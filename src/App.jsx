@@ -5,7 +5,7 @@ import { supabase } from './supabaseClient';
 import { 
   BookOpen, Award, AlertCircle, 
   Bookmark, User, LogOut, Trash2, 
-  Mail, Users, FileText, CheckSquare, Layers, Loader2, Plus
+  Mail, Users, FileText, CheckSquare, Layers, Loader2
 } from 'lucide-react';
 
 export default function App() {
@@ -544,4 +544,401 @@ export default function App() {
               
               return (
                 <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50/80 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-
+                  <div className="space-y-1.5 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">{m.etapa}</span>
+                      
+                      <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
+                        {esPromocional ? '✨ Promocional' : '📝 Final Obligatorio'}
+                      </span>
+
+                      {m.correlativa && (
+                        <span className="text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3 text-amber-500" /> Req: {m.correlativa}
+                        </span>
+                      )}
+                      {(st.comision || st.anioCursada || st.cuatrimestreCursada) && (
+                        <span className="text-[10px] text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
+                          {st.cuatrimestreCursada || 'Cursada'} {st.anioCursada || ''} • Com. {st.comision || '-'}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-bold text-slate-800 text-base">
+                        {st.customName ? `${m.name}: ${st.customName}` : m.name}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 flex-wrap justify-end">
+                    <button
+                      onClick={() => setActiveDetailMateria(m)}
+                      className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 transition"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta / Elegir Opción
+                    </button>
+
+                    <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'pendiente')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'pendiente' || !st.estado ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Pend.</button>
+                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'cursando')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'cursando' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-500'}`}>Curs.</button>
+                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
+                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
+                    </div>
+
+                    {st.estado === 'aprobada' && (
+                      <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-xl">
+                        <span className="text-[10px] font-bold text-emerald-700 uppercase">Nota:</span>
+                        <input
+                          type="number" min="4" max="10" placeholder="4-10"
+                          value={st.nota || ''}
+                          onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)}
+                          className="w-10 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-0.5 outline-none"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Cantidad de aplazos">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase">Apl:</span>
+                      <input
+                        type="number" min="0" max="5"
+                        value={st.aplazos || '0'}
+                        onChange={(e) => handleUpdateMateria(m.id, 'aplazos', e.target.value)}
+                        className="w-8 text-center bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-md py-0.5 outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </main>
+
+      {/* MODAL DETALLES DE CURSADA */}
+      {activeDetailMateria && (() => {
+        const mat = activeDetailMateria;
+        const st = studentData[selectedPlan]?.[mat.id] || {};
+        const regimenActual = st.regimen || (mat.regimen === 'final' ? 'final' : 'promocion');
+        const esPromocional = regimenActual === 'promocion';
+
+        const calcularPromedioParciales = () => {
+          const p1 = parseFloat(st.parcial1);
+          const p2 = parseFloat(st.parcial2);
+          const p3 = parseFloat(st.parcial3);
+          
+          const notasValidas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
+          if (notasValidas.length > 0) {
+            const suma = notasValidas.reduce((a, b) => a + b, 0);
+            const promedio = Math.round(suma / notasValidas.length);
+            handleUpdateMateria(mat.id, 'nota', promedio.toString());
+          }
+        };
+
+        const esCBC = activeBlock === 'cbc';
+        const esIdioma = activeBlock === 'idiomas';
+        const esElectiva = activeBlock === 'electivas';
+
+        return (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b pb-3">
+                <div>
+                  <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
+                  <p className="text-[10px] text-slate-500">Configuración, selección de cátedra y notas</p>
+                </div>
+                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
+              </div>
+
+              {esIdioma && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Idioma:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Elija el idioma --</option>
+                    <option value="Inglés">Inglés</option>
+                    <option value="Portugués">Portugués</option>
+                    <option value="Francés">Francés</option>
+                    <option value="Italiano">Italiano</option>
+                    <option value="Alemán">Alemán</option>
+                    <option value="Quechua">Quechua</option>
+                    <option value="Guaraní">Guaraní</option>
+                  </select>
+                </div>
+              )}
+
+              {esCBC && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Especifique materia / cátedra del CBC:</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Sociedad y Estado (Cátedra A)"
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                  />
+                </div>
+              )}
+
+              {esElectiva && (
+                <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar de la oferta disponible --</option>
+                    {seminariosOferta.map(sem => (
+                      <option key={sem.id} value={`${sem.nombre} (${sem.docente})`}>
+                        {sem.nombre} - {sem.docente} ({sem.tipo})
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[10px] text-sky-800">También puede escribir un seminario personalizado:</p>
+                  <input
+                    type="text"
+                    placeholder="O escriba el nombre del seminario electivo..."
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200">
+                <label className="text-xs font-bold uppercase text-slate-800 block">Régimen de la Materia:</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'promocion')}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${esPromocional ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                  >
+                    ✨ Promocional
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'final')}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${!esPromocional ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                  >
+                    📝 Examen Final Obligatorio
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><Users className="w-4 h-4 text-sky-600" /> Periodo y Cursada</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Año</span>
+                    <select
+                      value={st.anioCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Año --</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Cuatrimestre</span>
+                    <select
+                      value={st.cuatrimestreCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Período --</option>
+                      <option value="1° Cuatrimestre">1° Cuatrimestre</option>
+                      <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                      <option value="Verano">Verano</option>
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Comisión</span>
+                    <select
+                      value={st.comision || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Com --</option>
+                      <option value="1">Com 1</option>
+                      <option value="2">Com 2</option>
+                      <option value="3">Com 3</option>
+                      <option value="4">Com 4</option>
+                      <option value="5">Com 5</option>
+                      <option value="6">Com 6</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  <input type="text" placeholder="Profesor Teórico" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                  <input type="email" placeholder="Correo Teórico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <input type="text" placeholder="Profesor Práctico" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                  <input type="email" placeholder="Correo Práctico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                </div>
+              </div>
+
+              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
+                  {esPromocional && (
+                    <button 
+                      type="button" 
+                      onClick={calcularPromedioParciales}
+                      className="text-[10px] bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold px-2 py-1 rounded-lg transition"
+                    >
+                      ⚡ Calcular nota final por promedio
+                    </button>
+                  )}
+                </div>
+                
+                {esPromocional ? (
+                  <div>
+                    <p className="text-[10px] text-slate-500 mb-2">Al ser promocional, se habilitan 3 casillas (1° Parcial, 2° Parcial y Recuperador / 3°):</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
+                        <input type="text" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
+                        <input type="text" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">Recup / 3ro</span>
+                        <input type="text" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-[10px] text-slate-500">Al ser de final obligatorio, se habilitan 2 casillas para la regularidad y el espacio para la nota del examen final:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial (Regularidad)</span>
+                        <input type="text" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial (Regularidad)</span>
+                        <input type="text" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                    <div className="pt-1 border-t border-slate-200">
+                      <span className="text-[10px] font-bold text-amber-700 block mb-1">Nota de Examen Final</span>
+                      <input type="number" min="4" max="10" placeholder="Nota Final (4 a 10)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl">Guardar y Cerrar</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* MODAL GESTOR DE SEMINARIOS */}
+      {showSeminarioModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Oferta de Seminarios
+              </h3>
+              <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-lg">×</button>
+            </div>
+
+            <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 className="text-xs font-bold uppercase text-slate-700">Nuevo Seminario</h4>
+              <input
+                type="text"
+                placeholder="Nombre del seminario..."
+                value={nuevoSeminarioNombre}
+                onChange={(e) => setNuevoSeminarioNombre(e.target.value)}
+                className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Docente / Cátedra..."
+                  value={nuevoSeminarioDocente}
+                  onChange={(e) => setNuevoSeminarioDocente(e.target.value)}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                />
+                <select
+                  value={nuevoSeminarioTipo}
+                  onChange={(e) => setNuevoSeminarioTipo(e.target.value)}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                >
+                  <option value="sociocultural">Orientación Sociocultural</option>
+                  <option value="arqueologia">Orientación Arqueología</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  if (nuevoSeminarioNombre.trim()) {
+                    const nuevos = [...seminariosOferta, {
+                      id: 'sem-' + Date.now(),
+                      tipo: nuevoSeminarioTipo,
+                      nombre: nuevoSeminarioNombre,
+                      docente: nuevoSeminarioDocente || 'Docente a confirmar',
+                      cuatrimestre: '1C 2026'
+                    }];
+                    setSeminariosOferta(nuevos);
+                    guardarDatosNube(studentData, nuevos);
+                    setNuevoSeminarioNombre('');
+                    setNuevoSeminarioDocente('');
+                  }
+                }}
+                className="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-2 rounded-lg transition"
+              >
+                + Añadir al catálogo
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              <h4 className="text-xs font-bold uppercase text-slate-500">Seminarios Disponibles</h4>
+              {seminariosOferta.map(s => (
+                <div key={s.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
+                  <div>
+                    <p className="font-bold text-slate-800">{s.nombre}</p>
+                    <p className="text-[10px] text-slate-500">{s.docente} • {s.tipo.toUpperCase()}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const filtrados = seminariosOferta.filter(item => item.id !== s.id);
+                      setSeminariosOferta(filtrados);
+                      guardarDatosNube(studentData, filtrados);
+                    }}
+                    className="text-slate-400 hover:text-red-600 p-1"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
