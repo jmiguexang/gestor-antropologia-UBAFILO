@@ -90,9 +90,9 @@ export default function App() {
       const planState = prev[selectedPlan] || {};
       const matState = planState[id] || { 
         estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
-        choiceVal: '', areaVal: '', semVal: '', comision: '', cuatrimestre: '',
+        comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-        parcial1: '', parcial2: '', parcial3: ''
+        parcial1: '', parcial2: '', parcial3: '', notaFinal: ''
       };
       const updated = {
         ...prev,
@@ -189,7 +189,7 @@ export default function App() {
     </svg>
   );
 
-  // --- PANTALLA DE ACCESO (FORZADA CON #B3EBF2) ---
+  // --- PANTALLA DE ACCESO (#B3EBF2) ---
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#B3EBF2' }}>
@@ -388,7 +388,6 @@ export default function App() {
                 <p className="text-[10px] text-slate-400">{session.email}</p>
               </div>
               
-              {/* BOTÓN EXPLÍCITO DE CERRAR SESIÓN */}
               <button 
                 onClick={() => setSession(null)} 
                 className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
@@ -531,24 +530,31 @@ export default function App() {
             {currentBlockMaterias.map((m) => {
               const st = studentData[selectedPlan]?.[m.id] || { 
                 estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
-                choiceVal: '', areaVal: '', semVal: '', comision: '', cuatrimestre: '',
+                comision: '', anioCursada: '', cuatrimestreCursada: '',
                 docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-                parcial1: '', parcial2: '', parcial3: ''
+                parcial1: '', parcial2: '', parcial3: '', notaFinal: ''
               };
+
+              const esPromocional = m.regimen !== 'final';
               
               return (
                 <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50/80 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-1.5 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">{m.etapa}</span>
+                      
+                      <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
+                        {esPromocional ? '✨ Promocional' : '📝 Final Obligatorio'}
+                      </span>
+
                       {m.correlativa && (
                         <span className="text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
                           <AlertCircle className="w-3 h-3 text-amber-500" /> Req: {m.correlativa}
                         </span>
                       )}
-                      {(st.comision || st.cuatrimestre) && (
+                      {(st.comision || st.anioCursada || st.cuatrimestreCursada) && (
                         <span className="text-[10px] text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
-                          {st.cuatrimestre || 'Cursada'} • Com. {st.comision || '-'}
+                          {st.cuatrimestreCursada || 'Cursada'} {st.anioCursada || ''} • Com. {st.comision || '-'}
                         </span>
                       )}
                     </div>
@@ -599,42 +605,77 @@ export default function App() {
         </div>
       </main>
 
-      {/* MODAL DETALLES DE CURSADA */}
+      {/* MODAL DETALLES DE CURSADA CON AÑO, CUATRIMESTRE Y RÉGIMEN */}
       {activeDetailMateria && (() => {
         const mat = activeDetailMateria;
         const st = studentData[selectedPlan]?.[mat.id] || {};
+        const esPromocional = mat.regimen !== 'final';
 
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b pb-3">
-                <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
+                <div>
+                  <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
+                  <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border inline-block mt-1 ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
+                    {esPromocional ? '✨ Materia Promocional' : '📝 Materia con Examen Final Obligatorio'}
+                  </span>
+                </div>
                 <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
               </div>
 
+              {/* SECCIÓN DE PERIODO Y COMISIÓN */}
               <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><Users className="w-4 h-4 text-sky-600" /> Cursada y Docentes</h4>
-                <div className="grid grid-cols-2 gap-3">
-                  <select
-                    value={st.comision || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
-                  >
-                    <option value="">-- Comisión --</option>
-                    <option value="1">Comisión 1</option>
-                    <option value="2">Comisión 2</option>
-                    <option value="3">Comisión 3</option>
-                    <option value="4">Comisión 4</option>
-                    <option value="5">Comisión 5</option>
-                    <option value="6">Comisión 6</option>
-                  </select>
-                  <input
-                    type="text" placeholder="Cuatrimestre (ej. 1C 2026)"
-                    value={st.cuatrimestre || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestre', e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs"
-                  />
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><Users className="w-4 h-4 text-sky-600" /> Periodo y Cursada</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Año</span>
+                    <select
+                      value={st.anioCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Año --</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Cuatrimestre</span>
+                    <select
+                      value={st.cuatrimestreCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Período --</option>
+                      <option value="1° Cuatrimestre">1° Cuatrimestre</option>
+                      <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                      <option value="Verano">Verano</option>
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Comisión</span>
+                    <select
+                      value={st.comision || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Com --</option>
+                      <option value="1">Com 1</option>
+                      <option value="2">Com 2</option>
+                      <option value="3">Com 3</option>
+                      <option value="4">Com 4</option>
+                      <option value="5">Com 5</option>
+                      <option value="6">Com 6</option>
+                    </select>
+                  </div>
                 </div>
+
                 <div className="grid grid-cols-2 gap-2 pt-2">
                   <input type="text" placeholder="Profesor Teórico" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
                   <input type="email" placeholder="Correo Teórico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
@@ -645,13 +686,47 @@ export default function App() {
                 </div>
               </div>
 
+              {/* SECCIÓN DINÁMICA DE PARCIALES / FINAL */}
               <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Parciales</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  <input type="text" placeholder="1er Parcial" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                  <input type="text" placeholder="2do Parcial" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                  <input type="text" placeholder="Recup / 3ro" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                </div>
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
+                
+                {esPromocional ? (
+                  <div>
+                    <p className="text-[10px] text-slate-500 mb-2">Al ser promocional, se habilitan 3 casillas (1° Parcial, 2° Parcial y Recuperador / 3°):</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
+                        <input type="text" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
+                        <input type="text" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">Recup / 3ro</span>
+                        <input type="text" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-[10px] text-slate-500">Al ser de final obligatorio, se habilitan 2 casillas para la regularidad y el espacio para la nota del examen final:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial (Regularidad)</span>
+                        <input type="text" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial (Regularidad)</span>
+                        <input type="text" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                    <div className="pt-1 border-t border-slate-200">
+                      <span className="text-[10px] font-bold text-amber-700 block mb-1">Nota de Examen Final</span>
+                      <input type="number" min="4" max="10" placeholder="Nota Final (4 a 10)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end pt-2">
