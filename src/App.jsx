@@ -97,6 +97,26 @@ export default function App() {
 
       let updatedMat = { ...matState, [field]: value };
 
+      // Si se modifican notas en el detalle, calculamos automáticamente la nota principal de aprobación
+      if (['parcial1', 'parcial2', 'parcial3', 'notaFinal', 'regimen'].includes(field)) {
+        const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
+        if (reg === 'final') {
+          if (updatedMat.notaFinal) {
+            updatedMat.nota = updatedMat.notaFinal;
+          }
+        } else {
+          // Promocional: promedio de parciales válidos
+          const p1 = parseFloat(updatedMat.parcial1);
+          const p2 = parseFloat(updatedMat.parcial2);
+          const p3 = parseFloat(updatedMat.parcial3);
+          const validas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
+          if (validas.length > 0) {
+            const prom = Math.round(validas.reduce((a, b) => a + b, 0) / validas.length);
+            updatedMat.nota = prom.toString();
+          }
+        }
+      }
+
       const updated = {
         ...prev,
         [selectedPlan]: {
