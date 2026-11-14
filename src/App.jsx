@@ -182,23 +182,23 @@ export default function App() {
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
   const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
 
-  // --- ICONO EXACTO DEL PINO DE PUÁN (VECTORIAL) ---
+  // --- ICONO DEL PINO DE PUÁN (VECTORIAL) ---
   const PinoIcon = () => (
-    <svg width="28" height="28" viewBox="0 0 512 512" fill="currentColor" className="text-white">
+    <svg width="28" height="28" viewBox="0 0 512 512" fill="currentColor" className="text-sky-950">
       <path d="M256 32C245.3 32 235.3 38.3 231 48L143 144H191L111 240H167L87 336H167L79 432H224V464H160V496H352V464H288V432H433L345 336H425L345 240H401L321 144H369L281 48C276.7 38.3 266.7 32 256 32Z" />
     </svg>
   );
 
-  // --- PANTALLA DE ACCESO (CELESTE + PINO EXACTO) ---
+  // --- PANTALLA DE ACCESO (FORZADA CON #B3EBF2) ---
   if (!session) {
     return (
-      <div className="min-h-screen bg-sky-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-sky-100 space-y-6">
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#B3EBF2' }}>
+        <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-sky-300 space-y-6">
           <div className="text-center space-y-2">
-            <div className="bg-sky-600 w-14 h-14 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-sky-900/20">
+            <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center shadow-md border border-sky-300" style={{ backgroundColor: '#B3EBF2' }}>
               <PinoIcon />
             </div>
-            <span className="text-[10px] uppercase font-black tracking-widest text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-100">
+            <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
               UBA · FFyL · El Patio del Pino
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
@@ -274,14 +274,14 @@ export default function App() {
                       alert("Por favor completa todos los campos.");
                     }
                   }}
-                  className="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
+                  className="w-full bg-sky-800 hover:bg-sky-900 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
                 >
                   {loadingCloud && <Loader2 className="w-4 h-4 animate-spin" />}
                   Crear Registro en la Nube
                 </button>
                 <button
                   onClick={() => setIsRegistering(false)}
-                  className="w-full text-slate-500 hover:text-slate-800 text-xs font-semibold py-1"
+                  className="w-full text-slate-600 hover:text-slate-900 text-xs font-semibold py-1"
                 >
                   ← Ya tengo cuenta / Volver
                 </button>
@@ -313,7 +313,7 @@ export default function App() {
                       }
                     }
                   }}
-                  className="w-full bg-sky-900 hover:bg-sky-800 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
                 >
                   {loadingCloud ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />} 
                   Verificar e Ingresar con mi Correo
@@ -321,22 +321,22 @@ export default function App() {
 
                 <button
                   onClick={() => setIsRegistering(true)}
-                  className="w-full bg-sky-50 hover:bg-sky-100 text-sky-900 font-bold text-xs py-3 rounded-xl transition border border-sky-200"
+                  className="w-full bg-white hover:bg-sky-50 text-sky-950 font-bold text-xs py-3 rounded-xl transition border border-sky-300 shadow-xs"
                 >
                   Registrarme por Primera Vez
                 </button>
 
                 <div className="relative flex py-2 items-center">
-                  <div className="flex-grow border-t border-slate-200"></div>
-                  <span className="flex-shrink mx-4 text-slate-400 text-[10px] uppercase font-bold">O</span>
-                  <div className="flex-grow border-t border-slate-200"></div>
+                  <div className="flex-grow border-t border-sky-300"></div>
+                  <span className="flex-shrink mx-4 text-sky-900 text-[10px] uppercase font-bold">O</span>
+                  <div className="flex-grow border-t border-sky-300"></div>
                 </div>
 
                 <button
                   onClick={() => setSession({ nombre: 'Invitado', apellido: '', email: 'invitado@uba', tipo: 'invitado' })}
-                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2"
+                  className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2"
                 >
-                  <User className="w-4 h-4 text-slate-500" /> Continuar como Invitado (Sin registro)
+                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado (Sin registro)
                 </button>
               </div>
             )}
@@ -362,8 +362,10 @@ export default function App() {
       <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-sky-600 p-2 rounded-xl shadow-inner flex items-center justify-center">
-              <PinoIcon />
+            <div className="p-2 rounded-xl shadow-inner flex items-center justify-center" style={{ backgroundColor: '#B3EBF2' }}>
+              <div className="text-sky-950">
+                <PinoIcon />
+              </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -378,15 +380,21 @@ export default function App() {
 
           <div className="flex items-center gap-3 flex-wrap justify-center">
             <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
-              <div className="w-7 h-7 rounded-full bg-sky-600 flex items-center justify-center text-xs font-bold text-white">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-sky-950" style={{ backgroundColor: '#B3EBF2' }}>
                 {session.nombre[0]}
               </div>
               <div className="text-left">
                 <p className="text-xs font-bold text-white leading-tight">{session.nombre} {session.apellido}</p>
                 <p className="text-[10px] text-slate-400">{session.email}</p>
               </div>
-              <button onClick={() => setSession(null)} className="text-slate-400 hover:text-sky-400 p-1 transition ml-2" title="Cerrar sesión">
-                <LogOut className="w-4 h-4" />
+              
+              {/* BOTÓN EXPLÍCITO DE CERRAR SESIÓN */}
+              <button 
+                onClick={() => setSession(null)} 
+                className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
+                title="Cerrar sesión y salir del gestor"
+              >
+                <LogOut className="w-3.5 h-3.5" /> Salir
               </button>
             </div>
           </div>
@@ -680,12 +688,12 @@ export default function App() {
                   placeholder="Docente / Cátedra..."
                   value={nuevoSeminarioDocente}
                   onChange={(e) => setNuevoSeminarioDocente(e.target.value)}
-                  className="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
                 />
                 <select
                   value={nuevoSeminarioTipo}
                   onChange={(e) => setNuevoSeminarioTipo(e.target.value)}
-                  className="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
                 >
                   <option value="sociocultural">Orientación Sociocultural</option>
                   <option value="arqueologia">Orientación Arqueología</option>
@@ -727,7 +735,7 @@ export default function App() {
                       setSeminariosOferta(filtrados);
                       guardarDatosNube(studentData, filtrados);
                     }}
-                    className="text-slate-400 hover:text-sky-600 p-1"
+                    className="text-slate-400 hover:text-red-600 p-1"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
