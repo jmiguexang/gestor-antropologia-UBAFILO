@@ -97,22 +97,40 @@ export default function App() {
 
       let updatedMat = { ...matState, [field]: value };
 
-      // Si se modifican notas en el detalle, calculamos automáticamente la nota principal de aprobación
+      // CÁLCULO AUTOMÁTICO DE LA NOTA FINAL SEGÚN REGLAS DE UBA
       if (['parcial1', 'parcial2', 'parcial3', 'notaFinal', 'regimen'].includes(field)) {
         const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
-        if (reg === 'final') {
-          if (updatedMat.notaFinal) {
-            updatedMat.nota = updatedMat.notaFinal;
-          }
-        } else {
-          // Promocional: promedio de parciales válidos
-          const p1 = parseFloat(updatedMat.parcial1);
-          const p2 = parseFloat(updatedMat.parcial2);
-          const p3 = parseFloat(updatedMat.parcial3);
+        const p1 = parseFloat(updatedMat.parcial1);
+        const p2 = parseFloat(updatedMat.parcial2);
+        const p3 = parseFloat(updatedMat.parcial3);
+        const nFinal = parseFloat(updatedMat.notaFinal);
+
+        if (reg === 'promocion') {
+          // Promocional: se promedian parciales válidos
           const validas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
           if (validas.length > 0) {
-            const prom = Math.round(validas.reduce((a, b) => a + b, 0) / validas.length);
-            updatedMat.nota = prom.toString();
+            const promParciales = validas.reduce((a, b) => a + b, 0) / validas.length;
+            if (promParciales >= 7 && isNaN(nFinal)) {
+              updatedMat.nota = Math.round(promParciales).toString();
+            } else if (!isNaN(nFinal)) {
+              // Si rindió final a pesar de ser promocional (o se especifica nota final)
+              const notaFinalCalculada = Math.round((promParciales + nFinal) / 2);
+              updatedMat.nota = notaFinalCalculada.toString();
+            } else {
+              updatedMat.nota = Math.round(promParciales).toString();
+            }
+          }
+        } else {
+          // Final obligatorio: promedio de 1er y 2do parcial, luego sumado al examen final y dividido entre 2
+          const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
+          if (notasReg.length > 0) {
+            const promReg = notasReg.reduce((a, b) => a + b, 0) / notasReg.length;
+            if (!isNaN(nFinal)) {
+              const notaFinalCalculada = Math.round((promReg + nFinal) / 2);
+              updatedMat.nota = notaFinalCalculada.toString();
+            } else {
+              updatedMat.nota = Math.round(promReg).toString();
+            }
           }
         }
       }
@@ -642,19 +660,6 @@ export default function App() {
         const regimenActual = st.regimen || (mat.regimen === 'final' ? 'final' : 'promocion');
         const esPromocional = regimenActual === 'promocion';
 
-        const calcularPromedioParciales = () => {
-          const p1 = parseFloat(st.parcial1);
-          const p2 = parseFloat(st.parcial2);
-          const p3 = parseFloat(st.parcial3);
-          
-          const notasValidas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
-          if (notasValidas.length > 0) {
-            const suma = notasValidas.reduce((a, b) => a + b, 0);
-            const promedio = Math.round(suma / notasValidas.length);
-            handleUpdateMateria(mat.id, 'nota', promedio.toString());
-          }
-        };
-
         const esCBC = activeBlock === 'cbc';
         const esIdioma = activeBlock === 'idiomas';
         const esElectiva = activeBlock === 'electivas';
@@ -811,48 +816,41 @@ export default function App() {
               </div>
 
               <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
-                  {esPromocional && (
-                    <button 
-                      type="button" 
-                      onClick={calcularPromedioParciales}
-                      className="text-[10px] bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold px-2 py-1 rounded-lg transition"
-                    >
-                      ⚡ Calcular nota final por promedio
-                    </button>
-                  )}
-                </div>
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
                 
                 {esPromocional ? (
                   <div>
-                    <p className="text-[10px] text-slate-500 mb-2">Al ser promocional, se habilitan 3 casillas (1° Parcial, 2° Parcial y Recuperador / 3°):</p>
+                    <p className="text-[10px] text-slate-500 mb-2">Ingrese las notas de los parciales para promediar automáticamente (Promedio $\ge 7$ aprueba directo):</p>
                     <div className="grid grid-cols-3 gap-2">
                       <div>
                         <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
-                        <input type="text" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                       <div>
                         <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
-                        <input type="text" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                       <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">Recup / 3ro</span>
-                        <input type="text" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">3ro / Recup</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
+                    </div>
+                    <div className="pt-2 border-t border-slate-200 mt-2">
+                      <span className="text-[10px] font-bold text-sky-900 block mb-1">Nota de Examen Final (Solo si fue a final)</span>
+                      <input type="number" min="4" max="10" placeholder="Final (opcional)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-sky-50 border border-sky-300 rounded-lg p-2 text-xs text-center font-bold text-sky-950" />
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-[10px] text-slate-500">Al ser de final obligatorio, se habilitan 2 casillas para la regularidad y el espacio para la nota del examen final:</p>
+                    <p className="text-[10px] text-slate-500">Ingrese las notas de regularidad (1° y 2° parcial) y la nota del examen final:</p>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial (Regularidad)</span>
-                        <input type="text" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                       <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial (Regularidad)</span>
-                        <input type="text" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                     </div>
                     <div className="pt-1 border-t border-slate-200">
