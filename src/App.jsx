@@ -5,7 +5,7 @@ import { supabase } from './supabaseClient';
 import { 
   BookOpen, Award, GraduationCap, AlertCircle, 
   Bookmark, User, LogOut, Trash2, 
-  Mail, Users, FileText, CheckSquare, Layers, Loader2
+  Mail, Users, FileText, CheckSquare, Layers, Loader2, Trees
 } from 'lucide-react';
 
 export default function App() {
@@ -182,17 +182,17 @@ export default function App() {
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
   const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
 
-  // --- PANTALLA DE ACCESO / VERIFICACIÓN ---
+  // --- PANTALLA DE ACCESO / VERIFICACIÓN (CELESTE CON PINO) ---
   if (!session) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-100 space-y-6">
+      <div className="min-h-screen bg-sky-950 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-sky-100 space-y-6">
           <div className="text-center space-y-2">
-            <div className="bg-red-700 w-14 h-14 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-red-900/20">
-              <GraduationCap className="w-8 h-8 text-white" />
+            <div className="bg-sky-600 w-14 h-14 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-sky-900/20">
+              <Trees className="w-8 h-8 text-white" />
             </div>
-            <span className="text-[10px] uppercase font-black tracking-widest text-red-600 bg-red-50 px-3 py-1 rounded-full border border-red-100">
-              UBA · FFyL · Verificación Nube
+            <span className="text-[10px] uppercase font-black tracking-widest text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-100">
+              UBA · FFyL · El Patio del Pino
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
             <p className="text-xs text-slate-500">Ingrese su correo registrado para acceder a sus datos.</p>
@@ -209,7 +209,7 @@ export default function App() {
                       placeholder="Tu nombre"
                       value={formNombre}
                       onChange={(e) => setFormNombre(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-red-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600"
                     />
                   </div>
                   <div>
@@ -219,7 +219,7 @@ export default function App() {
                       placeholder="Tu apellido"
                       value={formApellido}
                       onChange={(e) => setFormApellido(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-red-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600"
                     />
                   </div>
                 </div>
@@ -229,51 +229,4 @@ export default function App() {
                     type="email"
                     placeholder="correo@filo.uba.ar"
                     value={formEmail}
-                    onChange={(e) => setFormEmail(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                </div>
-                <button
-                  onClick={async () => {
-                    if (formNombre.trim() && formApellido.trim() && formEmail.trim()) {
-                      setLoadingCloud(true);
-                      try {
-                        // Verificamos si el correo ya existe en la base de datos
-                        const { data: existente } = await supabase.from('estudiantes').select('*').eq('email', formEmail.trim()).maybeSingle();
-                        
-                        if (existente) {
-                          alert("⚠️ Este correo ya se encuentra registrado. Por favor, utilice la opción de ingresar con su correo.");
-                          setLoadingCloud(false);
-                          return;
-                        }
-
-                        // Si no existe, lo creamos oficialmente
-                        const { error } = await supabase.from('estudiantes').insert([{
-                          email: formEmail.trim(),
-                          nombre: formNombre.trim(),
-                          apellido: formApellido.trim(),
-                          datos_academicos: studentData,
-                          seminarios_oferta: seminariosOferta
-                        }]);
-
-                        if (error) throw error;
-
-                        setSession({ nombre: formNombre.trim(), apellido: formApellido.trim(), email: formEmail.trim(), tipo: 'registrado' });
-                      } catch (e) {
-                        console.error(e);
-                        alert("Hubo un error al registrarse en la base de datos.");
-                      } finally {
-                        setLoadingCloud(false);
-                      }
-                    } else {
-                      alert("Por favor completa todos los campos.");
-                    }
-                  }}
-                  className="w-full bg-red-700 hover:bg-red-800 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
-                >
-                  {loadingCloud && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Crear Registro en la Nube
-                </button>
-                <button
-                  onClick={() => setIsRegistering(false)}
-                  className="w-full text-
+                    onChange={(e) => setFormEmail(e.target.value
