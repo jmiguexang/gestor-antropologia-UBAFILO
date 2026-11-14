@@ -185,9 +185,9 @@ export default function App() {
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
   const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
 
-  // --- ICONO DEL PINO DE PUÁN (VECTORIAL SIN FONDO) ---
+  // --- ICONO DEL PINO DE PUÁN (VECTORIAL LIMPIO Y FORZADO A CELESTE) ---
   const PinoIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 512 512" fill="currentColor" className="text-sky-950">
+    <svg width="32" height="32" viewBox="0 0 512 512" fill="#B3EBF2" style={{ color: '#B3EBF2' }}>
       <path d="M256 32C245.3 32 235.3 38.3 231 48L143 144H191L111 240H167L87 336H167L79 432H224V464H160V496H352V464H288V432H433L345 336H425L345 240H401L321 144H369L281 48C276.7 38.3 266.7 32 256 32Z" />
     </svg>
   );
