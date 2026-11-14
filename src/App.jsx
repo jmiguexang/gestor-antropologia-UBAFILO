@@ -185,14 +185,14 @@ export default function App() {
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
   const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
 
-  // --- ICONO DEL PINO DE PUÁN (VECTORIAL LIMPIO Y FORZADO A CELESTE) ---
+  // --- ICONO DEL PINO DE PUÁN (VECTORIAL LIMPIO Y SIN CUADRADO) ---
   const PinoIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 512 512" fill="#B3EBF2" style={{ color: '#B3EBF2' }}>
+    <svg width="32" height="32" viewBox="0 0 512 512" fill="#B3EBF2">
       <path d="M256 32C245.3 32 235.3 38.3 231 48L143 144H191L111 240H167L87 336H167L79 432H224V464H160V496H352V464H288V432H433L345 336H425L345 240H401L321 144H369L281 48C276.7 38.3 266.7 32 256 32Z" />
     </svg>
   );
 
-  // --- PANTALLA DE ACCESO (#B3EBF2 SIN CUADRADO DE FONDO) ---
+  // --- PANTALLA DE ACCESO (#B3EBF2) ---
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#B3EBF2' }}>
@@ -759,4 +759,118 @@ export default function App() {
                     <p className="text-[10px] text-slate-500">Al ser de final obligatorio, se habilitan 2 casillas para la regularidad y el espacio para la nota del examen final:</p>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <span className="text-[10px] font-bold text
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial (Regularidad)</span>
+                        <input type="text" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial (Regularidad)</span>
+                        <input type="text" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                    <div className="pt-1 border-t border-slate-200">
+                      <span className="text-[10px] font-bold text-amber-700 block mb-1">Nota de Examen Final</span>
+                      <input type="number" min="4" max="10" placeholder="Nota Final (4 a 10)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl">Guardar y Cerrar</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* MODAL GESTOR DE SEMINARIOS */}
+      {showSeminarioModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Oferta de Seminarios
+              </h3>
+              <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-lg">×</button>
+            </div>
+
+            <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 className="text-xs font-bold uppercase text-slate-700">Nuevo Seminario</h4>
+              <input
+                type="text"
+                placeholder="Nombre del seminario..."
+                value={nuevoSeminarioNombre}
+                onChange={(e) => setNuevoSeminarioNombre(e.target.value)}
+                className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Docente / Cátedra..."
+                  value={nuevoSeminarioDocente}
+                  onChange={(e) => setNuevoSeminarioDocente(e.target.value)}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                />
+                <select
+                  value={nuevoSeminarioTipo}
+                  onChange={(e) => setNuevoSeminarioTipo(e.target.value)}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                >
+                  <option value="sociocultural">Orientación Sociocultural</option>
+                  <option value="arqueologia">Orientación Arqueología</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  if (nuevoSeminarioNombre.trim()) {
+                    const nuevos = [...seminariosOferta, {
+                      id: 'sem-' + Date.now(),
+                      tipo: nuevoSeminarioTipo,
+                      nombre: nuevoSeminarioNombre,
+                      docente: nuevoSeminarioDocente || 'Docente a confirmar',
+                      cuatrimestre: '1C 2026'
+                    }];
+                    setSeminariosOferta(nuevos);
+                    guardarDatosNube(studentData, nuevos);
+                    setNuevoSeminarioNombre('');
+                    setNuevoSeminarioDocente('');
+                  }
+                }}
+                className="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-2 rounded-lg transition"
+              >
+                + Añadir al catálogo
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              <h4 className="text-xs font-bold uppercase text-slate-500">Seminarios Disponibles</h4>
+              {seminariosOferta.map(s => (
+                <div key={s.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
+                  <div>
+                    <p className="font-bold text-slate-800">{s.nombre}</p>
+                    <p className="text-[10px] text-slate-500">{s.docente} • {s.tipo.toUpperCase()}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const filtrados = seminariosOferta.filter(item => item.id !== s.id);
+                      setSeminariosOferta(filtrados);
+                      guardarDatosNube(studentData, filtrados);
+                    }}
+                    className="text-slate-400 hover:text-red-600 p-1"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
