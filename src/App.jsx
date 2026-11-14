@@ -41,7 +41,6 @@ export default function App() {
 
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
 
-  // Sincronización con Supabase al iniciar sesión
   useEffect(() => {
     if (session && session.tipo === 'registrado') {
       cargarDatosNube(session.email);
@@ -55,21 +54,13 @@ export default function App() {
         .from('estudiantes')
         .select('*')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
       if (data) {
         if (data.datos_academicos) setStudentData(data.datos_academicos);
         if (data.seminarios_oferta && data.seminarios_oferta.length > 0) setSeminariosOferta(data.seminarios_oferta);
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
-      } else {
-        await supabase.from('estudiantes').insert([{
-          email: email,
-          nombre: session.nombre,
-          apellido: session.apellido,
-          datos_academicos: studentData,
-          seminarios_oferta: seminariosOferta
-        }]);
       }
     } catch (err) {
       console.error("Error al conectar con Supabase:", err);
@@ -94,7 +85,6 @@ export default function App() {
     }
   };
 
-  // Actualizar datos de materia con guardado automático local y en nube
   const handleUpdateMateria = (id, field, value) => {
     setStudentData(prev => {
       const planState = prev[selectedPlan] || {};
@@ -192,7 +182,7 @@ export default function App() {
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
   const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
 
-  // --- PANTALLA DE ACCESO / REGISTRO ---
+  // --- PANTALLA DE ACCESO / VERIFICACIÓN ---
   if (!session) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
@@ -202,10 +192,10 @@ export default function App() {
               <GraduationCap className="w-8 h-8 text-white" />
             </div>
             <span className="text-[10px] uppercase font-black tracking-widest text-red-600 bg-red-50 px-3 py-1 rounded-full border border-red-100">
-              UBA · FFyL · Nube Activa
+              UBA · FFyL · Verificación Nube
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
-            <p className="text-xs text-slate-500">Gestor académico sincronizado con Supabase.</p>
+            <p className="text-xs text-slate-500">Ingrese su correo registrado para acceder a sus datos.</p>
           </div>
 
           <div className="space-y-4 pt-2">
@@ -246,19 +236,44 @@ export default function App() {
                 <button
                   onClick={async () => {
                     if (formNombre.trim() && formApellido.trim() && formEmail.trim()) {
-                      const nuevoSesion = { nombre: formNombre, apellido: formApellido, email: formEmail, tipo: 'registrado' };
-                      setSession(nuevoSesion);
+                      setLoadingCloud(true);
                       try {
-                        await supabase.from('estudiantes').upsert([{
-                          email: formEmail,
-                          nombre: formNombre,
-                          apellido: formApellido,
+                        // Verificamos si el correo ya existe en la base de datos
+                        const { data: existente } = await supabase.from('estudiantes').select('*').eq('email', formEmail.trim()).maybeSingle();
+                        
+                        if (existente) {
+                          alert("⚠️ Este correo ya se encuentra registrado. Por favor, utilice la opción de ingresar con su correo.");
+                          setLoadingCloud(false);
+                          return;
+                        }
+
+                        // Si no existe, lo creamos oficialmente
+                        const { error } = await supabase.from('estudiantes').insert([{
+                          email: formEmail.trim(),
+                          nombre: formNombre.trim(),
+                          apellido: formApellido.trim(),
                           datos_academicos: studentData,
                           seminarios_oferta: seminariosOferta
                         }]);
-                      } catch (e) { console.error(e); }
+
+                        if (error) throw error;
+
+                        setSession({ nombre: formNombre.trim(), apellido: formApellido.trim(), email: formEmail.trim(), tipo: 'registrado' });
+                      } catch (e) {
+                        console.error(e);
+                        alert("Hubo un error al registrarse en la base de datos.");
+                      } finally {
+                        setLoadingCloud(false);
+                      }
                     } else {
                       alert("Por favor completa todos los campos.");
                     }
                   }}
-                  className="w-full
+                  className="w-full bg-red-700 hover:bg-red-800 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
+                >
+                  {loadingCloud && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Crear Registro en la Nube
+                </button>
+                <button
+                  onClick={() => setIsRegistering(false)}
+                  className="w-full text-
