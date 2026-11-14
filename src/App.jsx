@@ -5,7 +5,7 @@ import { supabase } from './supabaseClient';
 import { 
   BookOpen, Award, AlertCircle, 
   Bookmark, User, LogOut, Trash2, 
-  Mail, Users, FileText, CheckSquare, Layers, Loader2
+  Mail, Users, FileText, CheckSquare, Layers, Loader2, Plus
 } from 'lucide-react';
 
 export default function App() {
@@ -126,6 +126,7 @@ export default function App() {
       case 'cfg': return planObj.cfg || [];
       case 'cfo': return orientationObj.cfo || [];
       case 'idiomas': return planObj.idiomas || [];
+      case 'electivas': return orientationObj.electivas || planObj.electivas || [];
       case 'profesorado':
         const profObj = planObj.orientaciones['profesorado'];
         return profObj ? profObj.cfo : [];
@@ -136,6 +137,8 @@ export default function App() {
   const getAllMaterias = () => {
     let list = [...(planObj.cbc || []), ...(planObj.cfg || []), ...(orientationObj.cfo || [])];
     if (planObj.idiomas) list = [...list, ...planObj.idiomas];
+    const electivasList = orientationObj.electivas || planObj.electivas || [];
+    if (electivasList) list = [...list, ...electivasList];
     if (selectedPlan === '2023' && includeProfesorado && selectedOrientation !== 'profesorado') {
       const profObj = planObj.orientaciones['profesorado'];
       if (profObj) list = [...list, ...profObj.cfo];
@@ -506,6 +509,9 @@ export default function App() {
           <button onClick={() => setActiveBlock('idiomas')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
             <Layers className="w-4 h-4 text-sky-600" /> Idiomas y Requisitos
           </button>
+          <button onClick={() => setActiveBlock('electivas')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'electivas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+            <Layers className="w-4 h-4 text-sky-600" /> Electivas / Seminarios
+          </button>
           {selectedPlan === '2023' && (includeProfesorado || selectedOrientation === 'profesorado') && (
             <button onClick={() => setActiveBlock('profesorado')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'profesorado' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
               <Layers className="w-4 h-4 text-sky-600" /> Profesorado (CFE)
@@ -538,228 +544,4 @@ export default function App() {
               
               return (
                 <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50/80 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">{m.etapa}</span>
-                      
-                      <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
-                        {esPromocional ? '✨ Promocional' : '📝 Final Obligatorio'}
-                      </span>
-
-                      {m.correlativa && (
-                        <span className="text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3 text-amber-500" /> Req: {m.correlativa}
-                        </span>
-                      )}
-                      {(st.comision || st.anioCursada || st.cuatrimestreCursada) && (
-                        <span className="text-[10px] text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
-                          {st.cuatrimestreCursada || 'Cursada'} {st.anioCursada || ''} • Com. {st.comision || '-'}
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 flex-wrap justify-end">
-                    <button
-                      onClick={() => setActiveDetailMateria(m)}
-                      className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 transition"
-                    >
-                      <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta / Detalle
-                    </button>
-
-                    <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'pendiente')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'pendiente' || !st.estado ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Pend.</button>
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'cursando')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'cursando' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-500'}`}>Curs.</button>
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
-                    </div>
-
-                    {st.estado === 'aprobada' && (
-                      <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-xl">
-                        <span className="text-[10px] font-bold text-emerald-700 uppercase">Nota:</span>
-                        <input
-                          type="number" min="4" max="10" placeholder="4-10"
-                          value={st.nota || ''}
-                          onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)}
-                          className="w-10 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-0.5 outline-none"
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Cantidad de aplazos">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase">Apl:</span>
-                      <input
-                        type="number" min="0" max="5"
-                        value={st.aplazos || '0'}
-                        onChange={(e) => handleUpdateMateria(m.id, 'aplazos', e.target.value)}
-                        className="w-8 text-center bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-md py-0.5 outline-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </main>
-
-      {/* MODAL DETALLES DE CURSADA */}
-      {activeDetailMateria && (() => {
-        const mat = activeDetailMateria;
-        const st = studentData[selectedPlan]?.[mat.id] || {};
-        const regimenActual = st.regimen || (mat.regimen === 'final' ? 'final' : 'promocion');
-        const esPromocional = regimenActual === 'promocion';
-
-        const calcularPromedioParciales = () => {
-          const p1 = parseFloat(st.parcial1);
-          const p2 = parseFloat(st.parcial2);
-          const p3 = parseFloat(st.parcial3);
-          
-          const notasValidas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
-          if (notasValidas.length > 0) {
-            const suma = notasValidas.reduce((a, b) => a + b, 0);
-            const promedio = Math.round(suma / notasValidas.length);
-            handleUpdateMateria(mat.id, 'nota', promedio.toString());
-          }
-        };
-
-        const esCBC = activeBlock === 'cbc';
-        const esIdioma = activeBlock === 'idiomas';
-
-        return (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between border-b pb-3">
-                <div>
-                  <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
-                  <p className="text-[10px] text-slate-500">Configuración de cursada, cátedra y notas</p>
-                </div>
-                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
-              </div>
-
-              {esIdioma && (
-                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Idioma cursado:</label>
-                  <select
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
-                  >
-                    <option value="">-- Elija el idioma --</option>
-                    <option value="Inglés">Inglés</option>
-                    <option value="Portugués">Portugués</option>
-                    <option value="Francés">Francés</option>
-                    <option value="Italiano">Italiano</option>
-                    <option value="Alemán">Alemán</option>
-                    <option value="Quechua">Quechua</option>
-                    <option value="Guaraní">Guaraní</option>
-                  </select>
-                </div>
-              )}
-
-              {esCBC && (
-                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Especifique materia / cátedra del CBC:</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Introducción al Conocimiento de la Sociedad y el Estado (Cátedra A)"
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
-                  />
-                </div>
-              )}
-
-              <div className="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200">
-                <label className="text-xs font-bold uppercase text-slate-800 block">Régimen de la Materia:</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'promocion')}
-                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${esPromocional ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
-                  >
-                    ✨ Promocional
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'final')}
-                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${!esPromocional ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
-                  >
-                    📝 Examen Final Obligatorio
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><Users className="w-4 h-4 text-sky-600" /> Periodo y Cursada</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Año</span>
-                    <select
-                      value={st.anioCursada || ''}
-                      onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
-                    >
-                      <option value="">-- Año --</option>
-                      <option value="2026">2026</option>
-                      <option value="2025">2025</option>
-                      <option value="2024">2024</option>
-                      <option value="2023">2023</option>
-                      <option value="2022">2022</option>
-                      <option value="2021">2021</option>
-                      <option value="2020">2020</option>
-                    </select>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Cuatrimestre</span>
-                    <select
-                      value={st.cuatrimestreCursada || ''}
-                      onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
-                    >
-                      <option value="">-- Período --</option>
-                      <option value="1° Cuatrimestre">1° Cuatrimestre</option>
-                      <option value="2° Cuatrimestre">2° Cuatrimestre</option>
-                      <option value="Verano">Verano</option>
-                    </select>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Comisión</span>
-                    <select
-                      value={st.comision || ''}
-                      onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
-                    >
-                      <option value="">-- Com --</option>
-                      <option value="1">Com 1</option>
-                      <option value="2">Com 2</option>
-                      <option value="3">Com 3</option>
-                      <option value="4">Com 4</option>
-                      <option value="5">Com 5</option>
-                      <option value="6">Com 6</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 pt-2">
-                  <input type="text" placeholder="Profesor Teórico" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                  <input type="email" placeholder="Correo Teórico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <input type="text" placeholder="Profesor Práctico" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                  <input type="email" placeholder="Correo Práctico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                </div>
-              </div>
-
-              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
-                  {esPromocional && (
-                    <button 
-                      type="button" 
-                      onClick={calcularPromedioParciales}
-                      className="text-[10px] bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold px-2 py-1 rounded-lg transition"
+                  <div className="space-y-
