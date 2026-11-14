@@ -182,15 +182,14 @@ export default function App() {
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
   const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
 
-  // --- LOGO DEL PINO DE PUÁN (GARANTIZADO POR SVG DIRECTO) ---
+  // --- ICONO EXACTO DEL PINO DE PUÁN (VECTORIAL) ---
   const PinoIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-      <path d="M12 2L2 19h7v3h6v-3h7L12 2z" fill="#ffffff" fillOpacity="0.2" />
-      <path d="M12 2L4 16h6l-2 5h8l-2-5h6L12 2z" />
+    <svg width="28" height="28" viewBox="0 0 512 512" fill="currentColor" className="text-white">
+      <path d="M256 32C245.3 32 235.3 38.3 231 48L143 144H191L111 240H167L87 336H167L79 432H224V464H160V496H352V464H288V432H433L345 336H425L345 240H401L321 144H369L281 48C276.7 38.3 266.7 32 256 32Z" />
     </svg>
   );
 
-  // --- PANTALLA DE ACCESO (CELESTE + PINO) ---
+  // --- PANTALLA DE ACCESO (CELESTE + PINO EXACTO) ---
   if (!session) {
     return (
       <div className="min-h-screen bg-sky-900 flex items-center justify-center p-4">
