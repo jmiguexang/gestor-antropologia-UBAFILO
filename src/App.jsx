@@ -461,7 +461,7 @@ export default function App() {
               <PinoIcon />
             </div>
             <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
-              UBA · FFyL · El Patio del Pino
+              UBA · FFyL
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
             <p className="text-xs text-slate-500">Ingrese su correo registrado para acceder a sus datos.</p>
