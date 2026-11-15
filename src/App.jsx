@@ -606,7 +606,7 @@ export default function App() {
                   }}
                   className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2"
                 >
-                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado (Desde cero)
+                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado
                 </button>
               </div>
             )}
