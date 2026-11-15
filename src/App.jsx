@@ -255,7 +255,7 @@ export default function App() {
     }
     if (pct >= 25) {
       return [
-        `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada parcial suma un montón! 📝🔥`,
+        `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada final aprobado suma un montón! 📝🔥`,
         `Construyendo el trayecto académico: ${pct}% completado. ¡A seguir con ese ritmo! 🌿📖`,
         `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`
       ];
