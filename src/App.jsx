@@ -300,7 +300,7 @@ export default function App() {
     ctx.fillStyle = '#38bdf8';
     ctx.font = 'bold 34px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('UBA · FFyL · EL PATIO DEL PINO', W / 2, 180);
+    ctx.fillText('UBA · FFyL', W / 2, 180);
 
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 64px sans-serif';
@@ -462,8 +462,8 @@ export default function App() {
             <div className="mx-auto flex items-center justify-center">
               <PinoIcon color="#0f172a" />
             </div>
-            <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
-              UBA · FFyL · El Patio del Pino
+            <span className="text-[14px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
+              UBA · FFyL
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
             <p className="text-xs text-slate-500">Ingrese su correo registrado para acceder a sus datos.</p>
