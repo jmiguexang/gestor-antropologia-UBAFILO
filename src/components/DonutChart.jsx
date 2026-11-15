@@ -1,103 +1,139 @@
 import React from 'react';
 
 export function DonutChart({ total, aprobadas, regularizadas, cursando, pendientes }) {
-  const radius = 65;
+  const safeTotal = Math.max(total, 1);
+
+  // Porcentajes reales sobre el total de materias del plan
+  const pctAprobadas = (aprobadas / safeTotal) * 100;
+  const pctRegularizadas = (regularizadas / safeTotal) * 100;
+  const pctCursando = (cursando / safeTotal) * 100;
+
+  const porcentajePrincipal = Math.round(pctAprobadas);
+
+  // Geometría exacta del círculo SVG
+  const size = 200;
+  const strokeWidth = 22;
+  const center = size / 2;
+  const radius = center - strokeWidth;
   const circumference = 2 * Math.PI * radius;
 
-  const pAprobadas = total > 0 ? (aprobadas / total) : 0;
-  const pRegularizadas = total > 0 ? (regularizadas / total) : 0;
-  const pCursando = total > 0 ? (cursando / total) : 0;
+  // Longitudes de cada arco
+  const dashAprobadas = (pctAprobadas / 100) * circumference;
+  const dashRegularizadas = (pctRegularizadas / 100) * circumference;
+  const dashCursando = (pctCursando / 100) * circumference;
 
-  const dashAprobadas = pAprobadas * circumference;
-  const dashRegularizadas = pRegularizadas * circumference;
-  const dashCursando = pCursando * circumference;
-
+  // Desplazamientos (offsets) para apilar cada tramo donde termina el anterior
+  const offsetAprobadas = 0;
   const offsetRegularizadas = -dashAprobadas;
-  const offsetCursando = offsetRegularizadas - dashRegularizadas;
-
-  const porcentajeAvance = total > 0 ? Math.round(((aprobadas + regularizadas * 0.5) / total) * 100) : 0;
+  const offsetCursando = -(dashAprobadas + dashRegularizadas);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      <div className="relative w-40 h-40 flex items-center justify-center">
-        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-6">
+      {/* Gráfico de Rosquilla SVG Dinámico */}
+      <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90 transform">
+          {/* Aro base gris (Pendientes) */}
           <circle
-            cx="80" cy="80" r={radius}
-            className="text-slate-100"
-            strokeWidth="20"
-            stroke="currentColor"
+            cx={center}
+            cy={center}
+            r={radius}
             fill="transparent"
+            stroke="#e2e8f0"
+            strokeWidth={strokeWidth}
           />
+
+          {/* Tramo 1: Aprobadas (Verde Esmeralda) */}
           {aprobadas > 0 && (
             <circle
-              cx="80" cy="80" r={radius}
-              className="text-emerald-500 transition-all duration-700 ease-out"
-              strokeWidth="20"
-              strokeDasharray={`${dashAprobadas} ${circumference}`}
-              strokeDashoffset="0"
-              strokeLinecap="round"
+              cx={center}
+              cy={center}
+              r={radius}
               fill="transparent"
+              stroke="#10b981"
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${dashAprobadas} ${circumference}`}
+              strokeDashoffset={offsetAprobadas}
+              strokeLinecap="round"
+              style={{ transition: 'stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease' }}
             />
           )}
+
+          {/* Tramo 2: Regularizadas (Ámbar) */}
           {regularizadas > 0 && (
             <circle
-              cx="80" cy="80" r={radius}
-              className="text-amber-500 transition-all duration-700 ease-out"
-              strokeWidth="20"
+              cx={center}
+              cy={center}
+              r={radius}
+              fill="transparent"
+              stroke="#f59e0b"
+              strokeWidth={strokeWidth}
               strokeDasharray={`${dashRegularizadas} ${circumference}`}
               strokeDashoffset={offsetRegularizadas}
-              strokeLinecap="round"
-              fill="transparent"
+              style={{ transition: 'stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease' }}
             />
           )}
+
+          {/* Tramo 3: Cursando (Celeste Sky) */}
           {cursando > 0 && (
             <circle
-              cx="80" cy="80" r={radius}
-              className="text-blue-500 transition-all duration-700 ease-out"
-              strokeWidth="20"
+              cx={center}
+              cy={center}
+              r={radius}
+              fill="transparent"
+              stroke="#0284c7"
+              strokeWidth={strokeWidth}
               strokeDasharray={`${dashCursando} ${circumference}`}
               strokeDashoffset={offsetCursando}
-              strokeLinecap="round"
-              fill="transparent"
+              style={{ transition: 'stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease' }}
             />
           )}
         </svg>
-        <div className="absolute flex flex-col items-center justify-center text-center">
-          <span className="text-3xl font-black text-slate-800 tracking-tight">{porcentajeAvance}%</span>
-          <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Avance</span>
+
+        {/* Porcentaje central */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="text-4xl font-black text-slate-900 tracking-tight">{porcentajePrincipal}%</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Aprobado</span>
         </div>
       </div>
 
-      <div className="flex-1 w-full grid grid-cols-2 gap-3 text-sm">
-        <div className="flex items-center gap-2.5 bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/60">
-          <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
-          <div>
-            <p className="text-xs font-medium text-slate-500">Aprobadas</p>
-            <p className="font-bold text-slate-800 text-base">{aprobadas} <span className="text-xs text-slate-400 font-normal">/ {total}</span></p>
-          </div>
+      {/* Desglose numérico por estado */}
+      <div className="flex-1 w-full space-y-3">
+        <div>
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-wide">Progreso de la Carrera</h3>
+          <p className="text-xs text-slate-500">Se actualiza en tiempo real al cambiar el estado de tus materias.</p>
         </div>
 
-        <div className="flex items-center gap-2.5 bg-amber-50/50 p-2.5 rounded-xl border border-amber-100/60">
-          <span className="w-3.5 h-3.5 rounded-full bg-amber-500 flex-shrink-0"></span>
-          <div>
-            <p className="text-xs font-medium text-slate-500">Regularizadas</p>
-            <p className="font-bold text-slate-800 text-base">{regularizadas}</p>
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className="bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span className="text-xs font-bold text-emerald-950">Aprobadas</span>
+            </div>
+            <span className="text-sm font-black text-emerald-700">{aprobadas}</span>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2.5 bg-blue-50/50 p-2.5 rounded-xl border border-blue-100/60">
-          <span className="w-3.5 h-3.5 rounded-full bg-blue-500 flex-shrink-0"></span>
-          <div>
-            <p className="text-xs font-medium text-slate-500">Cursando</p>
-            <p className="font-bold text-slate-800 text-base">{cursando}</p>
+          <div className="bg-amber-50 border border-amber-200 p-2.5 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span className="text-xs font-bold text-amber-950">Regulares</span>
+            </div>
+            <span className="text-sm font-black text-amber-700">{regularizadas}</span>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
-          <span className="w-3.5 h-3.5 rounded-full bg-slate-300 flex-shrink-0"></span>
-          <div>
-            <p className="text-xs font-medium text-slate-500">Pendientes</p>
-            <p className="font-bold text-slate-800 text-base">{pendientes}</p>
+          <div className="bg-sky-50 border border-sky-200 p-2.5 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+              <span className="text-xs font-bold text-sky-950">Cursando</span>
+            </div>
+            <span className="text-sm font-black text-sky-700">{cursando}</span>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+              <span className="text-xs font-bold text-slate-700">Pendientes</span>
+            </div>
+            <span className="text-sm font-black text-slate-600">{pendientes}</span>
           </div>
         </div>
       </div>
