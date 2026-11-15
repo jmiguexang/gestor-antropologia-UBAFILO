@@ -47,9 +47,13 @@ export default function App() {
 
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
 
+  // Al iniciar sesión un usuario registrado, cargamos sus datos de la nube
   useEffect(() => {
     if (session && session.tipo === 'registrado') {
       cargarDatosNube(session.email);
+    } else if (session && session.tipo === 'invitado') {
+      // Limpiamos datos para invitado desde 0
+      setStudentData({ '2023': {}, '1985': {} });
     }
   }, [session]);
 
@@ -64,12 +68,18 @@ export default function App() {
 
       if (data) {
         if (data.datos_academicos) setStudentData(data.datos_academicos);
+        else setStudentData({ '2023': {}, '1985': {} });
+
         if (data.seminarios_oferta && data.seminarios_oferta.length > 0) setSeminariosOferta(data.seminarios_oferta);
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
+      } else {
+        // Si no existiera por alguna razón en la tabla, limpiamos a 0
+        setStudentData({ '2023': {}, '1985': {} });
       }
     } catch (err) {
       console.error("Error al conectar con Supabase:", err);
+      setStudentData({ '2023': {}, '1985': {} });
     } finally {
       setLoadingCloud(false);
     }
@@ -230,7 +240,6 @@ export default function App() {
   const totalMaterias = currentMateriasAll.length;
   const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
 
-  // Frases dinámicas según porcentaje de avance
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
       return [
@@ -242,8 +251,8 @@ export default function App() {
     if (pct >= 70) {
       return [
         `¡Ya estás al ${pct}% de tu carrera! Falta poco, sigue así, ¡vamos que tú puedes! 🔥🎓`,
-        `Huele a tesis: ${pct}% de la carrera aprobado. El último tirón es tuyo 💪✨`,
-        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 📖🚀`
+        `Huele a tesis: ${pct}% de la carrera aprobado. El último tirón es tuyo 📖🚀`,
+        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 💪✨`
       ];
     }
     if (pct >= 50) {
@@ -255,7 +264,7 @@ export default function App() {
     }
     if (pct >= 25) {
       return [
-        `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada final aprobado suma un montón! 📝🔥`,
+        `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada parcial suma un montón! 📝🔥`,
         `Construyendo el trayecto académico: ${pct}% completado. ¡A seguir con ese ritmo! 🌿📖`,
         `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`
       ];
@@ -270,7 +279,6 @@ export default function App() {
   const quotesList = getMotivationalQuotes(porcentajeAvance);
   const currentQuote = quotesList[quoteIndex % quotesList.length];
 
-  // Dibujar tarjeta vertical (1080x1920) en el Canvas
   useEffect(() => {
     if (!showShareModal || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -278,7 +286,6 @@ export default function App() {
     const W = 1080;
     const H = 1920;
 
-    // 1. Fondo degradado oscuro elegante
     const bgGrad = ctx.createLinearGradient(0, 0, W, H);
     bgGrad.addColorStop(0, '#0f172a');
     bgGrad.addColorStop(0.5, '#0c4a6e');
@@ -286,16 +293,14 @@ export default function App() {
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, W, H);
 
-    // 2. Detalles decorativos sutiles
     ctx.strokeStyle = 'rgba(179, 235, 242, 0.12)';
     ctx.lineWidth = 3;
     ctx.strokeRect(60, 60, W - 120, H - 120);
 
-    // 3. Encabezado institucional
     ctx.fillStyle = '#38bdf8';
     ctx.font = 'bold 34px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('UBA · FFyL', W / 2, 180);
+    ctx.fillText('UBA · FFyL · EL PATIO DEL PINO', W / 2, 180);
 
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 64px sans-serif';
@@ -310,13 +315,11 @@ export default function App() {
     ctx.font = '600 36px sans-serif';
     ctx.fillText(`Plan ${selectedPlan} · ${orientLabel}`, W / 2, 330);
 
-    // 4. Gráfico de Torta (Donut Chart)
     const cx = W / 2;
     const cy = 760;
     const radius = 270;
     const lineWidth = 75;
 
-    // Aro base (pendientes)
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
@@ -330,7 +333,6 @@ export default function App() {
 
     let startAngle = -Math.PI / 2;
 
-    // Segmento Aprobadas (Esmeralda)
     if (aprobadasCount > 0) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, startAngle, startAngle + aprobAngle);
@@ -341,7 +343,6 @@ export default function App() {
       startAngle += aprobAngle;
     }
 
-    // Segmento Regularizadas (Ámbar)
     if (regularizadasCount > 0) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, startAngle, startAngle + regAngle);
@@ -351,16 +352,14 @@ export default function App() {
       startAngle += regAngle;
     }
 
-    // Segmento Cursando (Celeste)
     if (cursandoCount > 0) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, startAngle, startAngle + cursAngle);
-      ctx.strokeStyle = '#38bdf8';
+      ctx.strokeStyle = '#0284c7';
       ctx.lineWidth = lineWidth;
       ctx.stroke();
     }
 
-    // Texto central en la torta
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 130px sans-serif';
     ctx.fillText(`${porcentajeAvance}%`, cx, cy + 35);
@@ -369,7 +368,6 @@ export default function App() {
     ctx.font = 'bold 32px sans-serif';
     ctx.fillText('COMPLETADO', cx, cy + 90);
 
-    // 5. Leyenda compacta
     const legendY = 1130;
     ctx.font = 'bold 30px sans-serif';
     ctx.fillStyle = '#10b981';
@@ -377,7 +375,6 @@ export default function App() {
     ctx.fillStyle = '#f59e0b';
     ctx.fillText(`● Regulares: ${regularizadasCount}`, W / 2 + 230, legendY);
 
-    // 6. Tarjeta de Métricas (Materias y Promedio)
     ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.beginPath();
     ctx.roundRect(120, 1200, W - 240, 190, 32);
@@ -393,7 +390,6 @@ export default function App() {
     ctx.fillText(`${aprobadasCount} / ${totalMaterias}`, W / 2 - 210, 1345);
     ctx.fillText(`${promedioSinAplazos}`, W / 2 + 210, 1345);
 
-    // 7. Frase Motivacional (con salto de línea automático)
     ctx.fillStyle = '#B3EBF2';
     ctx.font = 'bold 42px sans-serif';
     const words = currentQuote.split(' ');
@@ -414,7 +410,6 @@ export default function App() {
     }
     ctx.fillText(line.trim(), W / 2, yText);
 
-    // 8. Pie de firma
     ctx.fillStyle = '#64748b';
     ctx.font = '600 28px sans-serif';
     const userDisplay = session?.nombre && session.nombre !== 'Invitado' 
@@ -465,10 +460,10 @@ export default function App() {
         <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-sky-300 space-y-6">
           <div className="text-center space-y-3">
             <div className="mx-auto flex items-center justify-center">
-              <PinoIcon />
+              <PinoIcon color="#0f172a" />
             </div>
             <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
-              UBA · FFyL
+              UBA · FFyL · El Patio del Pino
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
             <p className="text-xs text-slate-500">Ingrese su correo registrado para acceder a sus datos.</p>
@@ -522,16 +517,19 @@ export default function App() {
                           return;
                         }
 
+                        // Al registrarse por primera vez, inicializamos sus datos desde cero (vacíos)
+                        const datosVacios = { '2023': {}, '1985': {} };
                         const { error } = await supabase.from('estudiantes').insert([{
                           email: formEmail.trim(),
                           nombre: formNombre.trim(),
                           apellido: formApellido.trim(),
-                          datos_academicos: studentData,
+                          datos_academicos: datosVacios,
                           seminarios_oferta: seminariosOferta
                         }]);
 
                         if (error) throw error;
 
+                        setStudentData(datosVacios);
                         setSession({ nombre: formNombre.trim(), apellido: formApellido.trim(), email: formEmail.trim(), tipo: 'registrado' });
                       } catch (e) {
                         console.error(e);
@@ -602,10 +600,13 @@ export default function App() {
                 </div>
 
                 <button
-                  onClick={() => setSession({ nombre: 'Invitado', apellido: '', email: 'invitado@uba', tipo: 'invitado' })}
+                  onClick={() => {
+                    setStudentData({ '2023': {}, '1985': {} });
+                    setSession({ nombre: 'Invitado', apellido: '', email: 'invitado@uba', tipo: 'invitado' });
+                  }}
                   className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2"
                 >
-                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado (Sin registro)
+                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado (Desde cero)
                 </button>
               </div>
             )}
@@ -622,7 +623,7 @@ export default function App() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center">
           <div className="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3">
             <Loader2 className="w-6 h-6 text-sky-600 animate-spin" />
-            <span className="text-xs font-bold text-slate-800">Verificando en Supabase...</span>
+            <span className="text-xs font-bold text-slate-800">Cargando datos desde Supabase...</span>
           </div>
         </div>
       )}
@@ -655,9 +656,12 @@ export default function App() {
               </div>
               
               <button 
-                onClick={() => setSession(null)} 
+                onClick={() => {
+                  setStudentData({ '2023': {}, '1985': {} });
+                  setSession(null);
+                }} 
                 className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
-                title="Cerrar sesión y salir del gestor"
+                title="Cerrar sesión y limpiar datos"
               >
                 <LogOut className="w-3.5 h-3.5" /> Salir
               </button>
@@ -911,7 +915,6 @@ export default function App() {
               <button onClick={() => setShowShareModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
 
-            {/* Vista previa del Canvas escalada */}
             <div className="flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200">
               <canvas
                 ref={canvasRef}
@@ -921,7 +924,6 @@ export default function App() {
               />
             </div>
 
-            {/* Selector de frases */}
             <div className="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase text-sky-900">Frase motivacional:</span>
@@ -936,7 +938,6 @@ export default function App() {
               <p className="text-xs text-slate-700 font-medium italic">"{currentQuote}"</p>
             </div>
 
-            {/* Botones de acción */}
             <div className="grid grid-cols-2 gap-2.5 pt-1">
               <button
                 type="button"
