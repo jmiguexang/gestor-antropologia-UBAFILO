@@ -288,7 +288,7 @@ export default function App() {
     ctx.fillStyle = '#38bdf8';
     ctx.font = 'bold 34px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('UBA · FFyL · EL PATIO DEL PINO', W / 2, 180);
+    ctx.fillText('UBA · FFyL', W / 2, 180);
 
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 64px sans-serif';
