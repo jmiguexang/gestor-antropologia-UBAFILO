@@ -446,8 +446,8 @@ export default function App() {
     }, 'image/png');
   };
 
-  const PinoIcon = () => (
-    <svg width="36" height="36" viewBox="0 0 512 512" fill="#0f172a">
+  const PinoIcon = ({ color = "#0f172a" }) => (
+    <svg width="36" height="36" viewBox="0 0 512 512" fill={color}>
       <path d="M256 32C245.3 32 235.3 38.3 231 48L143 144H191L111 240H167L87 336H167L79 432H224V464H160V496H352V464H288V432H433L345 336H425L345 240H401L321 144H369L281 48C276.7 38.3 266.7 32 256 32Z" />
     </svg>
   );
@@ -624,7 +624,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center">
-              <PinoIcon />
+              <PinoIcon color="#ffffff" />
             </div>
             <div>
               <div className="flex items-center gap-2">
