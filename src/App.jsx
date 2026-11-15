@@ -234,29 +234,36 @@ export default function App() {
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
       return [
-        `¡100% completado! Oficialmente en la recta final hacia el título de Antropología 🎓✨`,
-        `Todo el esfuerzo valió la pena: 100% de la carrera adentro. ¡A celebrar! 🥂🌿`,
-        `De Puan al mundo: 100% de materias aprobadas. ¡Lo lograste! 🚀📚`
+        `¡100% completado! Oficialmente en la meta del título de Antropología 🎓✨`,
+        `Todo el esfuerzo de Puan valió la pena: 100% adentro. ¡A celebrar! 🥂🌿`,
+        `De Filo UBA al mundo: carrera terminada. ¡Lo lograste! 🏆🚀`
       ];
     }
     if (pct >= 70) {
       return [
-        `Ya estás al ${pct}% de tu carrera. Falta poco, sigue así, ¡vamos que tú puedes! 🔥🎓`,
-        `¡${pct}% adentro! Ya se ve la meta en Puan, el último tirón es tuyo 💪✨`,
-        `Con el ${pct}% de la carrera aprobada, cada vez falta menos para la tesis 📖🚀`
+        `¡Ya estás al ${pct}% de tu carrera! Falta poco, sigue así, ¡vamos que tú puedes! 🔥🎓`,
+        `Huele a tesis: ${pct}% de la carrera aprobado. El último tirón es tuyo 💪✨`,
+        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 📖🚀`
       ];
     }
-    if (pct >= 40) {
+    if (pct >= 50) {
       return [
-        `¡Ya pasaste la mitad del camino (${pct}%)! Seguí metiéndole que vas increíble 🚀📚`,
-        `Al ${pct}% de Ciencias Antropológicas. Paso a paso construyendo el recorrido 🌿✨`,
-        `¡${pct}% completado! Cada final y cada parcial suma. ¡A no aflojar! 💪🔥`
+        `¡Ya pasamos la mitad del camino (${pct}%)! El recorrido viene excelente 🚀📚`,
+        `Mitad de carrera adentro (${pct}%). De acá en adelante, cada materia se disfruta el doble 🌿✨`,
+        `Cruzando el ${pct}% de Ciencias Antropológicas. ¡La base ya está súper firme! 💪🔥`
+      ];
+    }
+    if (pct >= 25) {
+      return [
+        `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada parcial suma un montón! 📝🔥`,
+        `Construyendo el trayecto académico: ${pct}% completado. ¡A seguir con ese ritmo! 🌿📖`,
+        `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`
       ];
     }
     return [
       `Arrancando el camino en Antropología: ya llevás el ${pct}% de la carrera 🌱📚`,
-      `Todo gran recorrido empieza con los primeros pasos: ${pct}% completado ✨🚀`,
-      `¡Vamos por más! ${pct}% de la carrera adentro en Filo UBA 💪🎓`
+      `Recién empieza el viaje en Puan: ${pct}% completado. ¡A meterle con todo! ✨🚀`,
+      `Primeros pasos en la facultad: ${pct}% adentro. ¡Vamos por más! 💪🎓`
     ];
   };
 
