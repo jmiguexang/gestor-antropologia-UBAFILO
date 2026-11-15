@@ -462,7 +462,7 @@ export default function App() {
             <div className="mx-auto flex items-center justify-center">
               <PinoIcon color="#0f172a" />
             </div>
-            <span className="text-[14px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
+            <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
               UBA · FFyL
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
