@@ -1035,7 +1035,7 @@ export default function App() {
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puanense 🧉
+                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner 🧉
               </h3>
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
