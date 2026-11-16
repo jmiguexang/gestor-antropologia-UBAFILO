@@ -1035,13 +1035,13 @@ export default function App() {
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-                <Coffee className="w-4 h-4 text-sky-600" /> Colaborar con el proyecto
+                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puanense 🧉
               </h3>
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
 
             <p className="text-xs text-slate-600 leading-relaxed">
-              Este gestor académico es gratuito y abierto para estudiantes de Filo UBA. Si te ayuda a organizar tu carrera, podés colaborar con un aporte voluntario vía Mercado Pago:
+              En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gestor te resulta útil para organizar tu cursada y querés apoyar el proyecto con un mate virtual, ¡muchas gracias! 💙
             </p>
 
             {/* Alias con botón de copiado rápido */}
