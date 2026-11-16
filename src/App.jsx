@@ -6,8 +6,12 @@ import {
   BookOpen, Award, AlertCircle, 
   Bookmark, User, LogOut, Trash2, 
   Mail, Users, FileText, CheckSquare, Layers, Loader2,
-  Share2, Download, RefreshCw, Sparkles
+  Share2, Download, RefreshCw, Sparkles,
+  Star, Trophy, TrendingDown, Coffee, Copy, Check
 } from 'lucide-react';
+
+// CONFIGURA AQUÍ TU ALIAS DE MERCADO PAGO
+const MP_ALIAS = 'juan.miguel.ch';
 
 export default function App() {
   const [session, setSession] = useState(() => {
@@ -28,6 +32,7 @@ export default function App() {
   const [selectedOrientation, setSelectedOrientation] = useState('sociocultural');
   const [includeProfesorado, setIncludeProfesorado] = useState(false);
   const [activeBlock, setActiveBlock] = useState('cbc');
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
 
   const [activeDetailMateria, setActiveDetailMateria] = useState(null);
 
@@ -35,6 +40,10 @@ export default function App() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
   const canvasRef = useRef(null);
+
+  // Estados para Colaboración / Mercado Pago
+  const [showDonateModal, setShowDonateModal] = useState(false);
+  const [copiedAlias, setCopiedAlias] = useState(false);
 
   const [seminariosOferta, setSeminariosOferta] = useState([
     { id: 'sem-1', tipo: 'sociocultural', nombre: 'Antropología de las emociones y los cuerpos', docente: 'Dr. Guber', cuatrimestre: '1C 2026' },
@@ -47,12 +56,10 @@ export default function App() {
 
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
 
-  // Al iniciar sesión un usuario registrado, cargamos sus datos de la nube
   useEffect(() => {
     if (session && session.tipo === 'registrado') {
       cargarDatosNube(session.email);
     } else if (session && session.tipo === 'invitado') {
-      // Limpiamos datos para invitado desde 0
       setStudentData({ '2023': {}, '1985': {} });
     }
   }, [session]);
@@ -74,7 +81,6 @@ export default function App() {
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
       } else {
-        // Si no existiera por alguna razón en la tabla, limpiamos a 0
         setStudentData({ '2023': {}, '1985': {} });
       }
     } catch (err) {
@@ -108,7 +114,8 @@ export default function App() {
         estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-        parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: ''
+        parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
+        favorita: false
       };
 
       let updatedMat = { ...matState, [field]: value };
@@ -197,23 +204,33 @@ export default function App() {
   };
 
   const currentMateriasAll = getAllMaterias();
-  const currentBlockMaterias = getBlockMaterias(activeBlock);
+  const rawBlockMaterias = onlyFavorites ? currentMateriasAll : getBlockMaterias(activeBlock);
+  const currentBlockMaterias = onlyFavorites
+    ? rawBlockMaterias.filter(m => studentData[selectedPlan]?.[m.id]?.favorita)
+    : rawBlockMaterias;
 
   let aprobadasCount = 0;
   let regularizadasCount = 0;
   let cursandoCount = 0;
   let pendientesCount = 0;
+  let favoritasCount = 0;
 
   let sumNotas = 0;
   let countNotas = 0;
   let sumHistorico = 0;
   let countHistorico = 0;
 
+  // Podio: Mayor y Menor nota aprobada
+  let highestMateria = null;
+  let lowestMateria = null;
+
   currentMateriasAll.forEach(m => {
     const st = studentData[selectedPlan]?.[m.id] || {};
     const estado = st.estado || 'pendiente';
     const notaNum = st.nota !== '' && !isNaN(st.nota) ? parseFloat(st.nota) : null;
     const aplazosNum = st.aplazos !== '' && !isNaN(st.aplazos) ? parseInt(st.aplazos) : 0;
+
+    if (st.favorita) favoritasCount++;
 
     if (estado === 'aprobada') {
       aprobadasCount++;
@@ -222,6 +239,14 @@ export default function App() {
         countNotas++;
         sumHistorico += notaNum;
         countHistorico++;
+
+        const displayName = st.customName ? `${m.name}: ${st.customName}` : m.name;
+        if (!highestMateria || notaNum > highestMateria.nota) {
+          highestMateria = { name: displayName, nota: notaNum };
+        }
+        if (!lowestMateria || notaNum < lowestMateria.nota) {
+          lowestMateria = { name: displayName, nota: notaNum };
+        }
       }
     } else if (estado === 'regularizada') { regularizadasCount++; } 
     else if (estado === 'cursando') { cursandoCount++; } 
@@ -300,7 +325,7 @@ export default function App() {
     ctx.fillStyle = '#38bdf8';
     ctx.font = 'bold 34px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('UBA · FFyL', W / 2, 180);
+    ctx.fillText('UBA · FFyL · EL PATIO DEL PINO', W / 2, 180);
 
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 64px sans-serif';
@@ -448,6 +473,12 @@ export default function App() {
     }, 'image/png');
   };
 
+  const handleCopyAlias = () => {
+    navigator.clipboard.writeText(MP_ALIAS);
+    setCopiedAlias(true);
+    setTimeout(() => setCopiedAlias(false), 2500);
+  };
+
   const PinoIcon = ({ color = "#0f172a" }) => (
     <svg width="36" height="36" viewBox="0 0 512 512" fill={color}>
       <path d="M256 32C245.3 32 235.3 38.3 231 48L143 144H191L111 240H167L87 336H167L79 432H224V464H160V496H352V464H288V432H433L345 336H425L345 240H401L321 144H369L281 48C276.7 38.3 266.7 32 256 32Z" />
@@ -463,7 +494,7 @@ export default function App() {
               <PinoIcon color="#0f172a" />
             </div>
             <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
-              UBA · FFyL
+              UBA · FFyL · El Patio del Pino
             </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
             <p className="text-xs text-slate-500">Ingrese su correo registrado para acceder a sus datos.</p>
@@ -517,7 +548,6 @@ export default function App() {
                           return;
                         }
 
-                        // Al registrarse por primera vez, inicializamos sus datos desde cero (vacíos)
                         const datosVacios = { '2023': {}, '1985': {} };
                         const { error } = await supabase.from('estudiantes').insert([{
                           email: formEmail.trim(),
@@ -606,7 +636,7 @@ export default function App() {
                   }}
                   className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2"
                 >
-                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado
+                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado (Desde cero)
                 </button>
               </div>
             )}
@@ -617,289 +647,429 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
-      
-      {loadingCloud && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3">
-            <Loader2 className="w-6 h-6 text-sky-600 animate-spin" />
-            <span className="text-xs font-bold text-slate-800">Cargando datos desde Supabase...</span>
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16 flex flex-col justify-between">
+      <div>
+        {loadingCloud && (
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center">
+            <div className="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3">
+              <Loader2 className="w-6 h-6 text-sky-600 animate-spin" />
+              <span className="text-xs font-bold text-slate-800">Cargando datos desde Supabase...</span>
+            </div>
+          </div>
+        )}
+
+        <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center">
+                <PinoIcon color="#ffffff" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-widest text-sky-400 font-bold">UBA · FFyL</span>
+                  <span className="bg-slate-800 text-slate-300 text-[10px] px-2 py-0.5 rounded-full border border-slate-700">
+                    {session.tipo === 'registrado' ? 'Verificado en Nube' : 'Modo Invitado'}
+                  </span>
+                </div>
+                <h1 className="text-lg font-black tracking-tight">Ciencias Antropológicas</h1>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 flex-wrap justify-center">
+              <button
+                onClick={() => setShowDonateModal(true)}
+                className="flex items-center gap-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition"
+                title="Colaborar con el desarrollo del gestor"
+              >
+                <Coffee className="w-3.5 h-3.5 text-sky-300" /> Invitame un mate 🧉
+              </button>
+
+              <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-sky-950" style={{ backgroundColor: '#B3EBF2' }}>
+                  {session.nombre[0]}
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-white leading-tight">{session.nombre} {session.apellido}</p>
+                  <p className="text-[10px] text-slate-400">{session.email}</p>
+                </div>
+                
+                <button 
+                  onClick={() => {
+                    setStudentData({ '2023': {}, '1985': {} });
+                    setSession(null);
+                  }} 
+                  className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
+                  title="Cerrar sesión y limpiar datos"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Salir
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="bg-white border-b border-slate-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500 uppercase">Plan:</span>
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => {
+                    setSelectedPlan(e.target.value);
+                    guardarDatosNube(studentData);
+                  }}
+                  className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
+                >
+                  {Object.entries(PLANS_DATA).map(([key, p]) => (
+                    <option key={key} value={key}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500 uppercase">Orientación:</span>
+                <select
+                  value={selectedOrientation}
+                  onChange={(e) => {
+                    setSelectedOrientation(e.target.value);
+                    guardarDatosNube(studentData);
+                  }}
+                  className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
+                >
+                  <option value="sociocultural">Licenciatura - Sociocultural</option>
+                  <option value="arqueologia">Licenciatura - Arqueología</option>
+                  {selectedPlan === '2023' && <option value="profesorado">Profesorado en Cs. Antropológicas</option>}
+                </select>
+              </div>
+
+              {selectedPlan === '2023' && selectedOrientation !== 'profesorado' && (
+                <label className="flex items-center gap-2 cursor-pointer bg-sky-50 text-sky-900 px-3 py-1.5 rounded-xl border border-sky-200 text-xs font-bold">
+                  <input
+                    type="checkbox"
+                    checked={includeProfesorado}
+                    onChange={(e) => setIncludeProfesorado(e.target.checked)}
+                    className="rounded text-sky-600 focus:ring-sky-500 w-3.5 h-3.5"
+                  />
+                  <span>Simultaneidad con Profesorado</span>
+                </label>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition"
+              >
+                <Share2 className="w-3.5 h-3.5" /> Compartir Historia ({porcentajeAvance}%)
+              </button>
+
+              <button
+                onClick={() => setShowSeminarioModal(true)}
+                className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition"
+              >
+                <Bookmark className="w-3.5 h-3.5" /> Catálogo Seminarios ({seminariosOferta.length})
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <main className="max-w-7xl mx-auto px-4 pt-6 space-y-6">
+          
+          {/* FILA SUPERIOR: GRÁFICO + PROMEDIO + PODIO DE NOTAS */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-6">
+              <DonutChart
+                total={currentMateriasAll.length}
+                aprobadas={aprobadasCount}
+                regularizadas={regularizadasCount}
+                cursando={cursandoCount}
+                pendientes={pendientesCount}
+              />
+            </div>
+
+            {/* PROMEDIO UBA */}
+            <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] uppercase tracking-wider text-sky-300 font-bold flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-sky-400" /> Promedio UBA
+                  </span>
+                  <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                    {countNotas} notas
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1.5 my-2">
+                  <span className="text-5xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
+                  <span className="text-lg font-bold text-sky-300">/ 10</span>
+                </div>
+                <p className="text-[11px] text-sky-200/80">Sobre materias aprobadas con calificación final.</p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-sky-800/60 space-y-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-sky-200 text-[11px]">Con aplazos:</span>
+                  <span className="font-bold text-white bg-sky-950/80 px-2 py-0.5 rounded-lg border border-sky-800">{promedioConAplazos}</span>
+                </div>
+                <button
+                  onClick={() => setShowShareModal(true)}
+                  className="w-full bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-sky-300" /> Tarjeta IG / WhatsApp
+                </button>
+              </div>
+            </div>
+
+            {/* PODIO DE NOTAS Y FAVORITAS */}
+            <div className="lg:col-span-3 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase tracking-wider font-black text-slate-700 flex items-center gap-1.5">
+                  <Trophy className="w-4 h-4 text-amber-500" /> Podio de Notas
+                </span>
+                <span className="text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-500" /> {favoritasCount} favs
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {/* Mayor Nota */}
+                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase text-emerald-800">Mayor Nota</span>
+                    <span className="text-sm font-black text-emerald-700 bg-white px-2 py-0.5 rounded-md border border-emerald-200">
+                      {highestMateria ? highestMateria.nota : '-'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-800 truncate mt-1" title={highestMateria?.name || ''}>
+                    {highestMateria ? highestMateria.name : 'Sin notas aún'}
+                  </p>
+                </div>
+
+                {/* Menor Nota */}
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase text-slate-600 flex items-center gap-1">
+                      <TrendingDown className="w-3 h-3 text-slate-400" /> Menor Nota
+                    </span>
+                    <span className="text-sm font-black text-slate-700 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                      {lowestMateria ? lowestMateria.nota : '-'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-700 truncate mt-1" title={lowestMateria?.name || ''}>
+                    {lowestMateria ? lowestMateria.name : 'Sin notas aún'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* PESTAÑAS DE BLOQUES DE AVANCE + FILTRO FAVORITAS */}
+          <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 border-b border-slate-200">
+            <div className="flex items-center gap-2">
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cbc'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cbc' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> CBC
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfg'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfg' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> {selectedPlan === '1985' ? 'Básicas (CFG)' : 'CFG'}
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfo'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfo' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> CFO
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('idiomas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> Idiomas
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('electivas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'electivas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> Electivas / Seminarios
+              </button>
+              {selectedPlan === '2023' && (includeProfesorado || selectedOrientation === 'profesorado') && (
+                <button onClick={() => { setOnlyFavorites(false); setActiveBlock('profesorado'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'profesorado' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                  <Layers className="w-4 h-4 text-sky-600" /> Profesorado
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={() => setOnlyFavorites(prev => !prev)}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 border ${onlyFavorites ? 'bg-amber-400 text-amber-950 border-amber-500 shadow-sm' : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100'}`}
+            >
+              <Star className={`w-3.5 h-3.5 ${onlyFavorites ? 'fill-amber-950' : 'fill-amber-400 text-amber-500'}`} />
+              Mis Favoritas ({favoritasCount})
+            </button>
+          </div>
+
+          {/* LISTADO DE MATERIAS DEL BLOQUE */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+              <h2 className="text-base font-bold flex items-center gap-2 uppercase tracking-wide">
+                {onlyFavorites ? (
+                  <><Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Materias Favoritas</>
+                ) : (
+                  <><BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock.toUpperCase()}</>
+                )}
+              </h2>
+              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">
+                {currentBlockMaterias.length} materias
+              </span>
+            </div>
+
+            {currentBlockMaterias.length === 0 ? (
+              <div className="p-10 text-center space-y-2">
+                <p className="text-sm font-bold text-slate-700">No hay materias en esta vista.</p>
+                {onlyFavorites && (
+                  <p className="text-xs text-slate-500">Haz clic en la estrella (★) junto al nombre de cualquier materia para agregarla a tus favoritas.</p>
+                )}
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {currentBlockMaterias.map((m) => {
+                  const st = studentData[selectedPlan]?.[m.id] || { 
+                    estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
+                    comision: '', anioCursada: '', cuatrimestreCursada: '',
+                    docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
+                    parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
+                    favorita: false
+                  };
+
+                  const regimenActual = st.regimen || (m.regimen === 'final' ? 'final' : 'promocion');
+                  const esPromocional = regimenActual === 'promocion';
+                  const esFavorita = Boolean(st.favorita);
+                  
+                  return (
+                    <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50/80 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">{m.etapa}</span>
+                          
+                          <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
+                            {esPromocional ? '✨ Promocional' : '📝 Final Obligatorio'}
+                          </span>
+
+                          {m.correlativa && (
+                            <span className="text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3 text-amber-500" /> Req: {m.correlativa}
+                            </span>
+                          )}
+                          {(st.comision || st.anioCursada || st.cuatrimestreCursada) && (
+                            <span className="text-[10px] text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
+                              {st.cuatrimestreCursada || 'Cursada'} {st.anioCursada || ''} • Com. {st.comision || '-'}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)}
+                            className="p-1 rounded-lg hover:bg-amber-50 transition"
+                            title={esFavorita ? 'Quitar de favoritas' : 'Marcar como materia favorita'}
+                          >
+                            <Star className={`w-5 h-5 transition ${esFavorita ? 'fill-amber-400 text-amber-500 scale-110' : 'text-slate-300 hover:text-amber-400'}`} />
+                          </button>
+
+                          <h3 className="font-bold text-slate-800 text-base">
+                            {st.customName ? `${m.name}: ${st.customName}` : m.name}
+                          </h3>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 flex-wrap justify-end">
+                        <button
+                          onClick={() => setActiveDetailMateria(m)}
+                          className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 transition"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta / Elegir Opción
+                        </button>
+
+                        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'pendiente')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'pendiente' || !st.estado ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Pend.</button>
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'cursando')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'cursando' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-500'}`}>Curs.</button>
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
+                        </div>
+
+                        {st.estado === 'aprobada' && (
+                          <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-xl">
+                            <span className="text-[10px] font-bold text-emerald-700 uppercase">Nota:</span>
+                            <input
+                              type="number" min="4" max="10" placeholder="4-10"
+                              value={st.nota || ''}
+                              onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)}
+                              className="w-10 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-0.5 outline-none"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Cantidad de aplazos">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase">Apl:</span>
+                          <input
+                            type="number" min="0" max="5"
+                            value={st.aplazos || '0'}
+                            onChange={(e) => handleUpdateMateria(m.id, 'aplazos', e.target.value)}
+                            className="w-8 text-center bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-md py-0.5 outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+
+      {/* PIE DE PÁGINA CON COLABORACIÓN */}
+      <footer className="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <p>Hecho a pulmón para la comunidad de <strong>Ciencias Antropológicas · FFyL UBA</strong>.</p>
+        <button
+          onClick={() => setShowDonateModal(true)}
+          className="flex items-center gap-2 bg-white hover:bg-sky-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold shadow-2xs transition"
+        >
+          <Coffee className="w-4 h-4 text-sky-600" /> ¿Te sirve el gestor? Invitame un mate 🧉
+        </button>
+      </footer>
+
+      {/* MODAL COLABORACIÓN / MERCADO PAGO */}
+      {showDonateModal && (
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-5 text-center">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Coffee className="w-4 h-4 text-sky-600" /> Colaborar con el proyecto
+              </h3>
+              <button onClick={() => setShowDonateModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Este gestor académico es gratuito y abierto para estudiantes de Filo UBA. Si te ayuda a organizar tu carrera, podés colaborar con un aporte voluntario vía Mercado Pago:
+            </p>
+
+            {/* Alias con botón de copiado rápido */}
+            <div className="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-sky-900 block">
+                Alias de Mercado Pago:
+              </span>
+              <div className="flex items-center justify-between bg-white border border-sky-300 rounded-xl px-3.5 py-2.5 shadow-2xs">
+                <span className="text-sm font-black text-slate-800 select-all">{MP_ALIAS}</span>
+                <button
+                  type="button"
+                  onClick={handleCopyAlias}
+                  className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition ${copiedAlias ? 'bg-emerald-600 text-white' : 'bg-sky-600 hover:bg-sky-700 text-white'}`}
+                >
+                  {copiedAlias ? <><Check className="w-3.5 h-3.5" /> ¡Copiado!</> : <><Copy className="w-3.5 h-3.5" /> Copiar</>}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowDonateModal(false)}
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl transition"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
-
-      <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center">
-              <PinoIcon color="#ffffff" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase tracking-widest text-sky-400 font-bold">UBA · FFyL</span>
-                <span className="bg-slate-800 text-slate-300 text-[10px] px-2 py-0.5 rounded-full border border-slate-700">
-                  {session.tipo === 'registrado' ? 'Verificado en Nube' : 'Modo Invitado'}
-                </span>
-              </div>
-              <h1 className="text-lg font-black tracking-tight">Ciencias Antropológicas</h1>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 flex-wrap justify-center">
-            <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-sky-950" style={{ backgroundColor: '#B3EBF2' }}>
-                {session.nombre[0]}
-              </div>
-              <div className="text-left">
-                <p className="text-xs font-bold text-white leading-tight">{session.nombre} {session.apellido}</p>
-                <p className="text-[10px] text-slate-400">{session.email}</p>
-              </div>
-              
-              <button 
-                onClick={() => {
-                  setStudentData({ '2023': {}, '1985': {} });
-                  setSession(null);
-                }} 
-                className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
-                title="Cerrar sesión y limpiar datos"
-              >
-                <LogOut className="w-3.5 h-3.5" /> Salir
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500 uppercase">Plan:</span>
-              <select
-                value={selectedPlan}
-                onChange={(e) => {
-                  setSelectedPlan(e.target.value);
-                  guardarDatosNube(studentData);
-                }}
-                className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
-              >
-                {Object.entries(PLANS_DATA).map(([key, p]) => (
-                  <option key={key} value={key}>{p.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500 uppercase">Orientación:</span>
-              <select
-                value={selectedOrientation}
-                onChange={(e) => {
-                  setSelectedOrientation(e.target.value);
-                  guardarDatosNube(studentData);
-                }}
-                className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
-              >
-                <option value="sociocultural">Licenciatura - Sociocultural</option>
-                <option value="arqueologia">Licenciatura - Arqueología</option>
-                {selectedPlan === '2023' && <option value="profesorado">Profesorado en Cs. Antropológicas</option>}
-              </select>
-            </div>
-
-            {selectedPlan === '2023' && selectedOrientation !== 'profesorado' && (
-              <label className="flex items-center gap-2 cursor-pointer bg-sky-50 text-sky-900 px-3 py-1.5 rounded-xl border border-sky-200 text-xs font-bold">
-                <input
-                  type="checkbox"
-                  checked={includeProfesorado}
-                  onChange={(e) => setIncludeProfesorado(e.target.checked)}
-                  className="rounded text-sky-600 focus:ring-sky-500 w-3.5 h-3.5"
-                />
-                <span>Simultaneidad con Profesorado</span>
-              </label>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition"
-            >
-              <Share2 className="w-3.5 h-3.5" /> Compartir Historia ({porcentajeAvance}%)
-            </button>
-
-            <button
-              onClick={() => setShowSeminarioModal(true)}
-              className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition"
-            >
-              <Bookmark className="w-3.5 h-3.5" /> Catálogo Seminarios ({seminariosOferta.length})
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <main className="max-w-7xl mx-auto px-4 pt-6 space-y-6">
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <DonutChart
-              total={currentMateriasAll.length}
-              aprobadas={aprobadasCount}
-              regularizadas={regularizadasCount}
-              cursando={cursandoCount}
-              pendientes={pendientesCount}
-            />
-          </div>
-
-          <div className="bg-gradient-to-br from-sky-900 to-slate-900 text-white p-6 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase tracking-widest text-sky-300 font-bold flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-sky-400" /> Promedio Académico UBA
-                </span>
-                <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2.5 py-1 rounded-full font-semibold">
-                  {countNotas} con nota
-                </span>
-              </div>
-              <div className="flex items-baseline gap-2 my-2">
-                <span className="text-6xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
-                <span className="text-xl font-bold text-sky-300">/ 10</span>
-              </div>
-              <p className="text-xs text-sky-200/80">Calculado sobre materias aprobadas con nota numérica final (del 4 al 10).</p>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-sky-800/60 space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-sky-200">Promedio Histórico (con aplazos):</span>
-                <span className="font-bold text-white bg-sky-950/80 px-2.5 py-1 rounded-lg border border-sky-800">{promedioConAplazos}</span>
-              </div>
-              <button
-                onClick={() => setShowShareModal(true)}
-                className="w-full bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2"
-              >
-                <Sparkles className="w-4 h-4 text-sky-300" /> Generar Tarjeta para IG / WhatsApp
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* PESTAÑAS DE BLOQUES DE AVANCE */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200">
-          <button onClick={() => setActiveBlock('cbc')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'cbc' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
-            <Layers className="w-4 h-4 text-sky-600" /> Ciclo Básico Común (CBC)
-          </button>
-          <button onClick={() => setActiveBlock('cfg')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'cfg' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
-            <Layers className="w-4 h-4 text-sky-600" /> {selectedPlan === '1985' ? 'Materias Básicas (CFG)' : 'Ciclo de Formación General (CFG)'}
-          </button>
-          <button onClick={() => setActiveBlock('cfo')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'cfo' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
-            <Layers className="w-4 h-4 text-sky-600" /> Ciclo de Formación Orientada (CFO)
-          </button>
-          <button onClick={() => setActiveBlock('idiomas')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
-            <Layers className="w-4 h-4 text-sky-600" /> Idiomas y Requisitos
-          </button>
-          <button onClick={() => setActiveBlock('electivas')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'electivas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
-            <Layers className="w-4 h-4 text-sky-600" /> Electivas / Seminarios
-          </button>
-          {selectedPlan === '2023' && (includeProfesorado || selectedOrientation === 'profesorado') && (
-            <button onClick={() => setActiveBlock('profesorado')} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${activeBlock === 'profesorado' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
-              <Layers className="w-4 h-4 text-sky-600" /> Profesorado (CFE)
-            </button>
-          )}
-        </div>
-
-        {/* LISTADO DE MATERIAS DEL BLOQUE */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-            <h2 className="text-base font-bold flex items-center gap-2 uppercase tracking-wide">
-              <BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock.toUpperCase()}
-            </h2>
-            <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">
-              {currentBlockMaterias.length} materias
-            </span>
-          </div>
-
-          <div className="divide-y divide-slate-100">
-            {currentBlockMaterias.map((m) => {
-              const st = studentData[selectedPlan]?.[m.id] || { 
-                estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
-                comision: '', anioCursada: '', cuatrimestreCursada: '',
-                docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-                parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: ''
-              };
-
-              const regimenActual = st.regimen || (m.regimen === 'final' ? 'final' : 'promocion');
-              const esPromocional = regimenActual === 'promocion';
-              
-              return (
-                <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50/80 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">{m.etapa}</span>
-                      
-                      <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
-                        {esPromocional ? '✨ Promocional' : '📝 Final Obligatorio'}
-                      </span>
-
-                      {m.correlativa && (
-                        <span className="text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3 text-amber-500" /> Req: {m.correlativa}
-                        </span>
-                      )}
-                      {(st.comision || st.anioCursada || st.cuatrimestreCursada) && (
-                        <span className="text-[10px] text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
-                          {st.cuatrimestreCursada || 'Cursada'} {st.anioCursada || ''} • Com. {st.comision || '-'}
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-bold text-slate-800 text-base">
-                        {st.customName ? `${m.name}: ${st.customName}` : m.name}
-                      </h3>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 flex-wrap justify-end">
-                    <button
-                      onClick={() => setActiveDetailMateria(m)}
-                      className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 transition"
-                    >
-                      <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta / Elegir Opción
-                    </button>
-
-                    <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'pendiente')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'pendiente' || !st.estado ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Pend.</button>
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'cursando')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'cursando' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-500'}`}>Curs.</button>
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
-                      <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
-                    </div>
-
-                    {st.estado === 'aprobada' && (
-                      <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-xl">
-                        <span className="text-[10px] font-bold text-emerald-700 uppercase">Nota:</span>
-                        <input
-                          type="number" min="4" max="10" placeholder="4-10"
-                          value={st.nota || ''}
-                          onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)}
-                          className="w-10 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-0.5 outline-none"
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Cantidad de aplazos">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase">Apl:</span>
-                      <input
-                        type="number" min="0" max="5"
-                        value={st.aplazos || '0'}
-                        onChange={(e) => handleUpdateMateria(m.id, 'aplazos', e.target.value)}
-                        className="w-8 text-center bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-md py-0.5 outline-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </main>
 
       {/* MODAL COMPARTIR HISTORIA IG / WHATSAPP */}
       {showShareModal && (
