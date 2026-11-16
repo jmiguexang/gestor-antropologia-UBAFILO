@@ -1020,7 +1020,7 @@ export default function App() {
 
       {/* PIE DE PÁGINA CON COLABORACIÓN */}
       <footer className="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-        <p>Hecho a pulmón para la comunidad de <strong>Ciencias Antropológicas · FFyL UBA</strong>.</p>
+        <p>Diseñado en estado de liminidad académica para la comunidad de <strong>Ciencias Antropológicas · FFyL UBA</strong>.</p>
         <button
           onClick={() => setShowDonateModal(true)}
           className="flex items-center gap-2 bg-white hover:bg-sky-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold shadow-2xs transition"
