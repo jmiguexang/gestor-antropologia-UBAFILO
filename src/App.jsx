@@ -224,14 +224,12 @@ export default function App() {
         const f2 = parseFloat(updatedMat.final2);
         const f3 = parseFloat(updatedMat.final3);
 
-        // Conteo de aplazos (notas de 1 a 3 en los intentos de final)
         let aplazosCount = 0;
         [f1, f2, f3].forEach(f => {
           if (!isNaN(f) && f > 0 && f < 4) aplazosCount++;
         });
         updatedMat.aplazos = Math.max(0, aplazosCount).toString();
 
-        // Nota final de la materia: es la nota obtenida al aprobar (primer intento >= 4)
         const notaAprobadaFinal = [f1, f2, f3].find(f => !isNaN(f) && f >= 4);
 
         if (notaAprobadaFinal !== undefined) {
@@ -341,7 +339,6 @@ export default function App() {
   let pendientesCount = 0;
   let favoritasCount = 0;
 
-  // CÁLCULO DE PROMEDIO UBA (INCLUYE NOTAS DE APROBACIÓN Y APLAZOS DE FINALES)
   let sumNotasPromedio = 0;
   let countNotasPromedio = 0;
   let notasAprobadasList = [];
@@ -364,7 +361,6 @@ export default function App() {
         notasAprobadasList.push({ name: st.customName ? `${m.name}: ${st.customName}` : m.name, nota: notaNum });
       }
 
-      // Sumar al promedio general los aplazos de finales (< 4)
       if (!esIdioma) {
         [st.final1, st.final2, st.final3].forEach(fVal => {
           const fNum = parseFloat(fVal);
@@ -1012,7 +1008,6 @@ export default function App() {
         const esIdioma = activeBlock === 'idiomas';
         const esElectiva = activeBlock === 'electivas';
 
-        // Verificamos si logró la promoción (régimen promocional y nota >= 7)
         const p1 = parseFloat(st.parcial1);
         const p2 = parseFloat(st.parcial2);
         const p3 = parseFloat(st.parcial3);
@@ -1051,18 +1046,73 @@ export default function App() {
                 </div>
               )}
 
-              {esCBC && (
-                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Especifique materia / cátedra del CBC:</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Sociedad y Estado (Cátedra A)"
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
-                  />
-                </div>
-              )}
+              {esCBC && (() => {
+                const nombreMat = mat.name.toLowerCase();
+                let opcionesCatedras = [];
+
+                if (nombreMat.includes('antropología')) {
+                  opcionesCatedras = ['Antropología (016) - Vargas'];
+                } else if (nombreMat.includes('filosofía')) {
+                  opcionesCatedras = ['Filosofía (042) - Beraldi'];
+                } else if (nombreMat.includes('sociedad y estado')) {
+                  opcionesCatedras = [
+                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Pedrosa',
+                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Denkberg'
+                  ];
+                } else if (nombreMat.includes('pensamiento científico')) {
+                  opcionesCatedras = [
+                    'Introducción al Pensamiento Científico (040) - Cátedra Buacar',
+                    'Introducción al Pensamiento Científico (040) - Cátedra Gimeno',
+                    'Introducción al Pensamiento Científico (040) - Cátedra Perot'
+                  ];
+                } else if (nombreMat.includes('economía')) {
+                  opcionesCatedras = [
+                    'Economía (021) - Cátedra Di Pelino',
+                    'Economía (021) - Cátedra Miliá'
+                  ];
+                } else if (nombreMat.includes('psicología')) {
+                  opcionesCatedras = [
+                    'Psicología (015) - Cátedra Quattrocchi',
+                    'Psicología (015) - Cátedra Fiotti'
+                  ];
+                } else if (nombreMat.includes('semiología')) {
+                  opcionesCatedras = ['Semiología (043) - Verzero'];
+                } else if (nombreMat.includes('sociología')) {
+                  opcionesCatedras = ['Sociología (014) - Bustos'];
+                } else {
+                  opcionesCatedras = [
+                    'Antropología (016) - Vargas',
+                    'Filosofía (042) - Beraldi',
+                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Pedrosa',
+                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Denkberg',
+                    'Introducción al Pensamiento Científico (040) - Cátedra Buacar',
+                    'Introducción al Pensamiento Científico (040) - Cátedra Gimeno',
+                    'Introducción al Pensamiento Científico (040) - Cátedra Perot',
+                    'Economía (021) - Cátedra Di Pelino',
+                    'Economía (021) - Cátedra Miliá',
+                    'Psicología (015) - Cátedra Quattrocchi',
+                    'Psicología (015) - Cátedra Fiotti',
+                    'Semiología (043) - Verzero',
+                    'Sociología (014) - Bustos'
+                  ];
+                }
+
+                return (
+                  <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                    <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Cátedra del CBC:</label>
+                    <select
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar cátedra --</option>
+                      {opcionesCatedras.map((cat, idx) => (
+                        <option key={idx} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              })()}
 
               {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
@@ -1171,7 +1221,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* EVALUACIONES, PARCIALES Y 3 INTENTOS DE FINAL */}
               <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
                 
