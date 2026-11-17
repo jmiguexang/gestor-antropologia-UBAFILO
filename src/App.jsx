@@ -975,3 +975,258 @@ export default function App() {
             <div className="flex items-center justify-between gap-2">
               <button type="button" onClick={() => setQuoteIndex(prev => prev + 1)} className="flex items-center justify-center gap-1.5 bg-sky-100 hover:bg-sky-200 text-sky-900 text-xs font-bold py-3 px-3 rounded-xl transition border border-sky-300" title="Cambiar frase">
                 <RefreshCw className="w-4 h-4 text-sky-700" /> Cambiar frase
+              </button>
+              <button type="button" onClick={handleDownloadStory} className="flex-1 flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl transition">
+                <Download className="w-4 h-4" /> Descargar PNG
+              </button>
+              <button type="button" onClick={handleNativeShare} className="flex-1 flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold py-3 rounded-xl transition">
+                <Share2 className="w-4 h-4" /> Compartir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeDetailMateria && (() => {
+        const mat = activeDetailMateria;
+        const st = studentData[selectedPlan]?.[mat.id] || {};
+        const regimenActual = st.regimen || (mat.regimen === 'final' ? 'final' : 'promocion');
+        const esPromocional = regimenActual === 'promocion';
+
+        const esCBC = activeBlock === 'cbc';
+        const esIdioma = activeBlock === 'idiomas';
+        const esElectiva = activeBlock === 'electivas';
+
+        return (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b pb-3">
+                <div>
+                  <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
+                  <p className="text-[10px] text-slate-500">Configuración, selección de cátedra y notas</p>
+                </div>
+                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
+              </div>
+
+              {esIdioma && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Idioma:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Elija el idioma --</option>
+                    <option value="Inglés">Inglés</option>
+                    <option value="Portugués">Portugués</option>
+                    <option value="Francés">Francés</option>
+                    <option value="Italiano">Italiano</option>
+                    <option value="Alemán">Alemán</option>
+                    <option value="Quechua">Quechua</option>
+                    <option value="Guaraní">Guaraní</option>
+                  </select>
+                </div>
+              )}
+
+              {esCBC && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Especifique materia / cátedra del CBC:</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Sociedad y Estado (Cátedra A)"
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                  />
+                </div>
+              )}
+
+              {esElectiva && (
+                <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar de la oferta disponible --</option>
+                    {seminariosOferta.map(sem => (
+                      <option key={sem.id} value={`${sem.nombre} (${sem.docente})`}>
+                        {sem.nombre} - {sem.docente} ({sem.tipo})
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[10px] text-sky-800">También puede escribir un seminario personalizado:</p>
+                  <input
+                    type="text"
+                    placeholder="O escriba el nombre del seminario electivo..."
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200">
+                <label className="text-xs font-bold uppercase text-slate-800 block">Régimen de la Materia:</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'promocion')}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${esPromocional ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                  >
+                    ✨ Promocional
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'final')}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${!esPromocional ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                  >
+                    📝 Examen Final Obligatorio
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><Users className="w-4 h-4 text-sky-600" /> Periodo y Cursada</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Año</span>
+                    <select
+                      value={st.anioCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Año --</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Cuatrimestre</span>
+                    <select
+                      value={st.cuatrimestreCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Período --</option>
+                      <option value="1° Cuatrimestre">1° Cuatrimestre</option>
+                      <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                      <option value="Verano">Verano</option>
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Comisión</span>
+                    <select
+                      value={st.comision || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Com --</option>
+                      <option value="1">Com 1</option>
+                      <option value="2">Com 2</option>
+                      <option value="3">Com 3</option>
+                      <option value="4">Com 4</option>
+                      <option value="5">Com 5</option>
+                      <option value="6">Com 6</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  <input type="text" placeholder="Profesor Teórico" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                  <input type="email" placeholder="Correo Teórico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <input type="text" placeholder="Profesor Práctico" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                  <input type="email" placeholder="Correo Práctico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                </div>
+              </div>
+
+              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
+                
+                {esPromocional ? (
+                  <div>
+                    <p className="text-[10px] text-slate-500 mb-2">Ingrese las notas de los parciales para promediar automáticamente (Promedio &ge; 7 aprueba directo):</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">3ro / Recup</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                    <div className="pt-2 border-t border-slate-200 mt-2">
+                      <span className="text-[10px] font-bold text-sky-900 block mb-1">Nota de Examen Final (Solo si fue a final)</span>
+                      <input type="number" min="4" max="10" placeholder="Final (opcional)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-sky-50 border border-sky-300 rounded-lg p-2 text-xs text-center font-bold text-sky-950" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-[10px] text-slate-500">Ingrese las notas de regularidad (1° y 2° parcial) y la nota del examen final:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                    <div className="pt-1 border-t border-slate-200">
+                      <span className="text-[10px] font-bold text-amber-700 block mb-1">Nota de Examen Final</span>
+                      <input type="number" min="4" max="10" placeholder="Nota Final (4 a 10)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl">Guardar y Cerrar</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {showSeminarioModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Seminarios (2C 2026)</h3>
+              <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 font-bold text-lg">×</button>
+            </div>
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+              {seminariosOferta.map(s => (
+                <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
+                  <div className="space-y-1 flex-1">
+                    <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{s.tipo.toUpperCase()}</span>
+                    <p className="font-bold text-slate-800 text-xs mt-1">{s.nombre}</p>
+                    <p className="text-[11px] text-slate-500">{s.docente}</p>
+                  </div>
+                  <button onClick={() => { handleAgregarSeminarioAElectivas(s); setShowSeminarioModal(false); setActiveBlock('electivas'); }} className="flex items-center justify-center gap-1.5 bg-sky-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
+                    <Plus className="w-4 h-4" /> Agregar a mis Electivas
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end"><button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
