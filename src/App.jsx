@@ -7,7 +7,7 @@ import {
   Bookmark, User, LogOut, Trash2, 
   Mail, Users, FileText, CheckSquare, Layers, Loader2,
   Share2, Download, RefreshCw, Sparkles,
-  Star, Trophy, TrendingDown, Coffee, Copy, Check, Plus
+  Star, Trophy, TrendingDown, Coffee, Copy, Check, Plus, Camera
 } from 'lucide-react';
 
 const MP_ALIAS = 'juan.miguel.ch';
@@ -30,6 +30,16 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-14', tipo: 'sociocultural', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', cuatrimestre: '2C 2026' },
   { id: 'sem-15', tipo: 'sociocultural', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', cuatrimestre: '2C 2026' },
   { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
+];
+
+// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA
+const AVATARES_ANTROPOLOGIA = [
+  { id: 'levis', nombre: 'Claude Lévi-Strauss', rol: 'Estructuralismo', emoji: '🧩', img: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80' },
+  { id: 'mead', nombre: 'Margaret Mead', rol: 'Antropología Cultura & Infancia', emoji: '🌴', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' },
+  { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
+  { id: 'malinowski', nombre: 'Bronisław Malinowski', rol: 'Padre del Trabajo de Campo / Funcionalismo', emoji: '⛺', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' },
+  { id: 'segato', nombre: 'Rita Segato', rol: 'Antropología Feminista y Violencia', emoji: '✊', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80' },
+  { id: 'foucault', nombre: 'Michel Foucault', rol: 'Poder, Saber y Biopolítica', emoji: '🔍', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80' }
 ];
 
 export default function App() {
@@ -64,6 +74,10 @@ export default function App() {
 
   const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
+  
+  // Estado para el Modal de selección de Avatar Histórico
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [avatarActual, setAvatarActual] = useState(null);
 
   // Estado para el Pop-up / Aviso flotante
   const [toastMessage, setToastMessage] = useState(null);
@@ -95,6 +109,7 @@ export default function App() {
 
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
+        if (data.avatar) setAvatarActual(data.avatar);
       } else {
         setStudentData({ '2023': {}, '1985': {} });
       }
@@ -106,7 +121,7 @@ export default function App() {
     }
   };
 
-  const guardarDatosNube = async (nuevoData, nuevosSemis = seminariosOferta) => {
+  const guardarDatosNube = async (nuevoData, nuevosSemis = seminariosOferta, nuevoAvatar = avatarActual) => {
     if (session && session.tipo === 'registrado') {
       try {
         await supabase.from('estudiantes').update({
@@ -114,6 +129,7 @@ export default function App() {
           seminarios_oferta: nuevosSemis,
           plan_actual: selectedPlan,
           orientacion_actual: selectedOrientation,
+          avatar: nuevoAvatar,
           actualizado_en: new Date()
         }).eq('email', session.email);
       } catch (err) {
@@ -122,7 +138,14 @@ export default function App() {
     }
   };
 
-  // Función para agregar seminario a electivas
+  const handleCambiarAvatar = (avatarObj) => {
+    setAvatarActual(avatarObj);
+    setShowAvatarModal(false);
+    guardarDatosNube(studentData, seminariosOferta, avatarObj);
+    setToastMessage(`¡Avatar actualizado a ${avatarObj.nombre}! 🏛️`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
   const handleAgregarSeminarioAElectivas = (sem) => {
     const customId = 'electiva-sem-' + sem.id + '-' + Date.now();
     const textoSeminario = `${sem.nombre} (${sem.docente})`;
@@ -155,7 +178,6 @@ export default function App() {
     }, 4000);
   };
 
-  // Función para eliminar seminario personalizado con confirmación
   const handleEliminarSeminarioPersonalizado = (id) => {
     const confirmar = window.confirm("¿Estás seguro que querés eliminar el seminario que elegiste?");
     if (!confirmar) return;
@@ -657,17 +679,20 @@ export default function App() {
                         }
 
                         const datosVacios = { '2023': {}, '1985': {} };
+                        const avatarPorDefecto = AVATARES_ANTROPOLOGIA[0]; // Lévi-Strauss por defecto
                         const { error } = await supabase.from('estudiantes').insert([{
                           email: formEmail.trim(),
                           nombre: formNombre.trim(),
                           apellido: formApellido.trim(),
                           datos_academicos: datosVacios,
-                          seminarios_oferta: SEMINARIOS_OFERTA_2C_2026
+                          seminarios_oferta: SEMINARIOS_OFERTA_2C_2026,
+                          avatar: avatarPorDefecto
                         }]);
 
                         if (error) throw error;
 
                         setStudentData(datosVacios);
+                        setAvatarActual(avatarPorDefecto);
                         setSession({ nombre: formNombre.trim(), apellido: formApellido.trim(), email: formEmail.trim(), tipo: 'registrado' });
                       } catch (e) {
                         console.error(e);
@@ -766,7 +791,7 @@ export default function App() {
           </div>
         )}
 
-        {/* POP-UP / AVISO FLOTANTE DE SEMINARIO AGREGADO */}
+        {/* POP-UP / AVISO FLOTANTE */}
         {toastMessage && (
           <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-sky-500 flex items-center gap-3 animate-bounce">
             <Sparkles className="w-5 h-5 text-sky-400 shrink-0" />
@@ -800,26 +825,55 @@ export default function App() {
                 <Coffee className="w-3.5 h-3.5 text-sky-300" /> Invitame un mate 🧉
               </button>
 
-              <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-sky-950" style={{ backgroundColor: '#B3EBF2' }}>
-                  {session.nombre[0]}
-                </div>
-                <div className="text-left">
-                  <p className="text-xs font-bold text-white leading-tight">{session.nombre} {session.apellido}</p>
-                  <p className="text-[10px] text-slate-400">{session.email}</p>
-                </div>
-                
-                <button 
-                  onClick={() => {
-                    setStudentData({ '2023': {}, '1985': {} });
-                    setSession(null);
-                  }} 
-                  className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
-                  title="Cerrar sesión y limpiar datos"
+              {session.tipo === 'invitado' ? (
+                <button
+                  onClick={() => setSession(null)}
+                  className="flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-extrabold shadow-sm transition animate-pulse"
                 >
-                  <LogOut className="w-3.5 h-3.5" /> Salir
+                  <Sparkles className="w-3.5 h-3.5" /> Sé parte de la memoria colectiva puaner. Registrate
                 </button>
-              </div>
+              ) : (
+                <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
+                  {/* Botón para cambiar avatar histórico */}
+                  <div 
+                    onClick={() => setShowAvatarModal(true)}
+                    className="relative group cursor-pointer"
+                    title="Hacé clic para cambiar tu avatar de antropólogo/a histórico/a"
+                  >
+                    {avatarActual?.img ? (
+                      <img src={avatarActual.img} alt={avatarActual.nombre} className="w-8 h-8 rounded-full object-cover border-2 border-sky-400 shadow-sm" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-sky-950 bg-sky-300 border-2 border-sky-400">
+                        {session.nombre[0]}
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-slate-900/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                      <Camera className="w-3.5 h-3.5 text-white" />
+                    </div>
+                  </div>
+
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-white leading-tight flex items-center gap-1.5">
+                      {session.nombre} {session.apellido}
+                      <span className="text-[10px] text-sky-300 font-normal" title={avatarActual?.nombre || ''}>
+                        ({avatarActual ? avatarActual.nombre.split(' ')[0] : 'Antropóloga/o'})
+                      </span>
+                    </p>
+                    <p className="text-[10px] text-slate-400">{session.email}</p>
+                  </div>
+                  
+                  <button 
+                    onClick={() => {
+                      setStudentData({ '2023': {}, '1985': {} });
+                      setSession(null);
+                    }} 
+                    className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
+                    title="Cerrar sesión y limpiar datos"
+                  >
+                    <LogOut className="w-3.5 h-3.5" /> Salir
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -1092,7 +1146,6 @@ export default function App() {
                       </div>
 
                       <div className="flex items-center gap-3 flex-wrap justify-end">
-                        {/* Botón de eliminar seminario agregado si es personalizado */}
                         {m.esCustomSeminario && (
                           <button
                             onClick={() => handleEliminarSeminarioPersonalizado(m.id)}
@@ -1147,6 +1200,54 @@ export default function App() {
           <Coffee className="w-4 h-4 text-sky-600" /> ¿Te sirve el gestor? Invitame un mate 🧉
         </button>
       </footer>
+
+      {/* MODAL SELECCIÓN DE AVATAR HISTÓRICO */}
+      {showAvatarModal && (
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                  <Camera className="w-4 h-4 text-sky-600" /> Elegí tu Antropólogo/a Histórico/a
+                </h3>
+                <p className="text-[11px] text-slate-500">Seleccioná una figura clave de la historia de la disciplina para tu perfil</p>
+              </div>
+              <button onClick={() => setShowAvatarModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-1">
+              {AVATARES_ANTROPOLOGIA.map((av) => {
+                const esSeleccionado = avatarActual?.id === av.id;
+                return (
+                  <div
+                    key={av.id}
+                    onClick={() => handleCambiarAvatar(av)}
+                    className={`cursor-pointer rounded-2xl p-3 border text-center transition flex flex-col items-center justify-between space-y-2 ${esSeleccionado ? 'bg-sky-50 border-sky-500 shadow-md ring-2 ring-sky-400' : 'bg-slate-50 hover:bg-sky-50/50 border-slate-200'}`}
+                  >
+                    <div className="relative">
+                      <img src={av.img} alt={av.nombre} className="w-16 h-16 rounded-full object-cover shadow-md border-2 border-white" />
+                      <span className="absolute -bottom-1 -right-1 text-sm bg-white rounded-full px-1 shadow-xs">{av.emoji}</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-800 text-xs leading-tight">{av.nombre}</p>
+                      <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">{av.rol}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex justify-end pt-2 border-t">
+              <button
+                onClick={() => setShowAvatarModal(false)}
+                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showDonateModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
