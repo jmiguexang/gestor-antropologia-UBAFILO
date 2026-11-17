@@ -43,22 +43,22 @@ export default function App() {
   const [copiedAlias, setCopiedAlias] = useState(false);
 
   const [seminariosOferta, setSeminariosOferta] = useState([
-    { id: 'sem-1', tipo: 'sociocultural', nombre: 'Antropología Social (Antropología Rural y Antropología Social)', docente: 'Prof. Sebastián Valverde', cuatrimestre: '2C 2026' },
-    { id: 'sem-2', tipo: 'sociocultural', nombre: 'Reproducción social, desigualdades y digitalización en el mundo del trabajo', docente: 'Prof. Hernán Palermo y Prof. Verónica Casas', cuatrimestre: '2C 2026' },
-    { id: 'sem-3', tipo: 'sociocultural', nombre: 'Poder policial, burocracias penales y activismos', docente: 'Prof. María Victoria Pita y Prof. Florencia Corbelle', cuatrimestre: '2C 2026' },
-    { id: 'sem-4', tipo: 'sociocultural', nombre: 'Colonialidad, modernidad e imaginarios de nación', docente: 'Prof. Eduardo Luis Urbano', cuatrimestre: '2C 2026' },
-    { id: 'sem-5', tipo: 'sociocultural', nombre: 'Heterodoxias sociorreligiosas desde una perspectiva histórica y antropológica', docente: 'Prof. Pablo Wright', cuatrimestre: '2C 2026' },
-    { id: 'sem-6', type: 'sociocultural', nombre: 'Conflictividad penal juvenil: enfoques, métodos y estudios', docente: 'Prof. María Florencia Graziano y Federico Medina', cuatrimestre: '2C 2026' },
-    { id: 'sem-7', tipo: 'sociocultural', nombre: 'Antropología y economía política: poder, trabajo y ambiente', docente: 'Prof. Santiago Sorroche', cuatrimestre: '2C 2026' },
-    { id: 'sem-8', tipo: 'sociocultural', nombre: 'Comunicar la antropología', docente: 'Prof. Marisol Garcia y Prof. Roberta Aller', cuatrimestre: '2C 2026' },
-    { id: 'sem-9', tipo: 'arqueologia', nombre: 'Cambio climático, transdisciplina y adaptación basada en ecosistemas', docente: 'Prof. Constanza Riera y Prof. Paula Beatriz Martin', cuatrimestre: '2C 2026' },
-    { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: Las empresas autogestionadas frente al pluriempleo y el capitalismo de plataformas', docente: 'Prof. Andres Eduardo Ruggeri y Prof. Natalia Polti', cuatrimestre: '2C 2026' },
-    { id: 'sem-11', tipo: 'arqueologia', nombre: 'Teoría, interdisciplinariedad y debates contemporáneos en arqueología histórica', docente: 'Prof. María Jimena Cruz y Melisa Salerno', cuatrimestre: '2C 2026' },
-    { id: 'sem-12', tipo: 'arqueologia', nombre: 'La cultura bajo una nueva perspectiva evolutiva', docente: 'Prof. Viviana Scheinsohn', cuatrimestre: '2C 2026' },
-    { id: 'sem-13', tipo: 'sociocultural', nombre: 'PST: Producción y gestión de proyectos culturales en Filo', docente: 'Prof. Victoria Julia Lencina (Artes)', cuatrimestre: '2C 2026' },
-    { id: 'sem-14', tipo: 'sociocultural', nombre: 'PST: Diálogos entre arte y educación en el Museo Etnográfico', docente: 'Prof. Mariana Luterstein y Prof. María Eugenia Lanza (Artes)', cuatrimestre: '2C 2026' },
-    { id: 'sem-15', tipo: 'sociocultural', nombre: 'PST: Construcción de un espacio de recreación educativa para las infancias en el CIDAC', docente: 'Prof. Anahi Guelman y Prof. Mariel Karolonski (Cs. de la Educación)', cuatrimestre: '2C 2026' },
-    { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: Saberes y experiencias ambientales en diálogos comunitarios (Cooperativa Recuperadores Urbanos del Oeste)', docente: 'Prof. María Inés Carabajal y Prof. Lia Inés Bachman (Geografía)', cuatrimestre: '2C 2026' }
+    { id: 'sem-1', tipo: 'sociocultural', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', cuatrimestre: '2C 2026' },
+    { id: 'sem-2', tipo: 'sociocultural', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', cuatrimestre: '2C 2026' },
+    { id: 'sem-3', tipo: 'sociocultural', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', cuatrimestre: '2C 2026' },
+    { id: 'sem-4', tipo: 'sociocultural', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN', docente: 'PROF. URBANO, Eduardo Luis', cuatrimestre: '2C 2026' },
+    { id: 'sem-5', tipo: 'sociocultural', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA', docente: 'PROF. Pablo WRIGHT', cuatrimestre: '2C 2026' },
+    { id: 'sem-6', tipo: 'sociocultural', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', cuatrimestre: '2C 2026' },
+    { id: 'sem-7', tipo: 'sociocultural', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', cuatrimestre: '2C 2026' },
+    { id: 'sem-8', tipo: 'sociocultural', nombre: 'COMUNICAR LA ANTROPOLOGÍA', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', cuatrimestre: '2C 2026' },
+    { id: 'sem-9', tipo: 'arqueologia', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', cuatrimestre: '2C 2026' },
+    { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', cuatrimestre: '2C 2026' },
+    { id: 'sem-11', tipo: 'arqueologia', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', cuatrimestre: '2C 2026' },
+    { id: 'sem-12', tipo: 'arqueologia', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', cuatrimestre: '2C 2026' },
+    { id: 'sem-13', tipo: 'sociocultural', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', cuatrimestre: '2C 2026' },
+    { id: 'sem-14', tipo: 'sociocultural', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', cuatrimestre: '2C 2026' },
+    { id: 'sem-15', tipo: 'sociocultural', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', cuatrimestre: '2C 2026' },
+    { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS (COOPERATIVA RECUPERADORES URBANOS DEL OESTE)', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
   ]);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   const [nuevoSeminarioNombre, setNuevoSeminarioNombre] = useState('');
