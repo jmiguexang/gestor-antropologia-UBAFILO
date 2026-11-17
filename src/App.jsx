@@ -955,10 +955,14 @@ export default function App() {
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puanense 🧉</h3>
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner 🧉</h3>
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 font-bold text-xl">×</button>
             </div>
-            <p className="text-xs text-slate-600">Si el gestor te resulta útil para organizar tu cursada y querés apoyar el proyecto con un mate virtual, ¡muchas gracias! 💙</p>
+            <p className="text-xs text-slate-600">
+            
+En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gestor te resulta útil para gestionar tu carrera y querés apoyar el proyecto con un mate virtual, ¡muchas gracias!
+              
+            </p>
             <div className="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-sky-900 block">Alias de Mercado Pago:</span>
               <div className="flex items-center justify-between bg-white border border-sky-300 rounded-xl px-3.5 py-2.5">
@@ -1243,7 +1247,7 @@ export default function App() {
                   {logroPromocion && (
                     <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
                       <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>¡Materia promocionada con éxito (promedio ≥ 7)! Zafaste del final.</span>
+                      <span>¡Promocionaste crack! Zafaste del final.</span>
                     </div>
                   )}
                 </div>
