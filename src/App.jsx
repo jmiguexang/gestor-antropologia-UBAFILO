@@ -207,42 +207,45 @@ export default function App() {
         estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-        parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
-        favorita: false
+        parcial1: '', parcial2: '', parcial3: '', 
+        final1: '', final2: '', final3: '', 
+        customName: '', favorita: false
       };
 
       let updatedMat = { ...matState, [field]: value };
 
-      if (['parcial1', 'parcial2', 'parcial3', 'notaFinal', 'regimen'].includes(field)) {
+      if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'regimen'].includes(field)) {
         const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
         const p1 = parseFloat(updatedMat.parcial1);
         const p2 = parseFloat(updatedMat.parcial2);
         const p3 = parseFloat(updatedMat.parcial3);
-        const nFinal = parseFloat(updatedMat.notaFinal);
 
-        if (reg === 'promocion') {
+        const f1 = parseFloat(updatedMat.final1);
+        const f2 = parseFloat(updatedMat.final2);
+        const f3 = parseFloat(updatedMat.final3);
+
+        // Conteo de aplazos (notas de 1 a 3 en los intentos de final)
+        let aplazosCount = 0;
+        [f1, f2, f3].forEach(f => {
+          if (!isNaN(f) && f > 0 && f < 4) aplazosCount++;
+        });
+        updatedMat.aplazos = Math.max(0, aplazosCount).toString();
+
+        // Nota final de la materia: es la nota obtenida al aprobar (primer intento >= 4)
+        const notaAprobadaFinal = [f1, f2, f3].find(f => !isNaN(f) && f >= 4);
+
+        if (notaAprobadaFinal !== undefined) {
+          updatedMat.nota = notaAprobadaFinal.toString();
+        } else if (reg === 'promocion') {
           const validas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
           if (validas.length > 0) {
             const promParciales = validas.reduce((a, b) => a + b, 0) / validas.length;
-            if (promParciales >= 7 && isNaN(nFinal)) {
-              updatedMat.nota = Math.round(promParciales).toString();
-            } else if (!isNaN(nFinal)) {
-              const notaFinalCalculada = Math.round((promParciales + nFinal) / 2);
-              updatedMat.nota = notaFinalCalculada.toString();
-            } else {
-              updatedMat.nota = Math.round(promParciales).toString();
-            }
+            updatedMat.nota = Math.round(promParciales).toString();
           }
         } else {
           const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
           if (notasReg.length > 0) {
-            const promReg = notasReg.reduce((a, b) => a + b, 0) / notasReg.length;
-            if (!isNaN(nFinal)) {
-              const notaFinalCalculada = Math.round((promReg + nFinal) / 2);
-              updatedMat.nota = notaFinalCalculada.toString();
-            } else {
-              updatedMat.nota = Math.round(promReg).toString();
-            }
+            updatedMat.nota = Math.round(notasReg.reduce((a, b) => a + b, 0) / notasReg.length).toString();
           }
         }
       }
@@ -338,8 +341,9 @@ export default function App() {
   let pendientesCount = 0;
   let favoritasCount = 0;
 
-  let sumNotas = 0;
-  let countNotas = 0;
+  // CÁLCULO DE PROMEDIO UBA (INCLUYE NOTAS DE APROBACIÓN Y APLAZOS DE FINALES)
+  let sumNotasPromedio = 0;
+  let countNotasPromedio = 0;
   let notasAprobadasList = [];
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
@@ -355,9 +359,20 @@ export default function App() {
     if (estado === 'aprobada') {
       aprobadasCount++;
       if (notaNum !== null && notaNum >= 4 && !esIdioma) {
-        sumNotas += notaNum;
-        countNotas++;
+        sumNotasPromedio += notaNum;
+        countNotasPromedio++;
         notasAprobadasList.push({ name: st.customName ? `${m.name}: ${st.customName}` : m.name, nota: notaNum });
+      }
+
+      // Sumar al promedio general los aplazos de finales (< 4)
+      if (!esIdioma) {
+        [st.final1, st.final2, st.final3].forEach(fVal => {
+          const fNum = parseFloat(fVal);
+          if (!isNaN(fNum) && fNum > 0 && fNum < 4) {
+            sumNotasPromedio += fNum;
+            countNotasPromedio++;
+          }
+        });
       }
     } else if (estado === 'regularizada') { regularizadasCount++; } 
     else if (estado === 'cursando') { cursandoCount++; } 
@@ -367,7 +382,7 @@ export default function App() {
   notasAprobadasList.sort((a, b) => b.nota - a.nota);
   const podioTop3 = notasAprobadasList.slice(0, 3);
 
-  const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
+  const promedioGeneralUBA = countNotasPromedio > 0 ? (sumNotasPromedio / countNotasPromedio).toFixed(2) : '-';
   const totalMaterias = currentMateriasAll.length;
   const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
 
@@ -513,7 +528,7 @@ export default function App() {
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 64px sans-serif';
     ctx.fillText(`${aprobadasCount} / ${totalMaterias}`, W / 2 - 210, 1345);
-    ctx.fillText(`${promedioSinAplazos}`, W / 2 + 210, 1345);
+    ctx.fillText(`${promedioGeneralUBA}`, W / 2 + 210, 1345);
 
     ctx.fillStyle = '#B3EBF2';
     ctx.font = 'bold 38px sans-serif';
@@ -547,7 +562,7 @@ export default function App() {
     const userDisplay = session?.nombre && session.nombre !== 'Invitado' ? `${session.nombre} ${session.apellido}` : 'Estudiante de Antropología';
     ctx.fillText(`${userDisplay} · gestorantropologia.uba`, W / 2, 1800);
 
-  }, [showShareModal, quoteIndex, porcentajeAvance, aprobadasCount, regularizadasCount, cursandoCount, totalMaterias, promedioSinAplazos, selectedPlan, selectedOrientation, session, currentQuote]);
+  }, [showShareModal, quoteIndex, porcentajeAvance, aprobadasCount, regularizadasCount, cursandoCount, totalMaterias, promedioGeneralUBA, selectedPlan, selectedOrientation, session, currentQuote]);
 
   const handleDownloadStory = () => {
     if (!canvasRef.current) return;
@@ -783,17 +798,17 @@ export default function App() {
               <div>
                 <div className="flex items-center justify-between mb-0.5">
                   <span className="text-[11px] uppercase tracking-wider text-sky-300 font-bold flex items-center gap-1.5"><Award className="w-4 h-4 text-sky-400" /> Promedio UBA</span>
-                  <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">{countNotas} notas</span>
+                  <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">con aplazos</span>
                 </div>
                 
                 <div className="flex items-baseline gap-1.5 my-0.5">
-                  <span className="text-6xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
+                  <span className="text-6xl font-black tracking-tight text-white">{promedioGeneralUBA}</span>
                   <span className="text-base font-bold text-sky-300">/ 10</span>
                 </div>
                 
                 <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay.</span>
+                  <span>El promedio contempla notas de aprobación y aplazos previos de exámenes finales según código UBA.</span>
                 </div>
               </div>
 
@@ -1148,50 +1163,49 @@ export default function App() {
                 </div>
               </div>
 
+              {/* EVALUACIONES, PARCIALES Y 3 INTENTOS DE FINAL */}
               <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
                 
-                {esPromocional ? (
-                  <div>
-                    <p className="text-[10px] text-slate-500 mb-2">Ingrese las notas de los parciales para promediar automáticamente (Promedio &ge; 7 aprueba directo):</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">3ro / Recup</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                      </div>
+                <div className="space-y-2">
+                  <span className="text-[10px] font-bold text-slate-600 block">Notas de Parciales / Regularidad</span>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <span className="text-[9px] font-bold text-slate-500 block mb-1">1er Parcial</span>
+                      <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                     </div>
-                    <div className="pt-2 border-t border-slate-200 mt-2">
-                      <span className="text-[10px] font-bold text-sky-900 block mb-1">Nota de Examen Final (Solo si fue a final)</span>
-                      <input type="number" min="4" max="10" placeholder="Final (opcional)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-sky-50 border border-sky-300 rounded-lg p-2 text-xs text-center font-bold text-sky-950" />
+                    <div>
+                      <span className="text-[9px] font-bold text-slate-500 block mb-1">2do Parcial</span>
+                      <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-bold text-slate-500 block mb-1">3ro / Recup</span>
+                      <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                     </div>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-[10px] text-slate-500">Ingrese las notas de regularidad (1° y 2° parcial) y la nota del examen final:</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
-                      </div>
+                </div>
+
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">3 Intentos de Examen Final</span>
+                    <span className="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">Aplazos: {st.aplazos || '0'}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <span className="text-[9px] font-bold text-amber-700 block mb-1">1° Intento Final</span>
+                      <input type="number" min="1" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950" />
                     </div>
-                    <div className="pt-1 border-t border-slate-200">
-                      <span className="text-[10px] font-bold text-amber-700 block mb-1">Nota de Examen Final</span>
-                      <input type="number" min="4" max="10" placeholder="Nota Final (4 a 10)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    <div>
+                      <span className="text-[9px] font-bold text-amber-700 block mb-1">2° Intento Final</span>
+                      <input type="number" min="1" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950" />
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-bold text-amber-700 block mb-1">3° Intento Final</span>
+                      <input type="number" min="1" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950" />
                     </div>
                   </div>
-                )}
+                  <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (&lt; 4) computan para el promedio general de la carrera.</p>
+                </div>
               </div>
 
               <div className="flex justify-end pt-2">
