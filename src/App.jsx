@@ -1012,6 +1012,14 @@ export default function App() {
         const esIdioma = activeBlock === 'idiomas';
         const esElectiva = activeBlock === 'electivas';
 
+        // Verificamos si logró la promoción (régimen promocional y nota >= 7)
+        const p1 = parseFloat(st.parcial1);
+        const p2 = parseFloat(st.parcial2);
+        const p3 = parseFloat(st.parcial3);
+        const validasParciales = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
+        const promedioParcialesCalc = validasParciales.length > 0 ? (validasParciales.reduce((a, b) => a + b, 0) / validasParciales.length) : 0;
+        const logroPromocion = esPromocional && validasParciales.length >= 2 && promedioParcialesCalc >= 7;
+
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
@@ -1183,9 +1191,15 @@ export default function App() {
                       <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                     </div>
                   </div>
+                  {logroPromocion && (
+                    <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                      <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span>¡Materia promocionada con éxito (promedio ≥ 7)! Exámenes finales deshabilitados.</span>
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-2 pt-2 border-t border-slate-200">
+                <div className={`space-y-2 pt-2 border-t border-slate-200 transition ${logroPromocion ? 'opacity-40 pointer-events-none' : ''}`}>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">3 Intentos de Examen Final</span>
                     <span className="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">Aplazos: {st.aplazos || '0'}</span>
@@ -1193,18 +1207,20 @@ export default function App() {
                   <div className="grid grid-cols-3 gap-2">
                     <div>
                       <span className="text-[9px] font-bold text-amber-700 block mb-1">1° Intento Final</span>
-                      <input type="number" min="1" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950" />
+                      <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
                     </div>
                     <div>
                       <span className="text-[9px] font-bold text-amber-700 block mb-1">2° Intento Final</span>
-                      <input type="number" min="1" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950" />
+                      <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
                     </div>
                     <div>
                       <span className="text-[9px] font-bold text-amber-700 block mb-1">3° Intento Final</span>
-                      <input type="number" min="1" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950" />
+                      <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
                     </div>
                   </div>
-                  <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (&lt; 4) computan para el promedio general de la carrera.</p>
+                  {!logroPromocion && (
+                    <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (&lt; 4) computan para el promedio general de la carrera.</p>
+                  )}
                 </div>
               </div>
 
