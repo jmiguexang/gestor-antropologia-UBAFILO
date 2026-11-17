@@ -32,22 +32,22 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
 ];
 
-// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA (15 REFERENTES CON RETRATO ESTILO BUSTO / B&W)
+// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA (15 REFERENTES CON ENLACES WIKIMEDIA SEGUROS / BUSTOS B&W)
 const AVATARES_ANTROPOLOGIA = [
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: 'https://upload.wikimedia.org/wikipedia/commons/6/62/FranzBoas.jpg' },
-  { id: 'malinowski', nombre: 'Bronisław Malinowski', rol: 'Trabajo de Campo / Funcionalismo', emoji: '⛺', img: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Bronislaw_Malinowski_1930s.jpg' },
+  { id: 'malinowski', nombre: 'Bronisław Malinowski', rol: 'Trabajo de Campo / Funcionalismo', emoji: '⛺', img: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Bronislaw_Malinowski_1916.jpg' },
   { id: 'mauss', nombre: 'Marcel Mauss', rol: 'Teoría del Don y Sociología', emoji: '🎁', img: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/M.Mauss_1872-1950.jpg' },
   { id: 'levis', nombre: 'Claude Lévi-Strauss', rol: 'Estructuralismo Antropológico', emoji: '🧩', img: 'https://upload.wikimedia.org/wikipedia/commons/1/18/Claude_L%C3%A9vi-Strauss_%281908-2009%29.jpg' },
   { id: 'mead', nombre: 'Margaret Mead', rol: 'Cultura, Género e Infancia', emoji: '🌴', img: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Margaret_Mead_%281901-1978%29.jpg' },
-  { id: 'benedict', nombre: 'Ruth Benedict', rol: 'Cultura y Personalidad', emoji: '🎭', img: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Ruth_Benedict_1930s.jpg' },
-  { id: 'geertz', nombre: 'Clifford Geertz', rol: 'Antropología Simbólica e Interpretativa', emoji: '✍️', img: 'https://upload.wikimedia.org/wikipedia/en/b/b4/Photo_of_Clifford_Geertz_on_dust_jacket_of_The_Interpretation_of_Cultures.jpg' },
-  { id: 'sahlins', nombre: 'Marshall Sahlins', rol: 'Antropología Económica y Simbólica', emoji: '🏝️', img: 'https://news.uchicago.edu/sites/default/files/images/2021-04/MarshallDSahlins1.jpg' },
-  { id: 'douglas', nombre: 'Mary Douglas', rol: 'Riesgo, Pureza y Símbolos', emoji: '⚖️', img: 'https://upload.wikimedia.org/wikipedia/en/e/ed/Mary_Douglas_%281921%E2%80%932007%29.jpg' },
-  { id: 'turner', nombre: 'Victor Turner', rol: 'Ritual y Liminidad', emoji: '🌿', img: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Victor_Turner_placeholder.jpg' },
+  { id: 'benedict', nombre: 'Ruth Benedict', rol: 'Cultura y Personalidad', emoji: '🎭', img: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Ruth_Benedict_1920.jpg' },
+  { id: 'geertz', nombre: 'Clifford Geertz', rol: 'Antropología Simbólica e Interpretativa', emoji: '✍️', img: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Clifford_Geertz.jpg' },
+  { id: 'sahlins', nombre: 'Marshall Sahlins', rol: 'Antropología Económica y Simbólica', emoji: '🏝️', img: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Marshall_Sahlins_2008.jpg' },
+  { id: 'douglas', nombre: 'Mary Douglas', rol: 'Riesgo, Pureza y Símbolos', emoji: '⚖️', img: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Mary_Douglas_1992.jpg' },
+  { id: 'turner', nombre: 'Victor Turner', rol: 'Ritual y Liminidad', emoji: '🌿', img: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Victor_W_Turner.jpg' },
   { id: 'gluckman', nombre: 'Max Gluckman', rol: 'Escuela de Mánchester y Conflictos', emoji: '⚖️', img: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Max_Gluckman.jpg' },
   { id: 'leach', nombre: 'Edmund Leach', rol: 'Estructuralismo Británico', emoji: '🌐', img: 'https://upload.wikimedia.org/wikipedia/commons/2/22/Edmund_Leach_portrait.jpg' },
   { id: 'graeber', nombre: 'David Graeber', rol: 'Antropología Económica y Anarquista', emoji: '✊', img: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/David_Graeber_2015-03-07_%2816741093492%29_%28cropped%29.jpg' },
-  { id: 'segato', nombre: 'Rita Segato', rol: 'Antropología Feminista y Violencia', emoji: '🔥', img: 'https://www.lanacion.com.ar/resizer/v2/rita-segato-escritora-antropologa-y-activista-WMK4BRXFIBDUNAH7WC4ICIDR5A.jpg?auth=a5d6a7079725d76c9996ce7acea226661b77af8f7705c42efce4e0b6df2a5e96&width=768&quality=70&smart=false' },
+  { id: 'segato', nombre: 'Rita Segato', rol: 'Antropología Feminista y Violencia', emoji: '🔥', img: 'https://upload.wikimedia.org/wikipedia/commons/2/29/Rita_Segato_2017.jpg' },
   { id: 'foucault', nombre: 'Michel Foucault', rol: 'Poder, Saber y Biopolítica', emoji: '🔍', img: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Photo_of_Michel_Foucault_on_1970_dustjacket_of_The_Order_of_Things.jpg' }
 ];
 
@@ -116,7 +116,6 @@ export default function App() {
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
         
-        // Recuperar avatar de la nube
         if (data.avatar) {
           setAvatarActual(data.avatar);
         }
