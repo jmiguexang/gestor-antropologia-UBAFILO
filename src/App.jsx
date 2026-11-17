@@ -10,7 +10,6 @@ import {
   Star, Trophy, TrendingDown, Coffee, Copy, Check
 } from 'lucide-react';
 
-// CONFIGURA AQUÍ TU ALIAS DE MERCADO PAGO
 const MP_ALIAS = 'juan.miguel.ch';
 
 export default function App() {
@@ -43,32 +42,24 @@ export default function App() {
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [copiedAlias, setCopiedAlias] = useState(false);
 
-const [seminariosOferta, setSeminariosOferta] = useState([
-    // Orientación Sociocultural
+  const [seminariosOferta, setSeminariosOferta] = useState([
     { id: 'sem-1', tipo: 'sociocultural', nombre: 'Antropología Social (Antropología Rural y Antropología Social)', docente: 'Prof. Sebastián Valverde', cuatrimestre: '2C 2026' },
     { id: 'sem-2', tipo: 'sociocultural', nombre: 'Reproducción social, desigualdades y digitalización en el mundo del trabajo', docente: 'Prof. Hernán Palermo y Prof. Verónica Casas', cuatrimestre: '2C 2026' },
     { id: 'sem-3', tipo: 'sociocultural', nombre: 'Poder policial, burocracias penales y activismos', docente: 'Prof. María Victoria Pita y Prof. Florencia Corbelle', cuatrimestre: '2C 2026' },
     { id: 'sem-4', tipo: 'sociocultural', nombre: 'Colonialidad, modernidad e imaginarios de nación', docente: 'Prof. Eduardo Luis Urbano', cuatrimestre: '2C 2026' },
     { id: 'sem-5', tipo: 'sociocultural', nombre: 'Heterodoxias sociorreligiosas desde una perspectiva histórica y antropológica', docente: 'Prof. Pablo Wright', cuatrimestre: '2C 2026' },
-    { id: 'sem-6', tipo: 'sociocultural', nombre: 'Conflictividad penal juvenil: enfoques, métodos y estudios', docente: 'Prof. María Florencia Graziano y Federico Medina', cuatrimestre: '2C 2026' },
+    { id: 'sem-6', type: 'sociocultural', nombre: 'Conflictividad penal juvenil: enfoques, métodos y estudios', docente: 'Prof. María Florencia Graziano y Federico Medina', cuatrimestre: '2C 2026' },
     { id: 'sem-7', tipo: 'sociocultural', nombre: 'Antropología y economía política: poder, trabajo y ambiente', docente: 'Prof. Santiago Sorroche', cuatrimestre: '2C 2026' },
-
-    // Ambas Orientaciones
     { id: 'sem-8', tipo: 'sociocultural', nombre: 'Comunicar la antropología', docente: 'Prof. Marisol Garcia y Prof. Roberta Aller', cuatrimestre: '2C 2026' },
     { id: 'sem-9', tipo: 'arqueologia', nombre: 'Cambio climático, transdisciplina y adaptación basada en ecosistemas', docente: 'Prof. Constanza Riera y Prof. Paula Beatriz Martin', cuatrimestre: '2C 2026' },
     { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: Las empresas autogestionadas frente al pluriempleo y el capitalismo de plataformas', docente: 'Prof. Andres Eduardo Ruggeri y Prof. Natalia Polti', cuatrimestre: '2C 2026' },
-
-    // Orientación Arqueológica
     { id: 'sem-11', tipo: 'arqueologia', nombre: 'Teoría, interdisciplinariedad y debates contemporáneos en arqueología histórica', docente: 'Prof. María Jimena Cruz y Melisa Salerno', cuatrimestre: '2C 2026' },
     { id: 'sem-12', tipo: 'arqueologia', nombre: 'La cultura bajo una nueva perspectiva evolutiva', docente: 'Prof. Viviana Scheinsohn', cuatrimestre: '2C 2026' },
-
-    // Otros Departamentos (PST)
     { id: 'sem-13', tipo: 'sociocultural', nombre: 'PST: Producción y gestión de proyectos culturales en Filo', docente: 'Prof. Victoria Julia Lencina (Artes)', cuatrimestre: '2C 2026' },
     { id: 'sem-14', tipo: 'sociocultural', nombre: 'PST: Diálogos entre arte y educación en el Museo Etnográfico', docente: 'Prof. Mariana Luterstein y Prof. María Eugenia Lanza (Artes)', cuatrimestre: '2C 2026' },
     { id: 'sem-15', tipo: 'sociocultural', nombre: 'PST: Construcción de un espacio de recreación educativa para las infancias en el CIDAC', docente: 'Prof. Anahi Guelman y Prof. Mariel Karolonski (Cs. de la Educación)', cuatrimestre: '2C 2026' },
     { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: Saberes y experiencias ambientales en diálogos comunitarios (Cooperativa Recuperadores Urbanos del Oeste)', docente: 'Prof. María Inés Carabajal y Prof. Lia Inés Bachman (Geografía)', cuatrimestre: '2C 2026' }
   ]);
-  
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   const [nuevoSeminarioNombre, setNuevoSeminarioNombre] = useState('');
   const [nuevoSeminarioDocente, setNuevoSeminarioDocente] = useState('');
@@ -127,7 +118,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
     }
   };
 
-  // Función auxiliar para acotar notas entre 0 y 10
   const parseNota10 = (val) => {
     if (val === '' || val === null || isNaN(val)) return '';
     const num = parseFloat(val);
@@ -165,7 +155,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
         const f2 = parseFloat(updatedMat.final2);
         const f3 = parseFloat(updatedMat.final3);
 
-        // Cálculo de aplazos automáticos por finales desaprobados (< 4)
         let aplazosFinalesCount = 0;
         [f1, f2, f3].forEach(f => {
           if (!isNaN(f) && f < 4) aplazosFinalesCount++;
@@ -268,7 +257,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
   let highestMateria = null;
   let lowestMateria = null;
 
-  // Lista de IDs de idiomas para excluirlos del promedio UBA y del podio
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
 
   currentMateriasAll.forEach(m => {
@@ -309,7 +297,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
   });
 
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
-  const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
   const totalMaterias = currentMateriasAll.length;
   const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
 
@@ -849,14 +836,10 @@ const [seminariosOferta, setSeminariosOferta] = useState([
                   <span className="text-5xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
                   <span className="text-lg font-bold text-sky-300">/ 10</span>
                 </div>
-                <p className="text-[11px] text-sky-200/80">Excluye idiomas (requisito) y notas mayores a 10.</p>
+                <p className="text-[11px] text-sky-200/80">Los idiomas no se incluyen para el promedio.</p>
               </div>
 
               <div className="mt-4 pt-3 border-t border-sky-800/60 space-y-2.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-sky-200 text-[11px]">Con aplazos:</span>
-                  <span className="font-bold text-white bg-sky-950/80 px-2 py-0.5 rounded-lg border border-sky-800">{promedioConAplazos}</span>
-                </div>
                 <button
                   onClick={() => setShowShareModal(true)}
                   className="w-full bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5"
@@ -906,7 +889,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
             </div>
           </div>
 
-          {/* RECORDATORIO CORTO DE FINALES PENDIENTES */}
           {regularizadasCount > 0 && (
             <div className="bg-amber-50 border border-amber-300 rounded-2xl px-4 py-2.5 flex items-center gap-2 text-xs font-bold text-amber-950 shadow-2xs">
               <span>⏳</span>
@@ -1083,7 +1065,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
         </button>
       </footer>
 
-      {/* MODAL COLABORACIÓN / MERCADO PAGO */}
       {showDonateModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-5 text-center">
@@ -1124,7 +1105,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
         </div>
       )}
 
-      {/* MODAL COMPARTIR HISTORIA IG / WHATSAPP */}
       {showShareModal && (
         <div className="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4 max-h-[95vh] overflow-y-auto">
@@ -1181,7 +1161,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
         </div>
       )}
 
-      {/* MODAL DETALLES DE CURSADA E INTENTOS DE FINAL */}
       {activeDetailMateria && (() => {
         const mat = activeDetailMateria;
         const st = studentData[selectedPlan]?.[mat.id] || {};
@@ -1380,7 +1359,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
                   </div>
                 )}
 
-                {/* SECCIÓN DE HASTA 3 INTENTOS DE EXAMEN FINAL */}
                 <div className="pt-2 border-t border-slate-200 space-y-2">
                   <span className="text-[10px] font-bold uppercase text-amber-900 block">
                     Intentos de Examen Final (Hasta 3 llamados / Si desaprueba con &lt;4 genera aplazo automático):
@@ -1411,7 +1389,6 @@ const [seminariosOferta, setSeminariosOferta] = useState([
         );
       })()}
 
-      {/* MODAL GESTOR DE SEMINARIOS */}
       {showSeminarioModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
@@ -1456,7 +1433,7 @@ const [seminariosOferta, setSeminariosOferta] = useState([
                       tipo: nuevoSeminarioTipo,
                       nombre: nuevoSeminarioNombre,
                       docente: nuevoSeminarioDocente || 'Docente a confirmar',
-                      cuatrimestre: '1C 2026'
+                      cuatrimestre: '2C 2026'
                     }];
                     setSeminariosOferta(nuevos);
                     guardarDatosNube(studentData, nuevos);
