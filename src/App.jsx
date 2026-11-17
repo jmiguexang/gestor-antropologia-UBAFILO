@@ -34,21 +34,23 @@ const SEMINARIOS_OFERTA_2C_2026 = [
 
 // AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA (15 REFERENTES CON ENLACES WIKIMEDIA SEGUROS / BUSTOS B&W)
 const AVATARES_ANTROPOLOGIA = [
-  { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: 'https://upload.wikimedia.org/wikipedia/commons/6/62/FranzBoas.jpg' },
-  { id: 'malinowski', nombre: 'Bronisław Malinowski', rol: 'Trabajo de Campo / Funcionalismo', emoji: '⛺', img: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Bronislaw_Malinowski_1916.jpg' },
-  { id: 'mauss', nombre: 'Marcel Mauss', rol: 'Teoría del Don y Sociología', emoji: '🎁', img: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/M.Mauss_1872-1950.jpg' },
-  { id: 'levis', nombre: 'Claude Lévi-Strauss', rol: 'Estructuralismo Antropológico', emoji: '🧩', img: 'https://upload.wikimedia.org/wikipedia/commons/1/18/Claude_L%C3%A9vi-Strauss_%281908-2009%29.jpg' },
-  { id: 'mead', nombre: 'Margaret Mead', rol: 'Cultura, Género e Infancia', emoji: '🌴', img: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Margaret_Mead_%281901-1978%29.jpg' },
-  { id: 'benedict', nombre: 'Ruth Benedict', rol: 'Cultura y Personalidad', emoji: '🎭', img: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Ruth_Benedict_1920.jpg' },
-  { id: 'geertz', nombre: 'Clifford Geertz', rol: 'Antropología Simbólica e Interpretativa', emoji: '✍️', img: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Clifford_Geertz.jpg' },
-  { id: 'sahlins', nombre: 'Marshall Sahlins', rol: 'Antropología Económica y Simbólica', emoji: '🏝️', img: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Marshall_Sahlins_2008.jpg' },
-  { id: 'douglas', nombre: 'Mary Douglas', rol: 'Riesgo, Pureza y Símbolos', emoji: '⚖️', img: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Mary_Douglas_1992.jpg' },
-  { id: 'turner', nombre: 'Victor Turner', rol: 'Ritual y Liminidad', emoji: '🌿', img: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Victor_W_Turner.jpg' },
-  { id: 'gluckman', nombre: 'Max Gluckman', rol: 'Escuela de Mánchester y Conflictos', emoji: '⚖️', img: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Max_Gluckman.jpg' },
-  { id: 'leach', nombre: 'Edmund Leach', rol: 'Estructuralismo Británico', emoji: '🌐', img: 'https://upload.wikimedia.org/wikipedia/commons/2/22/Edmund_Leach_portrait.jpg' },
-  { id: 'graeber', nombre: 'David Graeber', rol: 'Antropología Económica y Anarquista', emoji: '✊', img: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/David_Graeber_2015-03-07_%2816741093492%29_%28cropped%29.jpg' },
-  { id: 'segato', nombre: 'Rita Segato', rol: 'Antropología Feminista y Violencia', emoji: '🔥', img: 'https://upload.wikimedia.org/wikipedia/commons/2/29/Rita_Segato_2017.jpg' },
-  { id: 'foucault', nombre: 'Michel Foucault', rol: 'Poder, Saber y Biopolítica', emoji: '🔍', img: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Photo_of_Michel_Foucault_on_1970_dustjacket_of_The_Order_of_Things.jpg' }
+  { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
+  { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
+  { id: 'malinowski', nombre: 'Bronisław Malinowski', rol: 'Trabajo de Campo / Funcionalismo', emoji: '⛺', img: '/avatares/bronislaw-malinowski.jpg' },
+  { id: 'mauss', nombre: 'Marcel Mauss', rol: 'Teoría del Don y Sociología', emoji: '🎁', img: '/avatares/marcel-mauss.jpg' },
+  { id: 'levis', nombre: 'Claude Lévi-Strauss', rol: 'Estructuralismo Antropológico', emoji: '🧩', img: '/avatares/claude-levi-strauss.jpg' },
+  { id: 'mead', nombre: 'Margaret Mead', rol: 'Cultura, Género e Infancia', emoji: '🌴', img: '/avatares/margaret-mead.jpg' },
+  { id: 'benedict', nombre: 'Ruth Benedict', rol: 'Cultura y Personalidad', emoji: '🎭', img: '/avatares/ruth-benedict.jpg' },
+  { id: 'geertz', nombre: 'Clifford Geertz', rol: 'Antropología Simbólica e Interpretativa', emoji: '✍️', img: '/avatares/clifford-geertz.jpg' },
+  { id: 'sahlins', nombre: 'Marshall Sahlins', rol: 'Antropología Económica y Simbólica', emoji: '🏝️', img: '/avatares/marshall-sahlins.jpg' },
+  { id: 'douglas', nombre: 'Mary Douglas', rol: 'Riesgo, Pureza y Símbolos', emoji: '⚖️', img: '/avatares/mary-douglas.jpg' },
+  { id: 'turner', nombre: 'Victor Turner', rol: 'Ritual y Liminidad', emoji: '🌿', img: '/avatares/victor-turner.jpg' },
+  { id: 'gluckman', nombre: 'Max Gluckman', rol: 'Escuela de Mánchester y Conflictos', emoji: '⚖️', img: '/avatares/max-gluckman.jpg' },
+  { id: 'leach', nombre: 'Edmund Leach', rol: 'Estructuralismo Británico', emoji: '🌐', img: '/avatares/edmund-leach.jpg' },
+  { id: 'graeber', nombre: 'David Graeber', rol: 'Antropología Económica y Anarquista', emoji: '✊', img: '/avatares/david-graeber.jpg' },
+  { id: 'segato', nombre: 'Rita Segato', rol: 'Antropología Feminista y Violencia', emoji: '🔥', img: '/avatares/rita-segato.jpg' },
+  { id: 'foucault', nombre: 'Michel Foucault', rol: 'Poder, Saber y Biopolítica', emoji: '🔍', img: '/avatares/michael-foucault.jpg' },
+  { id: 'viveiros', nombre: 'Eduardo Viveiros de Castro', rol: 'Antropología Ontológica y Perspectivismo', emoji: '🐆', img: '/avatares/eduardo-viveiros-de-castro.jpg' }
 ];
 
 export default function App() {
