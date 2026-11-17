@@ -32,14 +32,92 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
 ];
 
-// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA
+// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA CON FOTOS REALES Y OFICIALES
 const AVATARES_ANTROPOLOGIA = [
-  { id: 'levis', nombre: 'Claude Lévi-Strauss', rol: 'Estructuralismo', emoji: '🧩', img: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80' },
-  { id: 'mead', nombre: 'Margaret Mead', rol: 'Antropología Cultura & Infancia', emoji: '🌴', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' },
-  { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
-  { id: 'malinowski', nombre: 'Bronisław Malinowski', rol: 'Padre del Trabajo de Campo / Funcionalismo', emoji: '⛺', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' },
-  { id: 'segato', nombre: 'Rita Segato', rol: 'Antropología Feminista y Violencia', emoji: '✊', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80' },
-  { id: 'foucault', nombre: 'Michel Foucault', rol: 'Poder, Saber y Biopolítica', emoji: '🔍', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80' }
+  { 
+    id: 'boas', 
+    nombre: 'Franz Boas', 
+    rol: 'Padre del Particularismo Histórico', 
+    emoji: '📚', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/6/62/FranzBoas.jpg' 
+  },
+  { 
+    id: 'malinowski', 
+    nombre: 'Bronisław Malinowski', 
+    rol: 'Padre del Trabajo de Campo / Funcionalismo', 
+    emoji: '⛺', 
+    img: 'https://pdr-assets.b-cdn.net/essays/writing-his-life-through-the-other-the-anthropology-of-malinowski/11996928774_678d7abcc6_b.jpg' 
+  },
+  { 
+    id: 'mauss', 
+    nombre: 'Marcel Mauss', 
+    rol: 'Teoría del Don y Sociología Francesa', 
+    emoji: '🎁', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/M.Mauss_1872-1950.jpg' 
+  },
+  { 
+    id: 'levis', 
+    nombre: 'Claude Lévi-Strauss', 
+    rol: 'Estructuralismo Antropológico', 
+    emoji: '🧩', 
+    img: 'https://cdn.britannica.com/77/236677-050-8F559BF9/Claude-Levi-Strauss-2001.jpg' 
+  },
+  { 
+    id: 'mead', 
+    nombre: 'Margaret Mead', 
+    rol: 'Cultura, Género e Infancia', 
+    emoji: '🌴', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Margaret_Mead_%281901-1978%29.jpg' 
+  },
+  { 
+    id: 'geertz', 
+    nombre: 'Clifford Geertz', 
+    rol: 'Antropología Simbólica e Interpretativa', 
+    emoji: '✍️', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Photo_of_Clifford_Geertz_on_dust_jacket_of_The_Interpretation_of_Cultures.jpg' 
+  },
+  { 
+    id: 'sahlins', 
+    nombre: 'Marshall Sahlins', 
+    rol: 'Antropología Económica y Simbólica', 
+    emoji: '🏝️', 
+    img: 'https://news.uchicago.edu/sites/default/files/images/2021-04/MarshallDSahlins1.jpg' 
+  },
+  { 
+    id: 'douglas', 
+    nombre: 'Mary Douglas', 
+    rol: 'Antropología del Riesgo, Pureza y Símbolos', 
+    emoji: '⚖️', 
+    img: 'https://upload.wikimedia.org/wikipedia/en/e/ed/Mary_Douglas_%281921%E2%80%932007%29.jpg' 
+  },
+  { 
+    id: 'turner', 
+    nombre: 'Victor Turner', 
+    rol: 'Antropología del Ritual y Liminidad', 
+    emoji: '🌿', 
+    img: 'https://anthroholic.com/wp-content/uploads/2025/06/Victor-Turner-Anthropologist-Biography-by-Anthroholic.webp' 
+  },
+  { 
+    id: 'graeber', 
+    nombre: 'David Graeber', 
+    rol: 'Antropología Económica y Anarquista', 
+    emoji: '✊', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/David_Graeber_2015-03-07_%2816741093492%29_%28cropped%29.jpg' 
+  },
+  { 
+    id: 'segato', 
+    nombre: 'Rita Segato', 
+    rol: 'Antropología Feminista, Género y Violencia', 
+    emoji: '🔥', 
+    img: 'https://www.lanacion.com.ar/resizer/v2/rita-segato-escritora-antropologa-y-activista-WMK4BRXFIBDUNAH7WC4ICIDR5A.jpg?auth=a5d6a7079725d76c9996ce7acea226661b77af8f7705c42efce4e0b6df2a5e96&width=768&quality=70&smart=false' 
+  },
+  { 
+    id: 'foucault', 
+    nombre: 'Michel Foucault', 
+    rol: 'Poder, Saber y Biopolítica', 
+    emoji: '🔍', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Photo_of_Michel_Foucault_on_1970_dustjacket_of_The_Order_of_Things.jpg' 
+  }
 ];
 
 export default function App() {
@@ -75,11 +153,9 @@ export default function App() {
   const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   
-  // Estado para el Modal de selección de Avatar Histórico
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [avatarActual, setAvatarActual] = useState(null);
 
-  // Estado para el Pop-up / Aviso flotante
   const [toastMessage, setToastMessage] = useState(null);
 
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
@@ -679,7 +755,7 @@ export default function App() {
                         }
 
                         const datosVacios = { '2023': {}, '1985': {} };
-                        const avatarPorDefecto = AVATARES_ANTROPOLOGIA[0]; // Lévi-Strauss por defecto
+                        const avatarPorDefecto = AVATARES_ANTROPOLOGIA[3]; // Lévi-Strauss por defecto
                         const { error } = await supabase.from('estudiantes').insert([{
                           email: formEmail.trim(),
                           nombre: formNombre.trim(),
@@ -834,7 +910,6 @@ export default function App() {
                 </button>
               ) : (
                 <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
-                  {/* Botón para cambiar avatar histórico */}
                   <div 
                     onClick={() => setShowAvatarModal(true)}
                     className="relative group cursor-pointer"
@@ -1201,10 +1276,10 @@ export default function App() {
         </button>
       </footer>
 
-      {/* MODAL SELECCIÓN DE AVATAR HISTÓRICO */}
+      {/* MODAL SELECCIÓN DE AVATAR HISTÓRICO REAL */}
       {showAvatarModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-5">
             <div className="flex items-center justify-between border-b pb-3">
               <div>
                 <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
