@@ -368,7 +368,6 @@ export default function App() {
   let sumNotas = 0;
   let countNotas = 0;
 
-  // Recopilar todas las notas válidas para el podio del Top 3
   let notasAprobadasList = [];
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
@@ -395,7 +394,6 @@ export default function App() {
     else { pendientesCount++; }
   });
 
-  // Ordenar de mayor a menor para sacar el podio (Top 3)
   notasAprobadasList.sort((a, b) => b.nota - a.nota);
   const podioTop3 = notasAprobadasList.slice(0, 3);
 
@@ -403,7 +401,7 @@ export default function App() {
   const totalMaterias = currentMateriasAll.length;
   const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
 
-  // AMPLIACIÓN DE FRASES MOTIVACIONALES (10 OPCIONES EN TOTAL)
+  // 10 FRASES MOTIVACIONALES (QUOTES)
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
       return [
@@ -453,6 +451,7 @@ export default function App() {
   const quotesList = getMotivationalQuotes(porcentajeAvance);
   const currentQuote = quotesList[quoteIndex % quotesList.length];
 
+  // CANVAS DE COMPARTIR HISTORIA CON SALTO DE LÍNEA AUTOMÁTICO (TEXT WRAP)
   useEffect(() => {
     if (!showShareModal || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -558,9 +557,37 @@ export default function App() {
     ctx.fillText(`${aprobadasCount} / ${totalMaterias}`, W / 2 - 210, 1345);
     ctx.fillText(`${promedioSinAplazos}`, W / 2 + 210, 1345);
 
+    // FUNCIÓN DE SALTO DE LÍNEA AUTOMÁTICO (TEXT WRAP) PARA EL QUOTE
     ctx.fillStyle = '#B3EBF2';
-    ctx.font = 'bold 42px sans-serif';
-    ctx.fillText(currentQuote, W / 2, 1510);
+    ctx.font = 'bold 38px sans-serif';
+    ctx.textAlign = 'center';
+    
+    const maxWidth = W - 200;
+    const words = currentQuote.split(' ');
+    let line = '';
+    let lines = [];
+
+    for (let n = 0; n < words.length; n++) {
+      let testLine = line + words[n] + ' ';
+      let metrics = ctx.measureText(testLine);
+      let testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        lines.push(line);
+        line = words[n] + ' ';
+      } else {
+        line = testLine;
+      }
+    }
+    lines.push(line);
+
+    let startQuoteY = 1490;
+    if (lines.length > 1) {
+      startQuoteY = 1470; // Subir un poquito si ocupa 2 líneas para centrar perfecto
+    }
+
+    for (let k = 0; k < lines.length; k++) {
+      ctx.fillText(lines[k], W / 2, startQuoteY + (k * 50));
+    }
 
     ctx.fillStyle = '#64748b';
     ctx.font = '600 28px sans-serif';
@@ -799,22 +826,24 @@ export default function App() {
               <DonutChart total={currentMateriasAll.length} aprobadas={aprobadasCount} regularizadas={regularizadasCount} cursando={cursandoCount} pendientes={pendientesCount} />
             </div>
 
-            {/* MODIFICACIÓN 1: PROMEDIO CON MENSAJE DE SALUD MENTAL */}
+            {/* SECCIÓN PROMEDIO Y MENSAJE DE SALUD MENTAL AJUSTADO */}
             <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-1">
                   <span className="text-[11px] uppercase tracking-wider text-sky-300 font-bold flex items-center gap-1.5"><Award className="w-4 h-4 text-sky-400" /> Promedio UBA</span>
                   <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">{countNotas} notas</span>
                 </div>
+                
+                {/* Tamaño de fuente del promedio restaurado a grande */}
                 <div className="flex items-baseline gap-1.5 my-1">
-                  <span className="text-4xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
-                  <span className="text-sm font-bold text-sky-300">/ 10</span>
+                  <span className="text-5xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
+                  <span className="text-lg font-bold text-sky-300">/ 10</span>
                 </div>
                 
-                {/* Mensaje de apoyo a la salud mental */}
-                <div className="mt-2 bg-sky-950/70 border border-sky-400/30 rounded-xl p-2.5 text-[11px] text-sky-100 leading-snug flex items-start gap-2">
+                {/* Mensaje de salud mental optimizado y corto, sin emoji final */}
+                <div className="mt-2 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2.5 text-[10.5px] text-sky-100 leading-snug flex items-start gap-2">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio no te define, tranquilo/a. Cada situación es particular, tú solo sigue adelante que siempre habrá tiempo para mejorar 💙</span>
+                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay</span>
                 </div>
               </div>
 
@@ -823,7 +852,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* MODIFICACIÓN 3: PODER / PODIO DE LAS MEJORES 3 NOTAS (MEDALLAS ORO, PLATA, BRONCE) */}
+            {/* PODIO DE NOTAS (TOP 3) */}
             <div className="lg:col-span-3 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] uppercase tracking-wider font-black text-slate-700 flex items-center gap-1.5">
