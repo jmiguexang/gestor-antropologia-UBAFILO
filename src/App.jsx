@@ -7,7 +7,7 @@ import {
   Bookmark, User, LogOut, Trash2, 
   Mail, Users, FileText, CheckSquare, Layers, Loader2,
   Share2, Download, RefreshCw, Sparkles,
-  Star, Trophy, TrendingDown, Coffee, Copy, Check, Plus, Camera
+  Star, Trophy, Coffee, Copy, Check, Plus, Camera, Heart
 } from 'lucide-react';
 
 const MP_ALIAS = 'juan.miguel.ch';
@@ -32,7 +32,7 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
 ];
 
-// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA (15 REFERENTES CON ENLACES WIKIMEDIA SEGUROS / BUSTOS B&W)
+// AVATARES LOCALES (CARPETA PUBLIC/AVATARES)
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -87,7 +87,7 @@ export default function App() {
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   
   const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [avatarActual, setAvatarActual] = useState(AVATARES_ANTROPOLOGIA[3]); // Lévi-Strauss por defecto
+  const [avatarActual, setAvatarActual] = useState(AVATARES_ANTROPOLOGIA[4]); // Lévi-Strauss por defecto
 
   const [toastMessage, setToastMessage] = useState(null);
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
@@ -368,8 +368,8 @@ export default function App() {
   let sumNotas = 0;
   let countNotas = 0;
 
-  let highestMateria = null;
-  let lowestMateria = null;
+  // Recopilar todas las notas válidas para el podio del Top 3
+  let notasAprobadasList = [];
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
 
@@ -388,28 +388,66 @@ export default function App() {
         countNotas++;
 
         const displayName = st.customName ? `${m.name}: ${st.customName}` : m.name;
-        if (!highestMateria || notaNum > highestMateria.nota) {
-          highestMateria = { name: displayName, nota: notaNum };
-        }
-        if (!lowestMateria || notaNum < lowestMateria.nota) {
-          lowestMateria = { name: displayName, nota: notaNum };
-        }
+        notasAprobadasList.push({ name: displayName, nota: notaNum });
       }
     } else if (estado === 'regularizada') { regularizadasCount++; } 
     else if (estado === 'cursando') { cursandoCount++; } 
     else { pendientesCount++; }
   });
 
+  // Ordenar de mayor a menor para sacar el podio (Top 3)
+  notasAprobadasList.sort((a, b) => b.nota - a.nota);
+  const podioTop3 = notasAprobadasList.slice(0, 3);
+
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
   const totalMaterias = currentMateriasAll.length;
   const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
 
+  // AMPLIACIÓN DE FRASES MOTIVACIONALES (10 OPCIONES EN TOTAL)
   const getMotivationalQuotes = (pct) => {
-    if (pct >= 100) return [`¡100% completado! Oficialmente en la meta del título de Antropología 🎓✨`];
-    if (pct >= 70) return [`¡Ya estás al ${pct}% de tu carrera! Falta poco, sigue así 🔥🎓`];
-    if (pct >= 50) return [`¡Ya pasamos la mitad del camino (${pct}%)! 🚀📚`];
-    if (pct >= 25) return [`Camino al 50%: ya tenés el ${pct}% adentro 📝🔥`];
-    return [`Arrancando el camino en Antropología: ya llevás el ${pct}% 🌱📚`];
+    if (pct >= 100) {
+      return [
+        `¡100% completado! Oficialmente en la meta del título de Antropología 🎓✨`,
+        `Todo el esfuerzo de Puan valió la pena: 100% adentro. ¡A celebrar! 🥂🌿`,
+        `De Filo UBA al mundo: carrera terminada. ¡Lo lograste! 🏆🚀`,
+        `¡Título en mano! El ritual de pasaje más hermoso de Puan culminó con éxito 🎓🔥`,
+        `Cerrando esta etnografía vital con broche de oro. ¡Felicidades colega! 🌟📚`
+      ];
+    }
+    if (pct >= 70) {
+      return [
+        `¡Ya estás al ${pct}% de tu carrera! Falta poco, sigue así, ¡vamos que tú puedes! 🔥🎓`,
+        `Huele a tesis: ${pct}% de la carrera aprobado. El último tirón es tuyo 📖🚀`,
+        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 💪✨`,
+        `El campo teórico está dominado al ${pct}%. ¡Ya casi cruzamos la meta puaner! ⛺🌟`,
+        `Cada vez más cerca de la tesina. ¡Ese ${pct}% demuestra tu aguante en Filo! ✊📚`
+      ];
+    }
+    if (pct >= 50) {
+      return [
+        `¡Ya pasamos la mitad del camino (${pct}%)! El recorrido viene excelente 🚀📚`,
+        `Mitad de carrera adentro (${pct}%). De acá en adelante, cada materia se disfruta el doble 🌿✨`,
+        `Cruzando el ${pct}% de Ciencias Antropológicas. ¡La base ya está súper firme! 💪🔥`,
+        `¡Mitad de trayecto superado! El espíritu de Puan nos impulsa a seguir adelante 🏛️💙`,
+        `Etnografiando cada cuatrimestre: ya logramos el ${pct}% de la carrera 📝🚀`
+      ];
+    }
+    if (pct >= 25) {
+      return [
+        `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada parcial suma un montón! 📝🔥`,
+        `Construyendo el trayecto académico: ${pct}% completado. ¡A seguir con ese ritmo! 🌿📖`,
+        `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`,
+        `Las correlativas van cediendo paso a paso. ¡Ya llevamos el ${pct}%! 🌱💪`,
+        `Semestre a semestre armando el rompecabezas antropológico (${pct}%) 🧩📚`
+      ];
+    }
+    return [
+      `Arrancando el camino en Antropología: ya llevás el ${pct}% de la carrera 🌱📚`,
+      `Recién empieza el viaje en Puan: ${pct}% completado. ¡A meterle con todo! ✨🚀`,
+      `Primeros pasos en la facultad: ${pct}% adentro. ¡Vamos por más! 💪🎓`,
+      `Iniciando el rito de iniciación en Filo UBA: ${pct}% y sumando 🧭📖`,
+      `Primeras lecturas, primeros teóricos: bienvenide al mundo antropológico (${pct}%) ☕🌿`
+    ];
   };
 
   const quotesList = getMotivationalQuotes(porcentajeAvance);
@@ -606,7 +644,7 @@ export default function App() {
                           return;
                         }
                         const datosVacios = { '2023': {}, '1985': {} };
-                        const avatarPorDefecto = AVATARES_ANTROPOLOGIA[3];
+                        const avatarPorDefecto = AVATARES_ANTROPOLOGIA[4];
                         await supabase.from('estudiantes').insert([{
                           email: formEmail.trim(), nombre: formNombre.trim(), apellido: formApellido.trim(),
                           datos_academicos: datosVacios, seminarios_oferta: SEMINARIOS_OFERTA_2C_2026, avatar: avatarPorDefecto
@@ -702,7 +740,7 @@ export default function App() {
                 <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
                   <div onClick={() => setShowAvatarModal(true)} className="relative group cursor-pointer" title="Cambiar avatar">
                     {avatarActual?.img ? (
-                      <img src={avatarActual.img} alt={avatarActual.nombre} className="w-8 h-8 rounded-full object-cover border-2 border-sky-400 shadow-sm filter grayscale contrast-125" />
+                      <img src={avatarActual.img} alt={avatarActual.nombre} className="w-8 h-8 rounded-full object-cover border-2 border-sky-400 shadow-sm" />
                     ) : (
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-sky-950 bg-sky-300 border-2 border-sky-400">{session.nombre[0]}</div>
                     )}
@@ -761,36 +799,61 @@ export default function App() {
               <DonutChart total={currentMateriasAll.length} aprobadas={aprobadasCount} regularizadas={regularizadasCount} cursando={cursandoCount} pendientes={pendientesCount} />
             </div>
 
+            {/* MODIFICACIÓN 1: PROMEDIO CON MENSAJE DE SALUD MENTAL */}
             <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] uppercase tracking-wider text-sky-300 font-bold flex items-center gap-1.5"><Award className="w-4 h-4 text-sky-400" /> Promedio UBA</span>
                   <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">{countNotas} notas</span>
                 </div>
-                <div className="flex items-baseline gap-1.5 my-2">
-                  <span className="text-5xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
-                  <span className="text-lg font-bold text-sky-300">/ 10</span>
+                <div className="flex items-baseline gap-1.5 my-1">
+                  <span className="text-4xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
+                  <span className="text-sm font-bold text-sky-300">/ 10</span>
+                </div>
+                
+                {/* Mensaje de apoyo a la salud mental */}
+                <div className="mt-2 bg-sky-950/70 border border-sky-400/30 rounded-xl p-2.5 text-[11px] text-sky-100 leading-snug flex items-start gap-2">
+                  <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
+                  <span>El promedio no te define, tranquilo/a. Cada situación es particular, tú solo sigue adelante que siempre habrá tiempo para mejorar 💙</span>
                 </div>
               </div>
-              <button onClick={() => setShowShareModal(true)} className="w-full bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5">
+
+              <button onClick={() => setShowShareModal(true)} className="w-full mt-3 bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-sky-300" /> Tarjeta IG / WhatsApp
               </button>
             </div>
 
+            {/* MODIFICACIÓN 3: PODER / PODIO DE LAS MEJORES 3 NOTAS (MEDALLAS ORO, PLATA, BRONCE) */}
             <div className="lg:col-span-3 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase tracking-wider font-black text-slate-700 flex items-center gap-1.5"><Trophy className="w-4 h-4 text-amber-500" /> Podio de Notas</span>
-                <span className="text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1"><Star className="w-3 h-3 fill-amber-400 text-amber-500" /> {favoritasCount} favs</span>
+                <span className="text-[11px] uppercase tracking-wider font-black text-slate-700 flex items-center gap-1.5">
+                  <Trophy className="w-4 h-4 text-amber-500" /> Podio de Notas (Top 3)
+                </span>
+                <span className="text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-500" /> {favoritasCount} favs
+                </span>
               </div>
-              <div className="space-y-2.5">
-                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2.5">
-                  <div className="flex items-center justify-between"><span className="text-[10px] font-bold uppercase text-emerald-800">Mayor Nota</span><span className="text-sm font-black text-emerald-700 bg-white px-2 py-0.5 rounded-md">{highestMateria ? highestMateria.nota : '-'}</span></div>
-                  <p className="text-xs font-bold text-slate-800 truncate mt-1">{highestMateria ? highestMateria.name : 'Sin notas aún'}</p>
-                </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
-                  <div className="flex items-center justify-between"><span className="text-[10px] font-bold uppercase text-slate-600">Menor Nota</span><span className="text-sm font-black text-slate-700 bg-white px-2 py-0.5 rounded-md">{lowestMateria ? lowestMateria.nota : '-'}</span></div>
-                  <p className="text-xs font-bold text-slate-700 truncate mt-1">{lowestMateria ? lowestMateria.name : 'Sin notas aún'}</p>
-                </div>
+
+              <div className="space-y-2">
+                {podioTop3.length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-4">Aún no hay notas cargadas</p>
+                ) : (
+                  podioTop3.map((item, idx) => {
+                    const medallas = ['🥇', '🥈', '🥉'];
+                    const coloresBorde = ['border-amber-300 bg-amber-50/50', 'border-slate-300 bg-slate-50', 'border-amber-700/30 bg-amber-950/5'];
+                    return (
+                      <div key={idx} className={`border rounded-xl p-2 flex items-center justify-between gap-2 ${coloresBorde[idx]}`}>
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <span className="text-sm shrink-0">{medallas[idx]}</span>
+                          <p className="text-[11px] font-bold text-slate-800 truncate" title={item.name}>{item.name}</p>
+                        </div>
+                        <span className="text-xs font-black px-2 py-0.5 bg-white rounded-md border shadow-2xs shrink-0 text-slate-900">
+                          {item.nota}
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>
@@ -865,7 +928,7 @@ export default function App() {
         </button>
       </footer>
 
-      {/* MODAL AVATAR EN B&W CON 15 ANTROPÓLOGOS */}
+      {/* MODAL AVATAR CON IMÁGENES LOCALES */}
       {showAvatarModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
@@ -879,7 +942,7 @@ export default function App() {
                 return (
                   <div key={av.id} onClick={() => handleCambiarAvatar(av)} className={`cursor-pointer rounded-2xl p-3 border text-center transition flex flex-col items-center justify-between space-y-2 ${esSeleccionado ? 'bg-sky-50 border-sky-500 shadow-md ring-2 ring-sky-400' : 'bg-slate-50 border-slate-200'}`}>
                     <div className="relative">
-                      <img src={av.img} alt={av.nombre} className="w-16 h-16 rounded-full object-cover shadow-md border-2 border-white filter grayscale contrast-125" />
+                      <img src={av.img} alt={av.nombre} className="w-16 h-16 rounded-full object-cover shadow-md border-2 border-white" />
                       <span className="absolute -bottom-1 -right-1 text-sm bg-white rounded-full px-1">{av.emoji}</span>
                     </div>
                     <div>
