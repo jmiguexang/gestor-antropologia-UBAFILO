@@ -1149,7 +1149,7 @@ export default function App() {
                 } else if (nombreMat.includes('sociología')) {
                   opcionesCatedras = ['Cátedra Bustos'];
                   
-                } /*else {
+                } else {
                   opcionesCatedras = [
                     'Cátedra Vargas',
                     'Cátedra Beraldi',
@@ -1164,7 +1164,7 @@ export default function App() {
                     'Cátedra Fiotti',
                     'Cátedra Verzero',
                     'Cátedra Bustos'
-                  ];*/
+                  ];
                 }
 
                 return (
