@@ -23,7 +23,7 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-7', tipo: 'sociocultural', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', cuatrimestre: '2C 2026' },
   { id: 'sem-8', tipo: 'sociocultural', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', cuatrimestre: '2C 2026' },
   { id: 'sem-9', tipo: 'arqueologia', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', cuatrimestre: '2C 2026' },
-  { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN EL ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', cuatrimestre: '2C 2026' },
+  { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', cuatrimestre: '2C 2026' },
   { id: 'sem-11', tipo: 'arqueologia', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', cuatrimestre: '2C 2026' },
   { id: 'sem-12', tipo: 'arqueologia', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', cuatrimestre: '2C 2026' },
   { id: 'sem-13', tipo: 'sociocultural', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', cuatrimestre: '2C 2026' },
@@ -1034,27 +1034,45 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL DETALLE DE MATERIA (LIBRETA, PARCIALES, PROFES, COMISIONES) RESTAURADO */}
+      {/* MODAL DETALLE DE MATERIA (LIBRETA ORIGINAL CON PARCIALES, PROFES, COMISIONES Y DATOS COMPLETOS) */}
       {activeDetailMateria && (() => {
         const mat = activeDetailMateria;
         const st = studentData[selectedPlan]?.[mat.id] || {};
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b pb-3">
                 <div>
-                  <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{mat.etapa}</span>
+                  <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900">{mat.etapa}</span>
                   <h3 className="text-base font-black text-slate-900 mt-1">{mat.name}</h3>
                 </div>
-                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
+                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
               </div>
 
               <div className="space-y-4">
-                {/* Régimen de aprobación */}
-                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                {/* Cuatrimestre y Año de Cursada */}
+                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Año de Cursada</label>
+                    <input type="text" placeholder="Ej. 2026" value={st.anioCursada || ''} onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Cuatrimestre</label>
+                    <select value={st.cuatrimestreCursada || ''} onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 font-semibold">
+                      <option value="">Seleccionar...</option>
+                      <option value="1° Cuatrimestre">1° Cuatrimestre</option>
+                      <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                      <option value="Curso de Verano">Curso de Verano</option>
+                      <option value="Curso de Invierno">Curso de Invierno</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Régimen de aprobación y Comisión */}
+                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                   <div>
                     <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Régimen</label>
-                    <select value={st.regimen || 'promocion'} onChange={(e) => handleUpdateMateria(mat.id, 'regimen', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold">
+                    <select value={st.regimen || 'promocion'} onChange={(e) => handleUpdateMateria(mat.id, 'regimen', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800">
                       <option value="promocion">Promoción Directa</option>
                       <option value="regular">Examen Final (Regular)</option>
                       <option value="libre">Examen Libre</option>
@@ -1062,60 +1080,62 @@ export default function App() {
                   </div>
                   <div>
                     <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Comisión / Turno</label>
-                    <input type="text" placeholder="Ej. Cátedra A / Mañana" value={st.comision || ''} onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs" />
+                    <input type="text" placeholder="Ej. Cátedra A / Mañana" value={st.comision || ''} onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
                   </div>
                 </div>
 
-                {/* Notas de Parciales y Finales */}
-                <div className="space-y-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                  <h4 className="text-xs font-bold uppercase text-slate-700">Notas de Parciales e Intentos de Final</h4>
-                  <div className="grid grid-cols-3 gap-2">
+                {/* Notas de Parciales e Intentos de Final */}
+                <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <h4 className="text-[11px] font-black uppercase text-slate-700 tracking-wider">Notas de Parciales e Intentos de Final</h4>
+                  <div className="grid grid-cols-3 gap-2.5">
                     <div>
-                      <span className="text-[9px] font-semibold text-slate-500 block mb-1">Parcial 1</span>
-                      <input type="number" min="0" max="10" placeholder="Nota 1" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center" />
+                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 1</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
                     </div>
                     <div>
-                      <span className="text-[9px] font-semibold text-slate-500 block mb-1">Parcial 2</span>
-                      <input type="number" min="0" max="10" placeholder="Nota 2" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center" />
+                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 2</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
                     </div>
                     <div>
-                      <span className="text-[9px] font-semibold text-slate-500 block mb-1">Parcial 3 / Recup</span>
-                      <input type="number" min="0" max="10" placeholder="Recup" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center" />
+                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 3 / Recup</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200">
+                  <div className="grid grid-cols-3 gap-2.5 pt-2 border-t border-slate-200">
                     <div>
-                      <span className="text-[9px] font-semibold text-amber-700 block mb-1">1° Final</span>
-                      <input type="number" min="0" max="10" placeholder="Final 1" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center" />
+                      <span className="text-[9px] font-bold text-amber-800 block mb-1">1° Examen Final</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
                     </div>
                     <div>
-                      <span className="text-[9px] font-semibold text-amber-700 block mb-1">2° Final</span>
-                      <input type="number" min="0" max="10" placeholder="Final 2" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center" />
+                      <span className="text-[9px] font-bold text-amber-800 block mb-1">2° Examen Final</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
                     </div>
                     <div>
-                      <span className="text-[9px] font-semibold text-amber-700 block mb-1">3° Final</span>
-                      <input type="number" min="0" max="10" placeholder="Final 3" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center" />
+                      <span className="text-[9px] font-bold text-amber-800 block mb-1">3° Examen Final</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
                     </div>
                   </div>
                 </div>
 
                 {/* Docentes y Contacto */}
-                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Docente Teórico</label>
-                    <input type="text" placeholder="Nombre prof." value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs mb-2" />
-                    <input type="email" placeholder="Correo electrónico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-500 block">Docente Teórico</label>
+                    <input type="text" placeholder="Nombre del profesor/a" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
+                    <input type="email" placeholder="Correo electrónico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
                   </div>
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Docente Práctico</label>
-                    <input type="text" placeholder="Nombre JTP/Ayudante" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs mb-2" />
-                    <input type="email" placeholder="Correo electrónico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs" />
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-500 block">Docente Práctico (JTP)</label>
+                    <input type="text" placeholder="Nombre del JTP / Ayudante" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
+                    <input type="email" placeholder="Correo electrónico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
                   </div>
                 </div>
               </div>
 
               <div className="flex justify-end pt-2">
-                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition">Guardar y Cerrar</button>
+                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow-md">
+                  Guardar y Cerrar
+                </button>
               </div>
             </div>
           </div>
