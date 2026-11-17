@@ -138,7 +138,6 @@ export default function App() {
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
 
-        // Recuperar avatar tanto si viene en columna 'avatar' como respaldo dentro de 'datos_academicos._avatar'
         const rawAvatar = data.avatar || datosRecibidos._avatar;
         if (rawAvatar) {
           const avatarId = typeof rawAvatar === 'string' ? rawAvatar : rawAvatar.id;
@@ -163,7 +162,6 @@ export default function App() {
     nuevoPlan = selectedPlan,
     nuevaOrientacion = selectedOrientation
   ) => {
-    // Respaldo local inmediato para invitados o fallos de red
     localStorage.setItem('antropologia_guest_data', JSON.stringify(nuevoData));
     if (nuevoAvatar) {
       localStorage.setItem('antropologia_avatar', JSON.stringify(nuevoAvatar));
@@ -171,7 +169,6 @@ export default function App() {
 
     if (session && session.tipo === 'registrado') {
       try {
-        // Guardamos también _avatar dentro del JSON datos_academicos como respaldo infalible
         const payloadAcademico = {
           ...nuevoData,
           _avatar: nuevoAvatar
@@ -327,7 +324,7 @@ export default function App() {
       case 'cfg': return planObj.cfg || [];
       case 'cfo': return orientationObj.cfo || [];
       case 'idiomas': return planObj.idiomas || [];
-      case 'electivas': return orientationObj.electivas || planObj.electivas || [];
+      case 'electivas': return planObj.electivas || planObj.electivas || [];
       case 'profesorado':
         const profObj = planObj.orientaciones['profesorado'];
         return profObj ? profObj.cfo : [];
@@ -843,7 +840,7 @@ export default function App() {
               <button onClick={() => setShowShareModal(true)} className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">
                 <Share2 className="w-3.5 h-3.5" /> Compartir Historia ({porcentajeAvance}%)
               </button>
-              <button onClick={() => setShowSeminarioModal(true)} className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">
+              <button onClick={() => setShowSeminarioModal(true)} className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition">
                 <Bookmark className="w-3.5 h-3.5" /> Catálogo Seminarios ({seminariosOferta.length})
               </button>
             </div>
@@ -1120,13 +1117,16 @@ export default function App() {
 
                 if (nombreMat.includes('antropología')) {
                   opcionesCatedras = ['Cátedra Vargas'];
+                  
                 } else if (nombreMat.includes('filosofía')) {
                   opcionesCatedras = ['Cátedra Beraldi'];
+                  
                 } else if (nombreMat.includes('sociedad y estado')) {
                   opcionesCatedras = [
                     'Cátedra Pedrosa',
                     'Cátedra Denkberg'
                   ];
+                  
                 } else if (nombreMat.includes('pensamiento científico')) {
                   opcionesCatedras = [
                     'Cátedra Buacar',
@@ -1145,9 +1145,11 @@ export default function App() {
                   ];
                 } else if (nombreMat.includes('semiología')) {
                   opcionesCatedras = ['Cátedra Verzero'];
+                  
                 } else if (nombreMat.includes('sociología')) {
                   opcionesCatedras = ['Cátedra Bustos'];
-                } else {
+                  
+                } /*else {
                   opcionesCatedras = [
                     'Cátedra Vargas',
                     'Cátedra Beraldi',
@@ -1162,7 +1164,7 @@ export default function App() {
                     'Cátedra Fiotti',
                     'Cátedra Verzero',
                     'Cátedra Bustos'
-                  ];
+                  ];*/
                 }
 
                 return (
