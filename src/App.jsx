@@ -36,12 +36,10 @@ export default function App() {
 
   const [activeDetailMateria, setActiveDetailMateria] = useState(null);
 
-  // Estados para Compartir Historia
   const [showShareModal, setShowShareModal] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
   const canvasRef = useRef(null);
 
-  // Estados para Colaboración / Mercado Pago
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [copiedAlias, setCopiedAlias] = useState(false);
 
@@ -107,6 +105,15 @@ export default function App() {
     }
   };
 
+  // Función auxiliar para acotar notas entre 0 y 10
+  const parseNota10 = (val) => {
+    if (val === '' || val === null || isNaN(val)) return '';
+    const num = parseFloat(val);
+    if (num < 0) return '0';
+    if (num > 10) return '10';
+    return val;
+  };
+
   const handleUpdateMateria = (id, field, value) => {
     setStudentData(prev => {
       const planState = prev[selectedPlan] || {};
@@ -114,41 +121,57 @@ export default function App() {
         estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-        parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
-        favorita: false
+        parcial1: '', parcial2: '', parcial3: '', 
+        final1: '', final2: '', final3: '',
+        customName: '', favorita: false
       };
 
-      let updatedMat = { ...matState, [field]: value };
+      let valClean = value;
+      if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'nota'].includes(field)) {
+        valClean = parseNota10(value);
+      }
 
-      if (['parcial1', 'parcial2', 'parcial3', 'notaFinal', 'regimen'].includes(field)) {
+      let updatedMat = { ...matState, [field]: valClean };
+
+      if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'regimen'].includes(field)) {
         const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
         const p1 = parseFloat(updatedMat.parcial1);
         const p2 = parseFloat(updatedMat.parcial2);
         const p3 = parseFloat(updatedMat.parcial3);
-        const nFinal = parseFloat(updatedMat.notaFinal);
+
+        const f1 = parseFloat(updatedMat.final1);
+        const f2 = parseFloat(updatedMat.final2);
+        const f3 = parseFloat(updatedMat.final3);
+
+        // Cálculo de aplazos automáticos por finales desaprobados (< 4)
+        let aplazosFinalesCount = 0;
+        [f1, f2, f3].forEach(f => {
+          if (!isNaN(f) && f < 4) aplazosFinalesCount++;
+        });
+
+        updatedMat.aplazos = Math.max(0, aplazosFinalesCount).toString();
 
         if (reg === 'promocion') {
           const validas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
           if (validas.length > 0) {
             const promParciales = validas.reduce((a, b) => a + b, 0) / validas.length;
-            if (promParciales >= 7 && isNaN(nFinal)) {
-              updatedMat.nota = Math.round(promParciales).toString();
-            } else if (!isNaN(nFinal)) {
-              const notaFinalCalculada = Math.round((promParciales + nFinal) / 2);
-              updatedMat.nota = notaFinalCalculada.toString();
+            const finalesRendidos = [f1, f2, f3].filter(n => !isNaN(n) && n >= 1);
+            if (finalesRendidos.length > 0) {
+              const promFinales = finalesRendidos.reduce((a, b) => a + b, 0) / finalesRendidos.length;
+              updatedMat.nota = Math.round((promParciales + promFinales) / 2).toString();
             } else {
               updatedMat.nota = Math.round(promParciales).toString();
             }
           }
         } else {
-          const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
-          if (notasReg.length > 0) {
-            const promReg = notasReg.reduce((a, b) => a + b, 0) / notasReg.length;
-            if (!isNaN(nFinal)) {
-              const notaFinalCalculada = Math.round((promReg + nFinal) / 2);
-              updatedMat.nota = notaFinalCalculada.toString();
-            } else {
-              updatedMat.nota = Math.round(promReg).toString();
+          const finalesRendidos = [f1, f2, f3].filter(n => !isNaN(n) && n >= 1);
+          if (finalesRendidos.length > 0) {
+            const promFinales = finalesRendidos.reduce((a, b) => a + b, 0) / finalesRendidos.length;
+            updatedMat.nota = Math.round(promFinales).toString();
+          } else {
+            const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
+            if (notasReg.length > 0) {
+              updatedMat.nota = Math.round(notasReg.reduce((a, b) => a + b, 0) / notasReg.length).toString();
             }
           }
         }
@@ -220,21 +243,24 @@ export default function App() {
   let sumHistorico = 0;
   let countHistorico = 0;
 
-  // Podio: Mayor y Menor nota aprobada
   let highestMateria = null;
   let lowestMateria = null;
+
+  // Lista de IDs de idiomas para excluirlos del promedio UBA y del podio
+  const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
 
   currentMateriasAll.forEach(m => {
     const st = studentData[selectedPlan]?.[m.id] || {};
     const estado = st.estado || 'pendiente';
     const notaNum = st.nota !== '' && !isNaN(st.nota) ? parseFloat(st.nota) : null;
     const aplazosNum = st.aplazos !== '' && !isNaN(st.aplazos) ? parseInt(st.aplazos) : 0;
+    const esIdioma = idiomasIds.has(m.id);
 
     if (st.favorita) favoritasCount++;
 
     if (estado === 'aprobada') {
       aprobadasCount++;
-      if (notaNum !== null && notaNum >= 4) {
+      if (notaNum !== null && notaNum >= 4 && !esIdioma) {
         sumNotas += notaNum;
         countNotas++;
         sumHistorico += notaNum;
@@ -252,7 +278,7 @@ export default function App() {
     else if (estado === 'cursando') { cursandoCount++; } 
     else { pendientesCount++; }
 
-    if (aplazosNum > 0) {
+    if (aplazosNum > 0 && !esIdioma) {
       for (let i = 0; i < aplazosNum; i++) {
         sumHistorico += 2;
         countHistorico++;
@@ -776,7 +802,6 @@ export default function App() {
 
         <main className="max-w-7xl mx-auto px-4 pt-6 space-y-6">
           
-          {/* FILA SUPERIOR: GRÁFICO + PROMEDIO + PODIO DE NOTAS */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-6">
               <DonutChart
@@ -788,7 +813,6 @@ export default function App() {
               />
             </div>
 
-            {/* PROMEDIO UBA */}
             <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -803,7 +827,7 @@ export default function App() {
                   <span className="text-5xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
                   <span className="text-lg font-bold text-sky-300">/ 10</span>
                 </div>
-                <p className="text-[11px] text-sky-200/80">Sobre materias aprobadas con calificación final.</p>
+                <p className="text-[11px] text-sky-200/80">Excluye idiomas (requisito) y notas mayores a 10.</p>
               </div>
 
               <div className="mt-4 pt-3 border-t border-sky-800/60 space-y-2.5">
@@ -820,7 +844,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* PODIO DE NOTAS Y FAVORITAS */}
             <div className="lg:col-span-3 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] uppercase tracking-wider font-black text-slate-700 flex items-center gap-1.5">
@@ -832,7 +855,6 @@ export default function App() {
               </div>
 
               <div className="space-y-2.5">
-                {/* Mayor Nota */}
                 <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold uppercase text-emerald-800">Mayor Nota</span>
@@ -845,7 +867,6 @@ export default function App() {
                   </p>
                 </div>
 
-                {/* Menor Nota */}
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold uppercase text-slate-600 flex items-center gap-1">
@@ -863,7 +884,14 @@ export default function App() {
             </div>
           </div>
 
-          {/* PESTAÑAS DE BLOQUES DE AVANCE + FILTRO FAVORITAS */}
+          {/* RECORDATORIO CORTO DE FINALES PENDIENTES */}
+          {regularizadasCount > 0 && (
+            <div className="bg-amber-50 border border-amber-300 rounded-2xl px-4 py-2.5 flex items-center gap-2 text-xs font-bold text-amber-950 shadow-2xs">
+              <span>⏳</span>
+              <span>Tenés {regularizadasCount} {regularizadasCount === 1 ? 'final pendiente' : 'finales pendientes'}. ¡A rendir! 🔥</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 border-b border-slate-200">
             <div className="flex items-center gap-2">
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cbc'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cbc' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
@@ -897,7 +925,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* LISTADO DE MATERIAS DEL BLOQUE */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
               <h2 className="text-base font-bold flex items-center gap-2 uppercase tracking-wide">
@@ -926,8 +953,9 @@ export default function App() {
                     estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
                     comision: '', anioCursada: '', cuatrimestreCursada: '',
                     docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-                    parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
-                    favorita: false
+                    parcial1: '', parcial2: '', parcial3: '', 
+                    final1: '', final2: '', final3: '',
+                    customName: '', favorita: false
                   };
 
                   const regimenActual = st.regimen || (m.regimen === 'final' ? 'final' : 'promocion');
@@ -956,7 +984,7 @@ export default function App() {
                           )}
                         </div>
                         
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2.5 flex-wrap">
                           <button
                             type="button"
                             onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)}
@@ -969,6 +997,12 @@ export default function App() {
                           <h3 className="font-bold text-slate-800 text-base">
                             {st.customName ? `${m.name}: ${st.customName}` : m.name}
                           </h3>
+
+                          {st.estado === 'regularizada' && (
+                            <span className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-900 px-2 py-0.5 rounded-md text-[11px] font-bold">
+                              ⏳ ¡No cuelgues este final! 💪
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -977,7 +1011,7 @@ export default function App() {
                           onClick={() => setActiveDetailMateria(m)}
                           className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 transition"
                         >
-                          <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta / Elegir Opción
+                          <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta / Intentos Final
                         </button>
 
                         <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
@@ -991,7 +1025,7 @@ export default function App() {
                           <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-xl">
                             <span className="text-[10px] font-bold text-emerald-700 uppercase">Nota:</span>
                             <input
-                              type="number" min="4" max="10" placeholder="4-10"
+                              type="number" min="0" max="10" placeholder="0-10"
                               value={st.nota || ''}
                               onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)}
                               className="w-10 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-0.5 outline-none"
@@ -999,13 +1033,12 @@ export default function App() {
                           </div>
                         )}
 
-                        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Cantidad de aplazos">
+                        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Aplazos automáticos por finales desaprobados">
                           <span className="text-[10px] font-bold text-slate-500 uppercase">Apl:</span>
                           <input
-                            type="number" min="0" max="5"
+                            type="number" min="0" max="5" readOnly
                             value={st.aplazos || '0'}
-                            onChange={(e) => handleUpdateMateria(m.id, 'aplazos', e.target.value)}
-                            className="w-8 text-center bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-md py-0.5 outline-none"
+                            className="w-8 text-center bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold rounded-md py-0.5 outline-none cursor-not-allowed"
                           />
                         </div>
                       </div>
@@ -1018,9 +1051,8 @@ export default function App() {
         </main>
       </div>
 
-      {/* PIE DE PÁGINA CON COLABORACIÓN */}
       <footer className="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-        <p>Diseñado en estado de liminidad académica para la comunidad de <strong>Ciencias Antropológicas · FFyL UBA</strong>.</p>
+        <p>Diseñado en estado de <strong>liminidad académica</strong> para la comunidad de Ciencias Antropológicas · FFyL UBA.</p>
         <button
           onClick={() => setShowDonateModal(true)}
           className="flex items-center gap-2 bg-white hover:bg-sky-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold shadow-2xs transition"
@@ -1035,7 +1067,7 @@ export default function App() {
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner 🧉
+                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puanense 🧉
               </h3>
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
@@ -1044,7 +1076,6 @@ export default function App() {
               En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gestor te resulta útil para organizar tu cursada y querés apoyar el proyecto con un mate virtual, ¡muchas gracias! 💙
             </p>
 
-            {/* Alias con botón de copiado rápido */}
             <div className="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-sky-900 block">
                 Alias de Mercado Pago:
@@ -1128,7 +1159,7 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL DETALLES DE CURSADA */}
+      {/* MODAL DETALLES DE CURSADA E INTENTOS DE FINAL */}
       {activeDetailMateria && (() => {
         const mat = activeDetailMateria;
         const st = studentData[selectedPlan]?.[mat.id] || {};
@@ -1145,7 +1176,7 @@ export default function App() {
               <div className="flex items-center justify-between border-b pb-3">
                 <div>
                   <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
-                  <p className="text-[10px] text-slate-500">Configuración, selección de cátedra y notas</p>
+                  <p className="text-[10px] text-slate-500">Configuración, cátedra, parciales y hasta 3 intentos de final</p>
                 </div>
                 <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
               </div>
@@ -1291,49 +1322,63 @@ export default function App() {
               </div>
 
               <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones, Notas e Intentos de Final</h4>
                 
                 {esPromocional ? (
-                  <div>
-                    <p className="text-[10px] text-slate-500 mb-2">Ingrese las notas de los parciales para promediar automáticamente (Promedio &ge; 7 aprueba directo):</p>
+                  <div className="space-y-3">
+                    <p className="text-[10px] text-slate-500">Notas de parciales (promedio &ge; 7 promociona):</p>
                     <div className="grid grid-cols-3 gap-2">
                       <div>
                         <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <input type="number" min="0" max="10" placeholder="0-10" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                       <div>
                         <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <input type="number" min="0" max="10" placeholder="0-10" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                       <div>
                         <span className="text-[10px] font-bold text-slate-600 block mb-1">3ro / Recup</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <input type="number" min="0" max="10" placeholder="0-10" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
-                    </div>
-                    <div className="pt-2 border-t border-slate-200 mt-2">
-                      <span className="text-[10px] font-bold text-sky-900 block mb-1">Nota de Examen Final (Solo si fue a final)</span>
-                      <input type="number" min="4" max="10" placeholder="Final (opcional)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-sky-50 border border-sky-300 rounded-lg p-2 text-xs text-center font-bold text-sky-950" />
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-[10px] text-slate-500">Ingrese las notas de regularidad (1° y 2° parcial) y la nota del examen final:</p>
+                    <p className="text-[10px] text-slate-500">Notas de regularidad (1° y 2° parcial):</p>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <input type="number" min="0" max="10" placeholder="0-10" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                       <div>
                         <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <input type="number" min="0" max="10" placeholder="0-10" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
-                    </div>
-                    <div className="pt-1 border-t border-slate-200">
-                      <span className="text-[10px] font-bold text-amber-700 block mb-1">Nota de Examen Final</span>
-                      <input type="number" min="4" max="10" placeholder="Nota Final (4 a 10)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
                     </div>
                   </div>
                 )}
+
+                {/* SECCIÓN DE HASTA 3 INTENTOS DE EXAMEN FINAL */}
+                <div className="pt-2 border-t border-slate-200 space-y-2">
+                  <span className="text-[10px] font-bold uppercase text-amber-900 block">
+                    Intentos de Examen Final (Hasta 3 llamados / Si desaprueba con &lt;4 genera aplazo automático):
+                  </span>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Intento</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Intento</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-600 block mb-1">3er Intento</span>
+                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-500 italic">Si rindió varios intentos para aprobar, la nota final se promedia automáticamente entre los intentos presentados.</p>
+                </div>
               </div>
 
               <div className="flex justify-end pt-2">
