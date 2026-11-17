@@ -1055,37 +1055,37 @@ En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gesto
                 let opcionesCatedras = [];
 
                 if (nombreMat.includes('antropología')) {
-                  opcionesCatedras = ['Antropología (016) - Vargas'];
+                  opcionesCatedras = ['Cátedra Vargas'];
                 } else if (nombreMat.includes('filosofía')) {
-                  opcionesCatedras = ['Filosofía (042) - Beraldi'];
+                  opcionesCatedras = ['Cátedra Beraldi'];
                 } else if (nombreMat.includes('sociedad y estado')) {
                   opcionesCatedras = [
-                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Pedrosa',
-                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Denkberg'
+                    'Cátedra Pedrosa',
+                    'Cátedra Denkberg'
                   ];
                 } else if (nombreMat.includes('pensamiento científico')) {
                   opcionesCatedras = [
-                    'Introducción al Pensamiento Científico (040) - Cátedra Buacar',
-                    'Introducción al Pensamiento Científico (040) - Cátedra Gimeno',
-                    'Introducción al Pensamiento Científico (040) - Cátedra Perot'
+                    'Cátedra Buacar',
+                    'Cátedra Gimeno',
+                    'Cátedra Perot'
                   ];
                 } else if (nombreMat.includes('economía')) {
                   opcionesCatedras = [
-                    'Economía (021) - Cátedra Di Pelino',
-                    'Economía (021) - Cátedra Miliá'
+                    'Cátedra Di Pelino',
+                    'Cátedra Miliá'
                   ];
                 } else if (nombreMat.includes('psicología')) {
                   opcionesCatedras = [
-                    'Psicología (015) - Cátedra Quattrocchi',
-                    'Psicología (015) - Cátedra Fiotti'
+                    'Cátedra Quattrocchi',
+                    'Cátedra Fiotti'
                   ];
                 } else if (nombreMat.includes('semiología')) {
-                  opcionesCatedras = ['Semiología (043) - Verzero'];
+                  opcionesCatedras = ['Cátedra Verzero'];
                 } else if (nombreMat.includes('sociología')) {
-                  opcionesCatedras = ['Sociología (014) - Bustos'];
+                  opcionesCatedras = ['Cátedra Bustos'];
                 } else {
                   opcionesCatedras = [
-                    'Antropología (016) - Vargas',
+                    'Cátedra Vargas',
                     'Filosofía (042) - Beraldi',
                     'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Pedrosa',
                     'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Denkberg',
