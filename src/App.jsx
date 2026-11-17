@@ -64,11 +64,8 @@ export default function App() {
 
   const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
-  const [nuevoSeminarioNombre, setNuevoSeminarioNombre] = useState('');
-  const [nuevoSeminarioDocente, setNuevoSeminarioDocente] = useState('');
-  const [nuevoSeminarioTipo, setNuevoSeminarioTipo] = useState('sociocultural');
 
-  // Estado para el Pop-up / Aviso flotante de seminario agregado
+  // Estado para el Pop-up / Aviso flotante
   const [toastMessage, setToastMessage] = useState(null);
 
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
@@ -125,7 +122,7 @@ export default function App() {
     }
   };
 
-  // Función para agregar un seminario directamente a las electivas del estudiante
+  // Función para agregar seminario a electivas
   const handleAgregarSeminarioAElectivas = (sem) => {
     const customId = 'electiva-sem-' + sem.id + '-' + Date.now();
     const textoSeminario = `${sem.nombre} (${sem.docente})`;
@@ -152,11 +149,28 @@ export default function App() {
       return updated;
     });
 
-    // Mostrar el aviso flotante (Pop-up)
     setToastMessage("¡Tu seminario elegido ya se agregó a la pestaña electivas/seminarios!");
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
+  };
+
+  // Función para eliminar seminario personalizado con confirmación
+  const handleEliminarSeminarioPersonalizado = (id) => {
+    const confirmar = window.confirm("¿Estás seguro que querés eliminar el seminario que elegiste?");
+    if (!confirmar) return;
+
+    setStudentData(prev => {
+      const planState = { ...(prev[selectedPlan] || {}) };
+      delete planState[id];
+
+      const updated = {
+        ...prev,
+        [selectedPlan]: planState
+      };
+      guardarDatosNube(updated);
+      return updated;
+    });
   };
 
   const parseNota10 = (val) => {
@@ -272,7 +286,6 @@ export default function App() {
     const electivasList = orientationObj.electivas || planObj.electivas || [];
     if (electivasList) list = [...list, ...electivasList];
     
-    // Incluir también seminarios personalizados agregados dinámicamente en el estado
     const planState = studentData[selectedPlan] || {};
     Object.keys(planState).forEach(k => {
       if (k.startsWith('electiva-sem-')) {
@@ -289,7 +302,6 @@ export default function App() {
 
   const currentMateriasAll = getAllMaterias();
   
-  // Modificamos para que el bloque 'electivas' también muestre los seminarios personalizados añadidos
   const getBlockMateriasExtended = (block) => {
     let base = getBlockMaterias(block);
     if (block === 'electivas') {
@@ -301,7 +313,8 @@ export default function App() {
             id: k,
             name: 'Seminario / Electiva (Oferta 2C 2026)',
             etapa: 'Electiva / PST',
-            correlativa: ''
+            correlativa: '',
+            esCustomSeminario: true
           });
         }
       });
@@ -333,7 +346,6 @@ export default function App() {
     const st = studentData[selectedPlan]?.[m.id] || {};
     const estado = st.estado || 'pendiente';
     const notaNum = st.nota !== '' && !isNaN(st.nota) ? parseFloat(st.nota) : null;
-    const aplazosNum = st.aplazos !== '' && !isNaN(st.aplazos) ? parseInt(st.aplazos) : 0;
     const esIdioma = idiomasIds.has(m.id);
 
     if (st.favorita) favoritasCount++;
@@ -1080,6 +1092,17 @@ export default function App() {
                       </div>
 
                       <div className="flex items-center gap-3 flex-wrap justify-end">
+                        {/* Botón de eliminar seminario agregado si es personalizado */}
+                        {m.esCustomSeminario && (
+                          <button
+                            onClick={() => handleEliminarSeminarioPersonalizado(m.id)}
+                            className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl border border-red-200 transition"
+                            title="Eliminar este seminario de mis electivas"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+
                         <button
                           onClick={() => setActiveDetailMateria(m)}
                           className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 transition"
@@ -1105,15 +1128,6 @@ export default function App() {
                             />
                           </div>
                         )}
-
-                        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Aplazos automáticos por finales desaprobados">
-                          <span className="text-[10px] font-bold text-slate-500 uppercase">Apl:</span>
-                          <input
-                            type="number" min="0" max="5" readOnly
-                            value={st.aplazos || '0'}
-                            className="w-8 text-center bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold rounded-md py-0.5 outline-none cursor-not-allowed"
-                          />
-                        </div>
                       </div>
                     </div>
                   );
@@ -1238,7 +1252,7 @@ export default function App() {
 
         const esCBC = activeBlock === 'cbc';
         const esIdioma = activeBlock === 'idiomas';
-        const esElectiva = activeBlock === 'electivas';
+        const esElectiva = activeBlock === 'electivas' || mat.esCustomSeminario;
 
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1284,7 +1298,7 @@ export default function App() {
                 </div>
               )}
 
-              {esElectiva && (
+              {esElectiva && !mat.esCustomSeminario && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Especifique nombre del seminario / optativa:</label>
                   <input
