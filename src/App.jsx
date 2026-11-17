@@ -7,51 +7,11 @@ import {
   Bookmark, User, LogOut, Trash2, 
   Mail, Users, FileText, CheckSquare, Layers, Loader2,
   Share2, Download, RefreshCw, Sparkles,
-  Star, Trophy, Coffee, Copy, Check, Plus, Camera, Heart
+  Star, Trophy, TrendingDown, Coffee, Copy, Check
 } from 'lucide-react';
 
+// CONFIGURA AQUÍ TU ALIAS DE MERCADO PAGO
 const MP_ALIAS = 'juan.miguel.ch';
-
-// OFERTA OFICIAL ACTUALIZADA 2C 2026 - CIENCIAS ANTROPOLÓGICAS (FFyL UBA)
-const SEMINARIOS_OFERTA_2C_2026 = [
-  { id: 'sem-1', tipo: 'sociocultural', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', cuatrimestre: '2C 2026' },
-  { id: 'sem-2', tipo: 'sociocultural', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', cuatrimestre: '2C 2026' },
-  { id: 'sem-3', tipo: 'sociocultural', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', cuatrimestre: '2C 2026' },
-  { id: 'sem-4', tipo: 'sociocultural', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN (MODALIDAD PRESENCIAL)', docente: 'PROF. URBANO, Eduardo Luis', cuatrimestre: '2C 2026' },
-  { id: 'sem-5', tipo: 'sociocultural', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA. ALGUNOS EJEMPLOS DE EUROPA Y ARGENTINA (MODALIDAD PRESENCIAL)', docente: 'PROF. Pablo WRIGHT', cuatrimestre: '2C 2026' },
-  { id: 'sem-6', tipo: 'sociocultural', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', cuatrimestre: '2C 2026' },
-  { id: 'sem-7', tipo: 'sociocultural', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', cuatrimestre: '2C 2026' },
-  { id: 'sem-8', tipo: 'sociocultural', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', cuatrimestre: '2C 2026' },
-  { id: 'sem-9', tipo: 'arqueologia', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', cuatrimestre: '2C 2026' },
-  { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', cuatrimestre: '2C 2026' },
-  { id: 'sem-11', tipo: 'arqueologia', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', cuatrimestre: '2C 2026' },
-  { id: 'sem-12', tipo: 'arqueologia', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', cuatrimestre: '2C 2026' },
-  { id: 'sem-13', tipo: 'sociocultural', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', cuatrimestre: '2C 2026' },
-  { id: 'sem-14', tipo: 'sociocultural', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', cuatrimestre: '2C 2026' },
-  { id: 'sem-15', tipo: 'sociocultural', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', cuatrimestre: '2C 2026' },
-  { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
-];
-
-// AVATARES LOCALES (CARPETA PUBLIC/AVATARES)
-const AVATARES_ANTROPOLOGIA = [
-  { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
-  { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
-  { id: 'malinowski', nombre: 'Bronisław Malinowski', rol: 'Trabajo de Campo / Funcionalismo', emoji: '⛺', img: '/avatares/bronislaw-malinowski.jpg' },
-  { id: 'mauss', nombre: 'Marcel Mauss', rol: 'Teoría del Don y Sociología', emoji: '🎁', img: '/avatares/marcel-mauss.jpg' },
-  { id: 'levis', nombre: 'Claude Lévi-Strauss', rol: 'Estructuralismo Antropológico', emoji: '🧩', img: '/avatares/claude-levi-strauss.jpg' },
-  { id: 'mead', nombre: 'Margaret Mead', rol: 'Cultura, Género e Infancia', emoji: '🌴', img: '/avatares/margaret-mead.jpg' },
-  { id: 'benedict', nombre: 'Ruth Benedict', rol: 'Cultura y Personalidad', emoji: '🎭', img: '/avatares/ruth-benedict.jpg' },
-  { id: 'geertz', nombre: 'Clifford Geertz', rol: 'Antropología Simbólica e Interpretativa', emoji: '✍️', img: '/avatares/clifford-geertz.jpg' },
-  { id: 'sahlins', nombre: 'Marshall Sahlins', rol: 'Antropología Económica y Simbólica', emoji: '🏝️', img: '/avatares/marshall-sahlins.jpg' },
-  { id: 'douglas', nombre: 'Mary Douglas', rol: 'Riesgo, Pureza y Símbolos', emoji: '⚖️', img: '/avatares/mary-douglas.jpg' },
-  { id: 'turner', nombre: 'Victor Turner', rol: 'Ritual y Liminidad', emoji: '🌿', img: '/avatares/victor-turner.jpg' },
-  { id: 'gluckman', nombre: 'Max Gluckman', rol: 'Escuela de Mánchester y Conflictos', emoji: '⚖️', img: '/avatares/max-gluckman.jpg' },
-  { id: 'leach', nombre: 'Edmund Leach', rol: 'Estructuralismo Británico', emoji: '🌐', img: '/avatares/edmund-leach.jpg' },
-  { id: 'graeber', nombre: 'David Graeber', rol: 'Antropología Económica y Anarquista', emoji: '✊', img: '/avatares/david-graeber.jpg' },
-  { id: 'segato', nombre: 'Rita Segato', rol: 'Antropología Feminista y Violencia', emoji: '🔥', img: '/avatares/rita-segato.jpg' },
-  { id: 'foucault', nombre: 'Michel Foucault', rol: 'Poder, Saber y Biopolítica', emoji: '🔍', img: '/avatares/michael-foucault.jpg' },
-  { id: 'viveiros', nombre: 'Eduardo Viveiros de Castro', rol: 'Antropología Ontológica y Perspectivismo', emoji: '🐆', img: '/avatares/eduardo-viveiros-de-castro.jpg' }
-];
 
 export default function App() {
   const [session, setSession] = useState(() => {
@@ -76,20 +36,24 @@ export default function App() {
 
   const [activeDetailMateria, setActiveDetailMateria] = useState(null);
 
+  // Estados para Compartir Historia
   const [showShareModal, setShowShareModal] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
   const canvasRef = useRef(null);
 
+  // Estados para Colaboración / Mercado Pago
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [copiedAlias, setCopiedAlias] = useState(false);
 
-  const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
+  const [seminariosOferta, setSeminariosOferta] = useState([
+    { id: 'sem-1', tipo: 'sociocultural', nombre: 'Antropología de las emociones y los cuerpos', docente: 'Dr. Guber', cuatrimestre: '1C 2026' },
+    { id: 'sem-2', tipo: 'arqueologia', nombre: 'Arqueología pública y patrimonial en los Andes', docente: 'Dra. Endere', cuatrimestre: '1C 2026' }
+  ]);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
-  
-  const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [avatarActual, setAvatarActual] = useState(AVATARES_ANTROPOLOGIA[4]); // Lévi-Strauss por defecto
+  const [nuevoSeminarioNombre, setNuevoSeminarioNombre] = useState('');
+  const [nuevoSeminarioDocente, setNuevoSeminarioDocente] = useState('');
+  const [nuevoSeminarioTipo, setNuevoSeminarioTipo] = useState('sociocultural');
 
-  const [toastMessage, setToastMessage] = useState(null);
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
 
   useEffect(() => {
@@ -113,14 +77,9 @@ export default function App() {
         if (data.datos_academicos) setStudentData(data.datos_academicos);
         else setStudentData({ '2023': {}, '1985': {} });
 
-        setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
-
+        if (data.seminarios_oferta && data.seminarios_oferta.length > 0) setSeminariosOferta(data.seminarios_oferta);
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
-        
-        if (data.avatar) {
-          setAvatarActual(data.avatar);
-        }
       } else {
         setStudentData({ '2023': {}, '1985': {} });
       }
@@ -132,7 +91,7 @@ export default function App() {
     }
   };
 
-  const guardarDatosNube = async (nuevoData = studentData, nuevosSemis = seminariosOferta, nuevoAvatar = avatarActual) => {
+  const guardarDatosNube = async (nuevoData, nuevosSemis = seminariosOferta) => {
     if (session && session.tipo === 'registrado') {
       try {
         await supabase.from('estudiantes').update({
@@ -140,76 +99,12 @@ export default function App() {
           seminarios_oferta: nuevosSemis,
           plan_actual: selectedPlan,
           orientacion_actual: selectedOrientation,
-          avatar: nuevoAvatar,
           actualizado_en: new Date()
         }).eq('email', session.email);
       } catch (err) {
         console.error("Error al guardar en la nube:", err);
       }
     }
-  };
-
-  const handleCambiarAvatar = (avatarObj) => {
-    setAvatarActual(avatarObj);
-    setShowAvatarModal(false);
-    guardarDatosNube(studentData, seminariosOferta, avatarObj);
-    setToastMessage(`¡Avatar actualizado a ${avatarObj.nombre}! 🏛️`);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
-
-  const handleAgregarSeminarioAElectivas = (sem) => {
-    const customId = 'electiva-sem-' + sem.id + '-' + Date.now();
-    const textoSeminario = `${sem.nombre} (${sem.docente})`;
-
-    setStudentData(prev => {
-      const planState = prev[selectedPlan] || {};
-      const updated = {
-        ...prev,
-        [selectedPlan]: {
-          ...planState,
-          [customId]: {
-            estado: 'cursando',
-            nota: '',
-            aplazos: '0',
-            regimen: 'promocion',
-            customName: textoSeminario,
-            favorita: true,
-            cuatrimestreCursada: '2° Cuatrimestre',
-            anioCursada: '2026'
-          }
-        }
-      };
-      guardarDatosNube(updated);
-      return updated;
-    });
-
-    setToastMessage("¡Tu seminario elegido ya se agregó a la pestaña electivas/seminarios!");
-    setTimeout(() => setToastMessage(null), 4000);
-  };
-
-  const handleEliminarSeminarioPersonalizado = (id) => {
-    const confirmar = window.confirm("¿Estás seguro que querés eliminar el seminario que elegiste?");
-    if (!confirmar) return;
-
-    setStudentData(prev => {
-      const planState = { ...(prev[selectedPlan] || {}) };
-      delete planState[id];
-
-      const updated = {
-        ...prev,
-        [selectedPlan]: planState
-      };
-      guardarDatosNube(updated);
-      return updated;
-    });
-  };
-
-  const parseNota10 = (val) => {
-    if (val === '' || val === null || isNaN(val)) return '';
-    const num = parseFloat(val);
-    if (num < 0) return '0';
-    if (num > 10) return '10';
-    return val;
   };
 
   const handleUpdateMateria = (id, field, value) => {
@@ -219,56 +114,41 @@ export default function App() {
         estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-        parcial1: '', parcial2: '', parcial3: '', 
-        final1: '', final2: '', final3: '',
-        customName: '', favorita: false
+        parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
+        favorita: false
       };
 
-      let valClean = value;
-      if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'nota'].includes(field)) {
-        valClean = parseNota10(value);
-      }
+      let updatedMat = { ...matState, [field]: value };
 
-      let updatedMat = { ...matState, [field]: valClean };
-
-      if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'regimen'].includes(field)) {
+      if (['parcial1', 'parcial2', 'parcial3', 'notaFinal', 'regimen'].includes(field)) {
         const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
         const p1 = parseFloat(updatedMat.parcial1);
         const p2 = parseFloat(updatedMat.parcial2);
         const p3 = parseFloat(updatedMat.parcial3);
-
-        const f1 = parseFloat(updatedMat.final1);
-        const f2 = parseFloat(updatedMat.final2);
-        const f3 = parseFloat(updatedMat.final3);
-
-        let aplazosFinalesCount = 0;
-        [f1, f2, f3].forEach(f => {
-          if (!isNaN(f) && f < 4) aplazosFinalesCount++;
-        });
-
-        updatedMat.aplazos = Math.max(0, aplazosFinalesCount).toString();
+        const nFinal = parseFloat(updatedMat.notaFinal);
 
         if (reg === 'promocion') {
           const validas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
           if (validas.length > 0) {
             const promParciales = validas.reduce((a, b) => a + b, 0) / validas.length;
-            const finalesRendidos = [f1, f2, f3].filter(n => !isNaN(n) && n >= 1);
-            if (finalesRendidos.length > 0) {
-              const promFinales = finalesRendidos.reduce((a, b) => a + b, 0) / finalesRendidos.length;
-              updatedMat.nota = Math.round((promParciales + promFinales) / 2).toString();
+            if (promParciales >= 7 && isNaN(nFinal)) {
+              updatedMat.nota = Math.round(promParciales).toString();
+            } else if (!isNaN(nFinal)) {
+              const notaFinalCalculada = Math.round((promParciales + nFinal) / 2);
+              updatedMat.nota = notaFinalCalculada.toString();
             } else {
               updatedMat.nota = Math.round(promParciales).toString();
             }
           }
         } else {
-          const finalesRendidos = [f1, f2, f3].filter(n => !isNaN(n) && n >= 1);
-          if (finalesRendidos.length > 0) {
-            const promFinales = finalesRendidos.reduce((a, b) => a + b, 0) / finalesRendidos.length;
-            updatedMat.nota = Math.round(promFinales).toString();
-          } else {
-            const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
-            if (notasReg.length > 0) {
-              updatedMat.nota = Math.round(notasReg.reduce((a, b) => a + b, 0) / notasReg.length).toString();
+          const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
+          if (notasReg.length > 0) {
+            const promReg = notasReg.reduce((a, b) => a + b, 0) / notasReg.length;
+            if (!isNaN(nFinal)) {
+              const notaFinalCalculada = Math.round((promReg + nFinal) / 2);
+              updatedMat.nota = notaFinalCalculada.toString();
+            } else {
+              updatedMat.nota = Math.round(promReg).toString();
             }
           }
         }
@@ -316,14 +196,6 @@ export default function App() {
     if (planObj.idiomas) list = [...list, ...planObj.idiomas];
     const electivasList = orientationObj.electivas || planObj.electivas || [];
     if (electivasList) list = [...list, ...electivasList];
-    
-    const planState = studentData[selectedPlan] || {};
-    Object.keys(planState).forEach(k => {
-      if (k.startsWith('electiva-sem-')) {
-        list.push({ id: k, name: 'Seminario / Electiva', etapa: 'Electiva', correlativa: '' });
-      }
-    });
-
     if (selectedPlan === '2023' && includeProfesorado && selectedOrientation !== 'profesorado') {
       const profObj = planObj.orientaciones['profesorado'];
       if (profObj) list = [...list, ...profObj.cfo];
@@ -332,29 +204,7 @@ export default function App() {
   };
 
   const currentMateriasAll = getAllMaterias();
-  
-  const getBlockMateriasExtended = (block) => {
-    let base = getBlockMaterias(block);
-    if (block === 'electivas') {
-      const planState = studentData[selectedPlan] || {};
-      const customSeminarios = [];
-      Object.keys(planState).forEach(k => {
-        if (k.startsWith('electiva-sem-')) {
-          customSeminarios.push({
-            id: k,
-            name: 'Seminario / Electiva (Oferta 2C 2026)',
-            etapa: 'Electiva / PST',
-            correlativa: '',
-            esCustomSeminario: true
-          });
-        }
-      });
-      return [...base, ...customSeminarios];
-    }
-    return base;
-  };
-
-  const rawBlockMaterias = onlyFavorites ? currentMateriasAll : getBlockMateriasExtended(activeBlock);
+  const rawBlockMaterias = onlyFavorites ? currentMateriasAll : getBlockMaterias(activeBlock);
   const currentBlockMaterias = onlyFavorites
     ? rawBlockMaterias.filter(m => studentData[selectedPlan]?.[m.id]?.favorita)
     : rawBlockMaterias;
@@ -367,91 +217,92 @@ export default function App() {
 
   let sumNotas = 0;
   let countNotas = 0;
+  let sumHistorico = 0;
+  let countHistorico = 0;
 
-  let notasAprobadasList = [];
-
-  const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
+  let highestMateria = null;
+  let lowestMateria = null;
 
   currentMateriasAll.forEach(m => {
     const st = studentData[selectedPlan]?.[m.id] || {};
     const estado = st.estado || 'pendiente';
     const notaNum = st.nota !== '' && !isNaN(st.nota) ? parseFloat(st.nota) : null;
-    const esIdioma = idiomasIds.has(m.id);
+    const aplazosNum = st.aplazos !== '' && !isNaN(st.aplazos) ? parseInt(st.aplazos) : 0;
 
     if (st.favorita) favoritasCount++;
 
     if (estado === 'aprobada') {
       aprobadasCount++;
-      if (notaNum !== null && notaNum >= 4 && !esIdioma) {
+      if (notaNum !== null && notaNum >= 4) {
         sumNotas += notaNum;
         countNotas++;
+        sumHistorico += notaNum;
+        countHistorico++;
 
         const displayName = st.customName ? `${m.name}: ${st.customName}` : m.name;
-        notasAprobadasList.push({ name: displayName, nota: notaNum });
+        if (!highestMateria || notaNum > highestMateria.nota) {
+          highestMateria = { name: displayName, nota: notaNum };
+        }
+        if (!lowestMateria || notaNum < lowestMateria.nota) {
+          lowestMateria = { name: displayName, nota: notaNum };
+        }
       }
     } else if (estado === 'regularizada') { regularizadasCount++; } 
     else if (estado === 'cursando') { cursandoCount++; } 
     else { pendientesCount++; }
+
+    if (aplazosNum > 0) {
+      for (let i = 0; i < aplazosNum; i++) {
+        sumHistorico += 2;
+        countHistorico++;
+      }
+    }
   });
 
-  notasAprobadasList.sort((a, b) => b.nota - a.nota);
-  const podioTop3 = notasAprobadasList.slice(0, 3);
-
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
+  const promedioConAplazos = countHistorico > 0 ? (sumHistorico / countHistorico).toFixed(2) : '-';
   const totalMaterias = currentMateriasAll.length;
   const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
 
-  // 10 FRASES MOTIVACIONALES (QUOTES)
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
       return [
         `¡100% completado! Oficialmente en la meta del título de Antropología 🎓✨`,
         `Todo el esfuerzo de Puan valió la pena: 100% adentro. ¡A celebrar! 🥂🌿`,
-        `De Filo UBA al mundo: carrera terminada. ¡Lo lograste! 🏆🚀`,
-        `¡Título en mano! El ritual de pasaje más hermoso de Puan culminó con éxito 🎓🔥`,
-        `Cerrando esta etnografía vital con broche de oro. ¡Felicidades colega! 🌟📚`
+        `De Filo UBA al mundo: carrera terminada. ¡Lo lograste! 🏆🚀`
       ];
     }
     if (pct >= 70) {
       return [
         `¡Ya estás al ${pct}% de tu carrera! Falta poco, sigue así, ¡vamos que tú puedes! 🔥🎓`,
         `Huele a tesis: ${pct}% de la carrera aprobado. El último tirón es tuyo 📖🚀`,
-        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 💪✨`,
-        `El campo teórico está dominado al ${pct}%. ¡Ya casi cruzamos la meta puaner! ⛺🌟`,
-        `Cada vez más cerca de la tesina. ¡Ese ${pct}% demuestra tu aguante en Filo! ✊📚`
+        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 💪✨`
       ];
     }
     if (pct >= 50) {
       return [
         `¡Ya pasamos la mitad del camino (${pct}%)! El recorrido viene excelente 🚀📚`,
         `Mitad de carrera adentro (${pct}%). De acá en adelante, cada materia se disfruta el doble 🌿✨`,
-        `Cruzando el ${pct}% de Ciencias Antropológicas. ¡La base ya está súper firme! 💪🔥`,
-        `¡Mitad de trayecto superado! El espíritu de Puan nos impulsa a seguir adelante 🏛️💙`,
-        `Etnografiando cada cuatrimestre: ya logramos el ${pct}% de la carrera 📝🚀`
+        `Cruzando el ${pct}% de Ciencias Antropológicas. ¡La base ya está súper firme! 💪🔥`
       ];
     }
     if (pct >= 25) {
       return [
         `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada parcial suma un montón! 📝🔥`,
         `Construyendo el trayecto académico: ${pct}% completado. ¡A seguir con ese ritmo! 🌿📖`,
-        `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`,
-        `Las correlativas van cediendo paso a paso. ¡Ya llevamos el ${pct}%! 🌱💪`,
-        `Semestre a semestre armando el rompecabezas antropológico (${pct}%) 🧩📚`
+        `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`
       ];
     }
     return [
       `Arrancando el camino en Antropología: ya llevás el ${pct}% de la carrera 🌱📚`,
       `Recién empieza el viaje en Puan: ${pct}% completado. ¡A meterle con todo! ✨🚀`,
-      `Primeros pasos en la facultad: ${pct}% adentro. ¡Vamos por más! 💪🎓`,
-      `Iniciando el rito de iniciación en Filo UBA: ${pct}% y sumando 🧭📖`,
-      `Primeras lecturas, primeros teóricos: bienvenide al mundo antropológico (${pct}%) ☕🌿`
+      `Primeros pasos en la facultad: ${pct}% adentro. ¡Vamos por más! 💪🎓`
     ];
   };
 
   const quotesList = getMotivationalQuotes(porcentajeAvance);
   const currentQuote = quotesList[quoteIndex % quotesList.length];
 
-  // CANVAS DE COMPARTIR HISTORIA CON SALTO DE LÍNEA AUTOMÁTICO (TEXT WRAP)
   useEffect(() => {
     if (!showShareModal || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -479,7 +330,11 @@ export default function App() {
     ctx.font = '900 64px sans-serif';
     ctx.fillText('Ciencias Antropológicas', W / 2, 265);
 
-    const orientLabel = selectedOrientation === 'sociocultural' ? 'Orientación Sociocultural' : selectedOrientation === 'arqueologia' ? 'Orientación Arqueología' : 'Profesorado';
+    const orientLabel = selectedOrientation === 'sociocultural' 
+      ? 'Orientación Sociocultural' 
+      : selectedOrientation === 'arqueologia' 
+        ? 'Orientación Arqueología' 
+        : 'Profesorado';
     ctx.fillStyle = '#bae6fd';
     ctx.font = '600 36px sans-serif';
     ctx.fillText(`Plan ${selectedPlan} · ${orientLabel}`, W / 2, 330);
@@ -511,6 +366,7 @@ export default function App() {
       ctx.stroke();
       startAngle += aprobAngle;
     }
+
     if (regularizadasCount > 0) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, startAngle, startAngle + regAngle);
@@ -519,6 +375,7 @@ export default function App() {
       ctx.stroke();
       startAngle += regAngle;
     }
+
     if (cursandoCount > 0) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, startAngle, startAngle + cursAngle);
@@ -557,41 +414,31 @@ export default function App() {
     ctx.fillText(`${aprobadasCount} / ${totalMaterias}`, W / 2 - 210, 1345);
     ctx.fillText(`${promedioSinAplazos}`, W / 2 + 210, 1345);
 
-    // FUNCIÓN DE SALTO DE LÍNEA AUTOMÁTICO (TEXT WRAP) PARA EL QUOTE
     ctx.fillStyle = '#B3EBF2';
-    ctx.font = 'bold 38px sans-serif';
-    ctx.textAlign = 'center';
-    
-    const maxWidth = W - 200;
+    ctx.font = 'bold 42px sans-serif';
     const words = currentQuote.split(' ');
     let line = '';
-    let lines = [];
+    let yText = 1510;
+    const maxWidth = W - 220;
 
-    for (let n = 0; n < words.length; n++) {
-      let testLine = line + words[n] + ' ';
-      let metrics = ctx.measureText(testLine);
-      let testWidth = metrics.width;
-      if (testWidth > maxWidth && n > 0) {
-        lines.push(line);
-        line = words[n] + ' ';
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line + words[i] + ' ';
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth && i > 0) {
+        ctx.fillText(line.trim(), W / 2, yText);
+        line = words[i] + ' ';
+        yText += 58;
       } else {
         line = testLine;
       }
     }
-    lines.push(line);
-
-    let startQuoteY = 1490;
-    if (lines.length > 1) {
-      startQuoteY = 1470;
-    }
-
-    for (let k = 0; k < lines.length; k++) {
-      ctx.fillText(lines[k], W / 2, startQuoteY + (k * 50));
-    }
+    ctx.fillText(line.trim(), W / 2, yText);
 
     ctx.fillStyle = '#64748b';
     ctx.font = '600 28px sans-serif';
-    const userDisplay = session?.nombre && session.nombre !== 'Invitado' ? `${session.nombre} ${session.apellido}` : 'Estudiante de Antropología';
+    const userDisplay = session?.nombre && session.nombre !== 'Invitado' 
+      ? `${session.nombre} ${session.apellido}` 
+      : 'Estudiante de Antropología';
     ctx.fillText(`${userDisplay} · gestorantropologia.uba`, W / 2, 1800);
 
   }, [showShareModal, quoteIndex, porcentajeAvance, aprobadasCount, regularizadasCount, cursandoCount, totalMaterias, promedioSinAplazos, selectedPlan, selectedOrientation, session, currentQuote]);
@@ -611,8 +458,14 @@ export default function App() {
       const file = new File([blob], `avance-antropologia-${porcentajeAvance}pct.png`, { type: 'image/png' });
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-          await navigator.share({ files: [file], title: 'Mi avance en Ciencias Antropológicas - UBA', text: currentQuote });
-        } catch (err) { }
+          await navigator.share({
+            files: [file],
+            title: 'Mi avance en Ciencias Antropológicas - UBA',
+            text: currentQuote
+          });
+        } catch (err) {
+          console.log('Compartir cancelado o no disponible:', err);
+        }
       } else {
         handleDownloadStory();
       }
@@ -636,8 +489,12 @@ export default function App() {
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#B3EBF2' }}>
         <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-sky-300 space-y-6">
           <div className="text-center space-y-3">
-            <div className="mx-auto flex items-center justify-center"><PinoIcon color="#0f172a" /></div>
-            <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">UBA · FFyL · Memoria Puaner</span>
+            <div className="mx-auto flex items-center justify-center">
+              <PinoIcon color="#0f172a" />
+            </div>
+            <span className="text-[10px] uppercase font-black tracking-widest text-sky-900 bg-sky-100 px-3 py-1 rounded-full border border-sky-300">
+              UBA · FFyL · Memoria Puaner
+            </span>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ciencias Antropológicas</h1>
             <p className="text-xs text-slate-500">Ingrese su correo registrado para acceder a sus datos.</p>
           </div>
@@ -648,16 +505,34 @@ export default function App() {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Nombre</label>
-                    <input type="text" placeholder="Tu nombre" value={formNombre} onChange={(e) => setFormNombre(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600" />
+                    <input
+                      type="text"
+                      placeholder="Tu nombre"
+                      value={formNombre}
+                      onChange={(e) => setFormNombre(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600"
+                    />
                   </div>
                   <div>
                     <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Apellido</label>
-                    <input type="text" placeholder="Tu apellido" value={formApellido} onChange={(e) => setFormApellido(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600" />
+                    <input
+                      type="text"
+                      placeholder="Tu apellido"
+                      value={formApellido}
+                      onChange={(e) => setFormApellido(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600"
+                    />
                   </div>
                 </div>
                 <div>
                   <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Correo electrónico</label>
-                  <input type="email" placeholder="correo@filo.uba.ar" value={formEmail} onChange={(e) => setFormEmail(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600" />
+                  <input
+                    type="email"
+                    placeholder="correo@filo.uba.ar"
+                    value={formEmail}
+                    onChange={(e) => setFormEmail(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-sky-600"
+                  />
                 </div>
                 <button
                   onClick={async () => {
@@ -665,57 +540,102 @@ export default function App() {
                       setLoadingCloud(true);
                       try {
                         const { data: existente } = await supabase.from('estudiantes').select('*').eq('email', formEmail.trim()).maybeSingle();
+                        
                         if (existente) {
-                          alert("⚠️ Este correo ya se encuentra registrado.");
+                          alert("⚠️ Este correo ya se encuentra registrado. Por favor, utilice la opción de ingresar con su correo.");
                           setLoadingCloud(false);
                           return;
                         }
+
                         const datosVacios = { '2023': {}, '1985': {} };
-                        const avatarPorDefecto = AVATARES_ANTROPOLOGIA[4];
-                        await supabase.from('estudiantes').insert([{
-                          email: formEmail.trim(), nombre: formNombre.trim(), apellido: formApellido.trim(),
-                          datos_academicos: datosVacios, seminarios_oferta: SEMINARIOS_OFERTA_2C_2026, avatar: avatarPorDefecto
+                        const { error } = await supabase.from('estudiantes').insert([{
+                          email: formEmail.trim(),
+                          nombre: formNombre.trim(),
+                          apellido: formApellido.trim(),
+                          datos_academicos: datosVacios,
+                          seminarios_oferta: seminariosOferta
                         }]);
+
+                        if (error) throw error;
+
                         setStudentData(datosVacios);
-                        setAvatarActual(avatarPorDefecto);
                         setSession({ nombre: formNombre.trim(), apellido: formApellido.trim(), email: formEmail.trim(), tipo: 'registrado' });
                       } catch (e) {
-                        alert("Hubo un error al registrarse.");
-                      } finally { setLoadingCloud(false); }
-                    } else { alert("Completa todos los campos."); }
+                        console.error(e);
+                        alert("Hubo un error al registrarse en la base de datos.");
+                      } finally {
+                        setLoadingCloud(false);
+                      }
+                    } else {
+                      alert("Por favor completa todos los campos.");
+                    }
                   }}
                   className="w-full bg-sky-800 hover:bg-sky-900 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
                 >
-                  {loadingCloud && <Loader2 className="w-4 h-4 animate-spin" />} Crear Registro en la Nube
+                  {loadingCloud && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Crear Registro en la Nube
                 </button>
-                <button onClick={() => setIsRegistering(false)} className="w-full text-slate-600 hover:text-slate-900 text-xs font-semibold py-1">← Volver</button>
+                <button
+                  onClick={() => setIsRegistering(false)}
+                  className="w-full text-slate-600 hover:text-slate-900 text-xs font-semibold py-1"
+                >
+                  ← Ya tengo cuenta / Volver
+                </button>
               </div>
             ) : (
               <div className="space-y-3">
                 <button
                   onClick={async () => {
-                    const emailInput = prompt("Ingrese su correo electrónico:");
+                    const emailInput = prompt("Ingrese su correo electrónico para verificar acceso:");
                     if (emailInput && emailInput.trim()) {
                       setLoadingCloud(true);
                       try {
-                        const { data } = await supabase.from('estudiantes').select('*').eq('email', emailInput.trim()).maybeSingle();
+                        const { data } = await supabase
+                          .from('estudiantes')
+                          .select('*')
+                          .eq('email', emailInput.trim())
+                          .maybeSingle();
+
                         setLoadingCloud(false);
+
                         if (data) {
                           setSession({ nombre: data.nombre, apellido: data.apellido, email: data.email, tipo: 'registrado' });
-                        } else { alert("❌ Correo no registrado."); }
-                      } catch (err) { setLoadingCloud(false); }
+                        } else {
+                          alert("❌ Acceso denegado: El correo ingresado no está registrado en el sistema. Debe registrarse previamente para acceder.");
+                        }
+                      } catch (err) {
+                        setLoadingCloud(false);
+                        alert("Error de conexión al verificar el correo en la base de datos.");
+                      }
                     }
                   }}
                   className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2"
                 >
-                  {loadingCloud ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />} Ingresar con mi Correo
+                  {loadingCloud ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />} 
+                  Verificar e Ingresar con mi Correo
                 </button>
-                <button onClick={() => setIsRegistering(true)} className="w-full bg-white hover:bg-sky-50 text-sky-950 font-bold text-xs py-3 rounded-xl transition border border-sky-300">Registrarme por Primera Vez</button>
+
+                <button
+                  onClick={() => setIsRegistering(true)}
+                  className="w-full bg-white hover:bg-sky-50 text-sky-950 font-bold text-xs py-3 rounded-xl transition border border-sky-300 shadow-xs"
+                >
+                  Registrarme por Primera Vez
+                </button>
+
                 <div className="relative flex py-2 items-center">
-                  <div className="flex-grow border-t border-sky-300"></div><span className="flex-shrink mx-4 text-sky-900 text-[10px] uppercase font-bold">O</span><div className="flex-grow border-t border-sky-300"></div>
+                  <div className="flex-grow border-t border-sky-300"></div>
+                  <span className="flex-shrink mx-4 text-sky-900 text-[10px] uppercase font-bold">O</span>
+                  <div className="flex-grow border-t border-sky-300"></div>
                 </div>
-                <button onClick={() => { setStudentData({ '2023': {}, '1985': {} }); setSession({ nombre: 'Invitado', apellido: '', email: 'invitado@uba', tipo: 'invitado' }); }} className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2">
-                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado
+
+                <button
+                  onClick={() => {
+                    setStudentData({ '2023': {}, '1985': {} });
+                    setSession({ nombre: 'Invitado', apellido: '', email: 'invitado@uba', tipo: 'invitado' });
+                  }}
+                  className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2"
+                >
+                  <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado (Desde cero)
                 </button>
               </div>
             )}
@@ -728,16 +648,21 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-16 flex flex-col justify-between">
       <div>
-        {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-sky-500 flex items-center gap-3 animate-bounce">
-            <Sparkles className="w-5 h-5 text-sky-400 shrink-0" /><p className="text-xs font-bold">{toastMessage}</p>
+        {loadingCloud && (
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center">
+            <div className="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3">
+              <Loader2 className="w-6 h-6 text-sky-600 animate-spin" />
+              <span className="text-xs font-bold text-slate-800">Cargando datos desde Supabase...</span>
+            </div>
           </div>
         )}
 
         <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
           <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <PinoIcon color="#ffffff" />
+              <div className="flex items-center justify-center">
+                <PinoIcon color="#ffffff" />
+              </div>
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] uppercase tracking-widest text-sky-400 font-bold">UBA · FFyL</span>
@@ -750,41 +675,34 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-3 flex-wrap justify-center">
-              <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-1.5 bg-sky-500/25 hover:bg-sky-500/35 text-sky-200 border border-sky-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+              <button
+                onClick={() => setShowDonateModal(true)}
+                className="flex items-center gap-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition"
+                title="Colaborar con el desarrollo del gestor"
+              >
                 <Coffee className="w-3.5 h-3.5 text-sky-300" /> Invitame un mate 🧉
               </button>
 
-              {session.tipo === 'invitado' ? (
-                <div className="flex items-center gap-2">
-                  <button onClick={() => setSession(null)} className="flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-extrabold shadow-sm transition animate-pulse">
-                    <Sparkles className="w-3.5 h-3.5" /> Registrate
-                  </button>
-                  <button onClick={() => setSession(null)} className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm">
-                    <LogOut className="w-3.5 h-3.5" /> Salir
-                  </button>
+              <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-sky-950" style={{ backgroundColor: '#B3EBF2' }}>
+                  {session.nombre[0]}
                 </div>
-              ) : (
-                <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
-                  <div onClick={() => setShowAvatarModal(true)} className="relative group cursor-pointer" title="Cambiar avatar">
-                    {avatarActual?.img ? (
-                      <img src={avatarActual.img} alt={avatarActual.nombre} className="w-8 h-8 rounded-full object-cover border-2 border-sky-400 shadow-sm" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-sky-950 bg-sky-300 border-2 border-sky-400">{session.nombre[0]}</div>
-                    )}
-                    <div className="absolute inset-0 bg-slate-900/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><Camera className="w-3.5 h-3.5 text-white" /></div>
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-white leading-tight flex items-center gap-1.5">
-                      {session.nombre} {session.apellido}
-                      <span className="text-[10px] text-sky-300 font-normal">({avatarActual ? avatarActual.nombre.split(' ')[0] : ''})</span>
-                    </p>
-                    <p className="text-[10px] text-slate-400">{session.email}</p>
-                  </div>
-                  <button onClick={() => { setStudentData({ '2023': {}, '1985': {} }); setSession(null); }} className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm">
-                    <LogOut className="w-3.5 h-3.5" /> Salir
-                  </button>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-white leading-tight">{session.nombre} {session.apellido}</p>
+                  <p className="text-[10px] text-slate-400">{session.email}</p>
                 </div>
-              )}
+                
+                <button 
+                  onClick={() => {
+                    setStudentData({ '2023': {}, '1985': {} });
+                    setSession(null);
+                  }} 
+                  className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm"
+                  title="Cerrar sesión y limpiar datos"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Salir
+                </button>
+              </div>
             </div>
           </div>
         </header>
@@ -794,26 +712,61 @@ export default function App() {
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-500 uppercase">Plan:</span>
-                <select value={selectedPlan} onChange={(e) => { setSelectedPlan(e.target.value); guardarDatosNube(studentData); }} className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none">
-                  {Object.entries(PLANS_DATA).map(([key, p]) => (<option key={key} value={key}>{p.name}</option>))}
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => {
+                    setSelectedPlan(e.target.value);
+                    guardarDatosNube(studentData);
+                  }}
+                  className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
+                >
+                  {Object.entries(PLANS_DATA).map(([key, p]) => (
+                    <option key={key} value={key}>{p.name}</option>
+                  ))}
                 </select>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-500 uppercase">Orientación:</span>
-                <select value={selectedOrientation} onChange={(e) => { setSelectedOrientation(e.target.value); guardarDatosNube(studentData); }} className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none">
+                <select
+                  value={selectedOrientation}
+                  onChange={(e) => {
+                    setSelectedOrientation(e.target.value);
+                    guardarDatosNube(studentData);
+                  }}
+                  className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
+                >
                   <option value="sociocultural">Licenciatura - Sociocultural</option>
                   <option value="arqueologia">Licenciatura - Arqueología</option>
                   {selectedPlan === '2023' && <option value="profesorado">Profesorado en Cs. Antropológicas</option>}
                 </select>
               </div>
+
+              {selectedPlan === '2023' && selectedOrientation !== 'profesorado' && (
+                <label className="flex items-center gap-2 cursor-pointer bg-sky-50 text-sky-900 px-3 py-1.5 rounded-xl border border-sky-200 text-xs font-bold">
+                  <input
+                    type="checkbox"
+                    checked={includeProfesorado}
+                    onChange={(e) => setIncludeProfesorado(e.target.checked)}
+                    className="rounded text-sky-600 focus:ring-sky-500 w-3.5 h-3.5"
+                  />
+                  <span>Simultaneidad con Profesorado</span>
+                </label>
+              )}
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <button onClick={() => setShowShareModal(true)} className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition"
+              >
                 <Share2 className="w-3.5 h-3.5" /> Compartir Historia ({porcentajeAvance}%)
               </button>
-              <button onClick={() => setShowSeminarioModal(true)} className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">
+
+              <button
+                onClick={() => setShowSeminarioModal(true)}
+                className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm transition"
+              >
                 <Bookmark className="w-3.5 h-3.5" /> Catálogo Seminarios ({seminariosOferta.length})
               </button>
             </div>
@@ -821,352 +774,663 @@ export default function App() {
         </div>
 
         <main className="max-w-7xl mx-auto px-4 pt-6 space-y-6">
+          
+          {/* FILA SUPERIOR: GRÁFICO + PROMEDIO + PODIO DE NOTAS */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-6">
-              <DonutChart total={currentMateriasAll.length} aprobadas={aprobadasCount} regularizadas={regularizadasCount} cursando={cursandoCount} pendientes={pendientesCount} />
+              <DonutChart
+                total={currentMateriasAll.length}
+                aprobadas={aprobadasCount}
+                regularizadas={regularizadasCount}
+                cursando={cursandoCount}
+                pendientes={pendientesCount}
+              />
             </div>
 
-            {/* SECCIÓN PROMEDIO OPTIMIZADA CON MENOS ESPACIO Y PUNTO FINAL */}
+            {/* PROMEDIO UBA */}
             <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
               <div>
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[11px] uppercase tracking-wider text-sky-300 font-bold flex items-center gap-1.5"><Award className="w-4 h-4 text-sky-400" /> Promedio UBA</span>
-                  <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">{countNotas} notas</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] uppercase tracking-wider text-sky-300 font-bold flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-sky-400" /> Promedio UBA
+                  </span>
+                  <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                    {countNotas} notas
+                  </span>
                 </div>
-                
-                {/* Promedio con tamaño grande restaurado y optimizado */}
-                <div className="flex items-baseline gap-1.5 my-0.5">
-                  <span className="text-6xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
-                  <span className="text-base font-bold text-sky-300">/ 10</span>
+                <div className="flex items-baseline gap-1.5 my-2">
+                  <span className="text-5xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
+                  <span className="text-lg font-bold text-sky-300">/ 10</span>
                 </div>
-                
-                {/* Mensaje de salud mental con punto final y sin emoji sobrante */}
-                <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
-                  <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay.</span>
-                </div>
+                <p className="text-[11px] text-sky-200/80">Sobre materias aprobadas con calificación final.</p>
               </div>
 
-              <button onClick={() => setShowShareModal(true)} className="w-full mt-2.5 bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-sky-300" /> Tarjeta IG / WhatsApp
-              </button>
+              <div className="mt-4 pt-3 border-t border-sky-800/60 space-y-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-sky-200 text-[11px]">Con aplazos:</span>
+                  <span className="font-bold text-white bg-sky-950/80 px-2 py-0.5 rounded-lg border border-sky-800">{promedioConAplazos}</span>
+                </div>
+                <button
+                  onClick={() => setShowShareModal(true)}
+                  className="w-full bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-sky-300" /> Tarjeta IG / WhatsApp
+                </button>
+              </div>
             </div>
 
-            {/* PODIO DE NOTAS (TOP 3) */}
+            {/* PODIO DE NOTAS Y FAVORITAS */}
             <div className="lg:col-span-3 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] uppercase tracking-wider font-black text-slate-700 flex items-center gap-1.5">
-                  <Trophy className="w-4 h-4 text-amber-500" /> Podio de Notas (Top 3)
+                  <Trophy className="w-4 h-4 text-amber-500" /> Podio de Notas
                 </span>
                 <span className="text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Star className="w-3 h-3 fill-amber-400 text-amber-500" /> {favoritasCount} favs
                 </span>
               </div>
 
-              <div className="space-y-2">
-                {podioTop3.length === 0 ? (
-                  <p className="text-xs text-slate-400 text-center py-4">Aún no hay notas cargadas</p>
-                ) : (
-                  podioTop3.map((item, idx) => {
-                    const medallas = ['🥇', '🥈', '🥉'];
-                    const coloresBorde = ['border-amber-300 bg-amber-50/50', 'border-slate-300 bg-slate-50', 'border-amber-700/30 bg-amber-950/5'];
-                    return (
-                      <div key={idx} className={`border rounded-xl p-2 flex items-center justify-between gap-2 ${coloresBorde[idx]}`}>
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <span className="text-sm shrink-0">{medallas[idx]}</span>
-                          <p className="text-[11px] font-bold text-slate-800 truncate" title={item.name}>{item.name}</p>
-                        </div>
-                        <span className="text-xs font-black px-2 py-0.5 bg-white rounded-md border shadow-2xs shrink-0 text-slate-900">
-                          {item.nota}
-                        </span>
-                      </div>
-                    );
-                  })
-                )}
+              <div className="space-y-2.5">
+                {/* Mayor Nota */}
+                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase text-emerald-800">Mayor Nota</span>
+                    <span className="text-sm font-black text-emerald-700 bg-white px-2 py-0.5 rounded-md border border-emerald-200">
+                      {highestMateria ? highestMateria.nota : '-'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-800 truncate mt-1" title={highestMateria?.name || ''}>
+                    {highestMateria ? highestMateria.name : 'Sin notas aún'}
+                  </p>
+                </div>
+
+                {/* Menor Nota */}
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase text-slate-600 flex items-center gap-1">
+                      <TrendingDown className="w-3 h-3 text-slate-400" /> Menor Nota
+                    </span>
+                    <span className="text-sm font-black text-slate-700 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                      {lowestMateria ? lowestMateria.nota : '-'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-700 truncate mt-1" title={lowestMateria?.name || ''}>
+                    {lowestMateria ? lowestMateria.name : 'Sin notas aún'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
+          {/* PESTAÑAS DE BLOQUES DE AVANCE + FILTRO FAVORITAS */}
           <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 border-b border-slate-200">
             <div className="flex items-center gap-2">
-              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cbc'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cbc' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CBC</button>
-              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfg'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfg' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CFG</button>
-              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfo'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfo' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CFO</button>
-              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('idiomas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Idiomas</button>
-              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('electivas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'electivas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Electivas / Seminarios</button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cbc'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cbc' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> CBC
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfg'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfg' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> {selectedPlan === '1985' ? 'Básicas (CFG)' : 'CFG'}
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfo'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfo' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> CFO
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('idiomas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> Idiomas
+              </button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('electivas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'electivas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                <Layers className="w-4 h-4 text-sky-600" /> Electivas / Seminarios
+              </button>
+              {selectedPlan === '2023' && (includeProfesorado || selectedOrientation === 'profesorado') && (
+                <button onClick={() => { setOnlyFavorites(false); setActiveBlock('profesorado'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'profesorado' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                  <Layers className="w-4 h-4 text-sky-600" /> Profesorado
+                </button>
+              )}
             </div>
-            <button onClick={() => setOnlyFavorites(prev => !prev)} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 border ${onlyFavorites ? 'bg-amber-400 text-amber-950 border-amber-500 shadow-sm' : 'bg-amber-50 text-amber-900 border-amber-200'}`}>
-              <Star className={`w-3.5 h-3.5 ${onlyFavorites ? 'fill-amber-950' : 'fill-amber-400 text-amber-500'}`} /> Mis Favoritas ({favoritasCount})
+
+            <button
+              onClick={() => setOnlyFavorites(prev => !prev)}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 border ${onlyFavorites ? 'bg-amber-400 text-amber-950 border-amber-500 shadow-sm' : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100'}`}
+            >
+              <Star className={`w-3.5 h-3.5 ${onlyFavorites ? 'fill-amber-950' : 'fill-amber-400 text-amber-500'}`} />
+              Mis Favoritas ({favoritasCount})
             </button>
           </div>
 
+          {/* LISTADO DE MATERIAS DEL BLOQUE */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
               <h2 className="text-base font-bold flex items-center gap-2 uppercase tracking-wide">
-                {onlyFavorites ? <><Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Materias Favoritas</> : <><BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock.toUpperCase()}</>}
+                {onlyFavorites ? (
+                  <><Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Materias Favoritas</>
+                ) : (
+                  <><BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock.toUpperCase()}</>
+                )}
               </h2>
-              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">{currentBlockMaterias.length} materias</span>
+              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">
+                {currentBlockMaterias.length} materias
+              </span>
             </div>
 
-            <div className="divide-y divide-slate-100">
-              {currentBlockMaterias.map((m) => {
-                const st = studentData[selectedPlan]?.[m.id] || { estado: 'pendiente', nota: '', favorita: false };
-                const esFavorita = Boolean(st.favorita);
-                return (
-                  <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="space-y-1.5 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">{m.etapa}</span>
+            {currentBlockMaterias.length === 0 ? (
+              <div className="p-10 text-center space-y-2">
+                <p className="text-sm font-bold text-slate-700">No hay materias en esta vista.</p>
+                {onlyFavorites && (
+                  <p className="text-xs text-slate-500">Haz clic en la estrella (★) junto al nombre de cualquier materia para agregarla a tus favoritas.</p>
+                )}
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {currentBlockMaterias.map((m) => {
+                  const st = studentData[selectedPlan]?.[m.id] || { 
+                    estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
+                    comision: '', anioCursada: '', cuatrimestreCursada: '',
+                    docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
+                    parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
+                    favorita: false
+                  };
+
+                  const regimenActual = st.regimen || (m.regimen === 'final' ? 'final' : 'promocion');
+                  const esPromocional = regimenActual === 'promocion';
+                  const esFavorita = Boolean(st.favorita);
+                  
+                  return (
+                    <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50/80 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">{m.etapa}</span>
+                          
+                          <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
+                            {esPromocional ? '✨ Promocional' : '📝 Final Obligatorio'}
+                          </span>
+
+                          {m.correlativa && (
+                            <span className="text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3 text-amber-500" /> Req: {m.correlativa}
+                            </span>
+                          )}
+                          {(st.comision || st.anioCursada || st.cuatrimestreCursada) && (
+                            <span className="text-[10px] text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
+                              {st.cuatrimestreCursada || 'Cursada'} {st.anioCursada || ''} • Com. {st.comision || '-'}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)}
+                            className="p-1 rounded-lg hover:bg-amber-50 transition"
+                            title={esFavorita ? 'Quitar de favoritas' : 'Marcar como materia favorita'}
+                          >
+                            <Star className={`w-5 h-5 transition ${esFavorita ? 'fill-amber-400 text-amber-500 scale-110' : 'text-slate-300 hover:text-amber-400'}`} />
+                          </button>
+
+                          <h3 className="font-bold text-slate-800 text-base">
+                            {st.customName ? `${m.name}: ${st.customName}` : m.name}
+                          </h3>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2.5 flex-wrap">
-                        <button type="button" onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)} className="p-1 rounded-lg hover:bg-amber-50 transition">
-                          <Star className={`w-5 h-5 transition ${esFavorita ? 'fill-amber-400 text-amber-500 scale-110' : 'text-slate-300'}`} />
+
+                      <div className="flex items-center gap-3 flex-wrap justify-end">
+                        <button
+                          onClick={() => setActiveDetailMateria(m)}
+                          className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 transition"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta / Elegir Opción
                         </button>
-                        <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
+
+                        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'pendiente')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'pendiente' || !st.estado ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Pend.</button>
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'cursando')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'cursando' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-500'}`}>Curs.</button>
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
+                          <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
+                        </div>
+
+                        {st.estado === 'aprobada' && (
+                          <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-xl">
+                            <span className="text-[10px] font-bold text-emerald-700 uppercase">Nota:</span>
+                            <input
+                              type="number" min="4" max="10" placeholder="4-10"
+                              value={st.nota || ''}
+                              onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)}
+                              className="w-10 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-0.5 outline-none"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-1 rounded-xl" title="Cantidad de aplazos">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase">Apl:</span>
+                          <input
+                            type="number" min="0" max="5"
+                            value={st.aplazos || '0'}
+                            onChange={(e) => handleUpdateMateria(m.id, 'aplazos', e.target.value)}
+                            className="w-8 text-center bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-md py-0.5 outline-none"
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 flex-wrap justify-end">
-                      {m.esCustomSeminario && (
-                        <button onClick={() => handleEliminarSeminarioPersonalizado(m.id)} className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition"><Trash2 className="w-4 h-4" /></button>
-                      )}
-                      <button onClick={() => setActiveDetailMateria(m)} className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                        <FileText className="w-3.5 h-3.5 text-sky-600" /> Libreta
-                      </button>
-                      <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-                        <button onClick={() => handleUpdateMateria(m.id, 'estado', 'pendiente')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'pendiente' || !st.estado ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Pend.</button>
-                        <button onClick={() => handleUpdateMateria(m.id, 'estado', 'cursando')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'cursando' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-500'}`}>Curs.</button>
-                        <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
-                        <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
-                      </div>
-                      {st.estado === 'aprobada' && (
-                        <input type="number" min="0" max="10" placeholder="Nota" value={st.nota || ''} onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)} className="w-12 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-1" />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </main>
       </div>
 
+      {/* PIE DE PÁGINA CON COLABORACIÓN */}
       <footer className="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-        <p>Diseñado en estado de <strong>liminidad académica</strong> para Ciencias Antropológicas · FFyL UBA.</p>
-        <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-2 bg-white hover:bg-sky-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold transition">
-          <Coffee className="w-4 h-4 text-sky-600" /> Invitame un mate 🧉
+        <p>Diseñado en estado de liminidad académica para la comunidad de <strong>Ciencias Antropológicas · FFyL UBA</strong>.</p>
+        <button
+          onClick={() => setShowDonateModal(true)}
+          className="flex items-center gap-2 bg-white hover:bg-sky-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold shadow-2xs transition"
+        >
+          <Coffee className="w-4 h-4 text-sky-600" /> ¿Te sirve el gestor? Invitame un mate 🧉
         </button>
       </footer>
 
-      {/* MODAL AVATAR CON IMÁGENES LOCALES */}
-      {showAvatarModal && (
-        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Camera className="w-4 h-4 text-sky-600" /> Elegí tu Antropólogo/a Histórico/a</h3>
-              <button onClick={() => setShowAvatarModal(false)} className="text-slate-400 font-bold text-xl">×</button>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-1">
-              {AVATARES_ANTROPOLOGIA.map((av) => {
-                const esSeleccionado = avatarActual?.id === av.id;
-                return (
-                  <div key={av.id} onClick={() => handleCambiarAvatar(av)} className={`cursor-pointer rounded-2xl p-3 border text-center transition flex flex-col items-center justify-between space-y-2 ${esSeleccionado ? 'bg-sky-50 border-sky-500 shadow-md ring-2 ring-sky-400' : 'bg-slate-50 border-slate-200'}`}>
-                    <div className="relative">
-                      <img src={av.img} alt={av.nombre} className="w-16 h-16 rounded-full object-cover shadow-md border-2 border-white" />
-                      <span className="absolute -bottom-1 -right-1 text-sm bg-white rounded-full px-1">{av.emoji}</span>
-                    </div>
-                    <div>
-                      <p className="font-bold text-slate-800 text-xs">{av.nombre}</p>
-                      <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">{av.rol}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* MODAL COLABORACIÓN / MERCADO PAGO */}
       {showDonateModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 text-center">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puanense 🧉</h3>
-              <button onClick={() => setShowDonateModal(false)} className="text-slate-400 font-bold text-xl">×</button>
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner 🧉
+              </h3>
+              <button onClick={() => setShowDonateModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
-            <p className="text-xs text-slate-600">Si el gestor te resulta útil para organizar tu cursada y querés apoyar el proyecto con un mate virtual, ¡muchas gracias! 💙</p>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gestor te resulta útil para organizar tu cursada y querés apoyar el proyecto con un mate virtual, ¡muchas gracias! 💙
+            </p>
+
+            {/* Alias con botón de copiado rápido */}
             <div className="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-sky-900 block">Alias de Mercado Pago:</span>
-              <div className="flex items-center justify-between bg-white border border-sky-300 rounded-xl px-3.5 py-2.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-sky-900 block">
+                Alias de Mercado Pago:
+              </span>
+              <div className="flex items-center justify-between bg-white border border-sky-300 rounded-xl px-3.5 py-2.5 shadow-2xs">
                 <span className="text-sm font-black text-slate-800 select-all">{MP_ALIAS}</span>
-                <button type="button" onClick={handleCopyAlias} className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg ${copiedAlias ? 'bg-emerald-600 text-white' : 'bg-sky-600 text-white'}`}>
+                <button
+                  type="button"
+                  onClick={handleCopyAlias}
+                  className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition ${copiedAlias ? 'bg-emerald-600 text-white' : 'bg-sky-600 hover:bg-sky-700 text-white'}`}
+                >
                   {copiedAlias ? <><Check className="w-3.5 h-3.5" /> ¡Copiado!</> : <><Copy className="w-3.5 h-3.5" /> Copiar</>}
                 </button>
               </div>
             </div>
-            <button onClick={() => setShowDonateModal(false)} className="w-full bg-slate-900 text-white text-xs font-bold py-2.5 rounded-xl">Cerrar</button>
+
+            <button
+              onClick={() => setShowDonateModal(false)}
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl transition"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
 
-      {/* MODAL DE HISTORIA CON BOTÓN PARA CAMBIAR FRASE */}
+      {/* MODAL COMPARTIR HISTORIA IG / WHATSAPP */}
       {showShareModal && (
         <div className="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4 max-h-[95vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Sparkles className="w-4 h-4 text-sky-600" /> Historia de Avance</h3>
-              <button onClick={() => setShowShareModal(false)} className="text-slate-400 font-bold text-xl">×</button>
+              <div>
+                <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-sky-600" /> Historia de Avance
+                </h3>
+                <p className="text-[11px] text-slate-500">Formato vertical listo para Instagram o WhatsApp</p>
+              </div>
+              <button onClick={() => setShowShareModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
-            <div className="flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200 relative">
-              <canvas ref={canvasRef} width={1080} height={1920} className="w-56 h-auto rounded-xl shadow-lg border border-slate-300" />
+
+            <div className="flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200">
+              <canvas
+                ref={canvasRef}
+                width={1080}
+                height={1920}
+                className="w-56 h-auto rounded-xl shadow-lg border border-slate-300"
+              />
             </div>
-            <div className="flex items-center justify-between gap-2">
-              <button type="button" onClick={() => setQuoteIndex(prev => prev + 1)} className="flex items-center justify-center gap-1.5 bg-sky-100 hover:bg-sky-200 text-sky-900 text-xs font-bold py-3 px-3 rounded-xl transition border border-sky-300" title="Cambiar frase">
-                <RefreshCw className="w-4 h-4 text-sky-700" /> Cambiar frase
-              </button>
-              <button type="button" onClick={handleDownloadStory} className="flex-1 flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl transition">
+
+            <div className="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase text-sky-900">Frase motivacional:</span>
+                <button
+                  type="button"
+                  onClick={() => setQuoteIndex(prev => prev + 1)}
+                  className="flex items-center gap-1 text-[11px] font-bold text-sky-700 hover:text-sky-950 bg-white px-2.5 py-1 rounded-lg border border-sky-200 shadow-2xs transition"
+                >
+                  <RefreshCw className="w-3 h-3" /> Cambiar frase
+                </button>
+              </div>
+              <p className="text-xs text-slate-700 font-medium italic">"{currentQuote}"</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={handleDownloadStory}
+                className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl shadow-sm transition"
+              >
                 <Download className="w-4 h-4" /> Descargar PNG
               </button>
-              <button type="button" onClick={handleNativeShare} className="flex-1 flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold py-3 rounded-xl transition">
-                <Share2 className="w-4 h-4" /> Compartir
+              <button
+                type="button"
+                onClick={handleNativeShare}
+                className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-bold py-3 rounded-xl shadow-sm transition"
+              >
+                <Share2 className="w-4 h-4" /> Compartir Ahora
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* MODAL DETALLE DE MATERIA (LIBRETA ORIGINAL CON PARCIALES, PROFES, COMISIONES Y DATOS COMPLETOS) */}
+      {/* MODAL DETALLES DE CURSADA (RESTAURADO EXACTO A TU VERSIÓN ORIGINAL) */}
       {activeDetailMateria && (() => {
         const mat = activeDetailMateria;
         const st = studentData[selectedPlan]?.[mat.id] || {};
+        const regimenActual = st.regimen || (mat.regimen === 'final' ? 'final' : 'promocion');
+        const esPromocional = regimenActual === 'promocion';
+
+        const esCBC = activeBlock === 'cbc';
+        const esIdioma = activeBlock === 'idiomas';
+        const esElectiva = activeBlock === 'electivas';
+
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b pb-3">
                 <div>
-                  <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900">{mat.etapa}</span>
-                  <h3 className="text-base font-black text-slate-900 mt-1">{mat.name}</h3>
+                  <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
+                  <p className="text-[10px] text-slate-500">Configuración, selección de cátedra y notas</p>
                 </div>
-                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
+                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
               </div>
 
-              <div className="space-y-4">
-                {/* Cuatrimestre y Año de Cursada */}
-                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              {esIdioma && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Idioma:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Elija el idioma --</option>
+                    <option value="Inglés">Inglés</option>
+                    <option value="Portugués">Portugués</option>
+                    <option value="Francés">Francés</option>
+                    <option value="Italiano">Italiano</option>
+                    <option value="Alemán">Alemán</option>
+                    <option value="Quechua">Quechua</option>
+                    <option value="Guaraní">Guaraní</option>
+                  </select>
+                </div>
+              )}
+
+              {esCBC && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Especifique materia / cátedra del CBC:</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Sociedad y Estado (Cátedra A)"
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                  />
+                </div>
+              )}
+
+              {esElectiva && (
+                <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar de la oferta disponible --</option>
+                    {seminariosOferta.map(sem => (
+                      <option key={sem.id} value={`${sem.nombre} (${sem.docente})`}>
+                        {sem.nombre} - {sem.docente} ({sem.tipo})
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[10px] text-sky-800">También puede escribir un seminario personalizado:</p>
+                  <input
+                    type="text"
+                    placeholder="O escriba el nombre del seminario electivo..."
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200">
+                <label className="text-xs font-bold uppercase text-slate-800 block">Régimen de la Materia:</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'promocion')}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${esPromocional ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                  >
+                    ✨ Promocional
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'final')}
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${!esPromocional ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                  >
+                    📝 Examen Final Obligatorio
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><Users className="w-4 h-4 text-sky-600" /> Periodo y Cursada</h4>
+                <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Año de Cursada</label>
-                    <input type="text" placeholder="Ej. 2026" value={st.anioCursada || ''} onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Año</span>
+                    <select
+                      value={st.anioCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Año --</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                    </select>
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Cuatrimestre</label>
-                    <select value={st.cuatrimestreCursada || ''} onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 font-semibold">
-                      <option value="">Seleccionar...</option>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Cuatrimestre</span>
+                    <select
+                      value={st.cuatrimestreCursada || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Período --</option>
                       <option value="1° Cuatrimestre">1° Cuatrimestre</option>
                       <option value="2° Cuatrimestre">2° Cuatrimestre</option>
-                      <option value="Curso de Verano">Curso de Verano</option>
-                      <option value="Curso de Invierno">Curso de Invierno</option>
+                      <option value="Verano">Verano</option>
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-600 block mb-1">Comisión</span>
+                    <select
+                      value={st.comision || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Com --</option>
+                      <option value="1">Com 1</option>
+                      <option value="2">Com 2</option>
+                      <option value="3">Com 3</option>
+                      <option value="4">Com 4</option>
+                      <option value="5">Com 5</option>
+                      <option value="6">Com 6</option>
                     </select>
                   </div>
                 </div>
 
-                {/* Régimen de aprobación y Comisión */}
-                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Régimen</label>
-                    <select value={st.regimen || 'promocion'} onChange={(e) => handleUpdateMateria(mat.id, 'regimen', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800">
-                      <option value="promocion">Promoción Directa</option>
-                      <option value="regular">Examen Final (Regular)</option>
-                      <option value="libre">Examen Libre</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Comisión / Turno</label>
-                    <input type="text" placeholder="Ej. Cátedra A / Mañana" value={st.comision || ''} onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                  </div>
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  <input type="text" placeholder="Profesor Teórico" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                  <input type="email" placeholder="Correo Teórico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
                 </div>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <input type="text" placeholder="Profesor Práctico" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                  <input type="email" placeholder="Correo Práctico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                </div>
+              </div>
 
-                {/* Notas de Parciales e Intentos de Final */}
-                <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <h4 className="text-[11px] font-black uppercase text-slate-700 tracking-wider">Notas de Parciales e Intentos de Final</h4>
-                  <div className="grid grid-cols-3 gap-2.5">
-                    <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 1</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
+              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
+                
+                {esPromocional ? (
+                  <div>
+                    <p className="text-[10px] text-slate-500 mb-2">Ingrese las notas de los parciales para promediar automáticamente (Promedio &ge; 7 aprueba directo):</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">3ro / Recup</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 2</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 3 / Recup</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2.5 pt-2 border-t border-slate-200">
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-800 block mb-1">1° Examen Final</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-800 block mb-1">2° Examen Final</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-800 block mb-1">3° Examen Final</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
+                    <div className="pt-2 border-t border-slate-200 mt-2">
+                      <span className="text-[10px] font-bold text-sky-900 block mb-1">Nota de Examen Final (Solo si fue a final)</span>
+                      <input type="number" min="4" max="10" placeholder="Final (opcional)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-sky-50 border border-sky-300 rounded-lg p-2 text-xs text-center font-bold text-sky-950" />
                     </div>
                   </div>
-                </div>
-
-                {/* Docentes y Contacto */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase text-slate-500 block">Docente Teórico</label>
-                    <input type="text" placeholder="Nombre del profesor/a" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                    <input type="email" placeholder="Correo electrónico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-[10px] text-slate-500">Ingrese las notas de regularidad (1° y 2° parcial) y la nota del examen final:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">1er Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-600 block mb-1">2do Parcial</span>
+                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                    </div>
+                    <div className="pt-1 border-t border-slate-200">
+                      <span className="text-[10px] font-bold text-amber-700 block mb-1">Nota de Examen Final</span>
+                      <input type="number" min="4" max="10" placeholder="Nota Final (4 a 10)" value={st.notaFinal || ''} onChange={(e) => handleUpdateMateria(mat.id, 'notaFinal', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-900" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase text-slate-500 block">Docente Práctico (JTP)</label>
-                    <input type="text" placeholder="Nombre del JTP / Ayudante" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                    <input type="email" placeholder="Correo electrónico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                  </div>
-                </div>
+                )}
               </div>
 
               <div className="flex justify-end pt-2">
-                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow-md">
-                  Guardar y Cerrar
-                </button>
+                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl">Guardar y Cerrar</button>
               </div>
             </div>
           </div>
         );
       })()}
 
+      {/* MODAL GESTOR DE SEMINARIOS */}
       {showSeminarioModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Seminarios (2C 2026)</h3>
-              <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 font-bold text-lg">×</button>
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Oferta de Seminarios
+              </h3>
+              <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-lg">×</button>
             </div>
-            <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+
+            <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 className="text-xs font-bold uppercase text-slate-700">Nuevo Seminario</h4>
+              <input
+                type="text"
+                placeholder="Nombre del seminario..."
+                value={nuevoSeminarioNombre}
+                onChange={(e) => setNuevoSeminarioNombre(e.target.value)}
+                className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Docente / Cátedra..."
+                  value={nuevoSeminarioDocente}
+                  onChange={(e) => setNuevoSeminarioDocente(e.target.value)}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                />
+                <select
+                  value={nuevoSeminarioTipo}
+                  onChange={(e) => setNuevoSeminarioTipo(e.target.value)}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
+                >
+                  <option value="sociocultural">Orientación Sociocultural</option>
+                  <option value="arqueologia">Orientación Arqueología</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  if (nuevoSeminarioNombre.trim()) {
+                    const nuevos = [...seminariosOferta, {
+                      id: 'sem-' + Date.now(),
+                      tipo: nuevoSeminarioTipo,
+                      nombre: nuevoSeminarioNombre,
+                      docente: nuevoSeminarioDocente || 'Docente a confirmar',
+                      cuatrimestre: '1C 2026'
+                    }];
+                    setSeminariosOferta(nuevos);
+                    guardarDatosNube(studentData, nuevos);
+                    setNuevoSeminarioNombre('');
+                    setNuevoSeminarioDocente('');
+                  }
+                }}
+                className="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-2 rounded-lg transition"
+              >
+                + Añadir al catálogo
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              <h4 className="text-xs font-bold uppercase text-slate-500">Seminarios Disponibles</h4>
               {seminariosOferta.map(s => (
-                <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
-                  <div className="space-y-1 flex-1">
-                    <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{s.tipo.toUpperCase()}</span>
-                    <p className="font-bold text-slate-800 text-xs mt-1">{s.nombre}</p>
-                    <p className="text-[11px] text-slate-500">{s.docente}</p>
+                <div key={s.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
+                  <div>
+                    <p className="font-bold text-slate-800">{s.nombre}</p>
+                    <p className="text-[10px] text-slate-500">{s.docente} • {s.tipo.toUpperCase()}</p>
                   </div>
-                  <button onClick={() => { handleAgregarSeminarioAElectivas(s); setShowSeminarioModal(false); setActiveBlock('electivas'); }} className="flex items-center justify-center gap-1.5 bg-sky-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                    <Plus className="w-4 h-4" /> Agregar a mis Electivas
+                  <button
+                    onClick={() => {
+                      const filtrados = seminariosOferta.filter(item => item.id !== s.id);
+                      setSeminariosOferta(filtrados);
+                      guardarDatosNube(studentData, filtrados);
+                    }}
+                    className="text-slate-400 hover:text-red-600 p-1"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
             </div>
-            <div className="flex justify-end"><button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button></div>
+
+            <div className="flex justify-end pt-2">
+              <button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button>
+            </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
