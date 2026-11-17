@@ -804,7 +804,7 @@ export default function App() {
                 
                 <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio no te define, tranquilx. Esto es solo un número para organizarte 💙</span>
+                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay.</span>
                 </div>
               </div>
 
@@ -955,7 +955,7 @@ export default function App() {
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner 🧉</h3>
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner</h3>
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 font-bold text-xl">×</button>
             </div>
             <p className="text-xs text-slate-600">
