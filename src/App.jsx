@@ -808,7 +808,7 @@ export default function App() {
                 
                 <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio contempla notas de aprobación y aplazos previos de exámenes finales según código UBA.</span>
+                  <span>El promedio no te define, tranquilx. Esto es solo un número para organizarte 💙</span>
                 </div>
               </div>
 
@@ -1194,7 +1194,7 @@ export default function App() {
                   {logroPromocion && (
                     <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
                       <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>¡Materia promocionada con éxito (promedio ≥ 7)! Exámenes finales deshabilitados.</span>
+                      <span>¡Materia promocionada con éxito (promedio ≥ 7)! Zafaste del final.</span>
                     </div>
                   )}
                 </div>
