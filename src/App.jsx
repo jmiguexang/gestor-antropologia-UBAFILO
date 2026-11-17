@@ -32,7 +32,6 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
 ];
 
-// AVATARES LOCALES (CARPETA PUBLIC/AVATARES)
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -87,7 +86,7 @@ export default function App() {
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   
   const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [avatarActual, setAvatarActual] = useState(AVATARES_ANTROPOLOGIA[4]); // Lévi-Strauss por defecto
+  const [avatarActual, setAvatarActual] = useState(AVATARES_ANTROPOLOGIA[4]);
 
   const [toastMessage, setToastMessage] = useState(null);
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
@@ -117,10 +116,7 @@ export default function App() {
 
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
-        
-        if (data.avatar) {
-          setAvatarActual(data.avatar);
-        }
+        if (data.avatar) setAvatarActual(data.avatar);
       } else {
         setStudentData({ '2023': {}, '1985': {} });
       }
@@ -183,12 +179,12 @@ export default function App() {
       return updated;
     });
 
-    setToastMessage("¡Tu seminario elegido ya se agregó a la pestaña electivas/seminarios!");
+    setToastMessage("¡Seminario agregado a tus electivas!");
     setTimeout(() => setToastMessage(null), 4000);
   };
 
   const handleEliminarSeminarioPersonalizado = (id) => {
-    const confirmar = window.confirm("¿Estás seguro que querés eliminar el seminario que elegiste?");
+    const confirmar = window.confirm("¿Estás seguro que querés eliminar este seminario?");
     if (!confirmar) return;
 
     setStudentData(prev => {
@@ -204,14 +200,6 @@ export default function App() {
     });
   };
 
-  const parseNota10 = (val) => {
-    if (val === '' || val === null || isNaN(val)) return '';
-    const num = parseFloat(val);
-    if (num < 0) return '0';
-    if (num > 10) return '10';
-    return val;
-  };
-
   const handleUpdateMateria = (id, field, value) => {
     setStudentData(prev => {
       const planState = prev[selectedPlan] || {};
@@ -219,56 +207,41 @@ export default function App() {
         estado: 'pendiente', nota: '', aplazos: '0', regimen: 'promocion', 
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
-        parcial1: '', parcial2: '', parcial3: '', 
-        final1: '', final2: '', final3: '',
-        customName: '', favorita: false
+        parcial1: '', parcial2: '', parcial3: '', notaFinal: '', customName: '',
+        favorita: false
       };
 
-      let valClean = value;
-      if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'nota'].includes(field)) {
-        valClean = parseNota10(value);
-      }
+      let updatedMat = { ...matState, [field]: value };
 
-      let updatedMat = { ...matState, [field]: valClean };
-
-      if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'regimen'].includes(field)) {
+      if (['parcial1', 'parcial2', 'parcial3', 'notaFinal', 'regimen'].includes(field)) {
         const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
         const p1 = parseFloat(updatedMat.parcial1);
         const p2 = parseFloat(updatedMat.parcial2);
         const p3 = parseFloat(updatedMat.parcial3);
-
-        const f1 = parseFloat(updatedMat.final1);
-        const f2 = parseFloat(updatedMat.final2);
-        const f3 = parseFloat(updatedMat.final3);
-
-        let aplazosFinalesCount = 0;
-        [f1, f2, f3].forEach(f => {
-          if (!isNaN(f) && f < 4) aplazosFinalesCount++;
-        });
-
-        updatedMat.aplazos = Math.max(0, aplazosFinalesCount).toString();
+        const nFinal = parseFloat(updatedMat.notaFinal);
 
         if (reg === 'promocion') {
           const validas = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
           if (validas.length > 0) {
             const promParciales = validas.reduce((a, b) => a + b, 0) / validas.length;
-            const finalesRendidos = [f1, f2, f3].filter(n => !isNaN(n) && n >= 1);
-            if (finalesRendidos.length > 0) {
-              const promFinales = finalesRendidos.reduce((a, b) => a + b, 0) / finalesRendidos.length;
-              updatedMat.nota = Math.round((promParciales + promFinales) / 2).toString();
+            if (promParciales >= 7 && isNaN(nFinal)) {
+              updatedMat.nota = Math.round(promParciales).toString();
+            } else if (!isNaN(nFinal)) {
+              const notaFinalCalculada = Math.round((promParciales + nFinal) / 2);
+              updatedMat.nota = notaFinalCalculada.toString();
             } else {
               updatedMat.nota = Math.round(promParciales).toString();
             }
           }
         } else {
-          const finalesRendidos = [f1, f2, f3].filter(n => !isNaN(n) && n >= 1);
-          if (finalesRendidos.length > 0) {
-            const promFinales = finalesRendidos.reduce((a, b) => a + b, 0) / finalesRendidos.length;
-            updatedMat.nota = Math.round(promFinales).toString();
-          } else {
-            const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
-            if (notasReg.length > 0) {
-              updatedMat.nota = Math.round(notasReg.reduce((a, b) => a + b, 0) / notasReg.length).toString();
+          const notasReg = [p1, p2].filter(n => !isNaN(n) && n >= 1);
+          if (notasReg.length > 0) {
+            const promReg = notasReg.reduce((a, b) => a + b, 0) / notasReg.length;
+            if (!isNaN(nFinal)) {
+              const notaFinalCalculada = Math.round((promReg + nFinal) / 2);
+              updatedMat.nota = notaFinalCalculada.toString();
+            } else {
+              updatedMat.nota = Math.round(promReg).toString();
             }
           }
         }
@@ -367,7 +340,6 @@ export default function App() {
 
   let sumNotas = 0;
   let countNotas = 0;
-
   let notasAprobadasList = [];
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
@@ -385,9 +357,7 @@ export default function App() {
       if (notaNum !== null && notaNum >= 4 && !esIdioma) {
         sumNotas += notaNum;
         countNotas++;
-
-        const displayName = st.customName ? `${m.name}: ${st.customName}` : m.name;
-        notasAprobadasList.push({ name: displayName, nota: notaNum });
+        notasAprobadasList.push({ name: st.customName ? `${m.name}: ${st.customName}` : m.name, nota: notaNum });
       }
     } else if (estado === 'regularizada') { regularizadasCount++; } 
     else if (estado === 'cursando') { cursandoCount++; } 
@@ -401,57 +371,45 @@ export default function App() {
   const totalMaterias = currentMateriasAll.length;
   const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
 
-  // 10 FRASES MOTIVACIONALES (QUOTES)
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
       return [
         `¡100% completado! Oficialmente en la meta del título de Antropología 🎓✨`,
         `Todo el esfuerzo de Puan valió la pena: 100% adentro. ¡A celebrar! 🥂🌿`,
-        `De Filo UBA al mundo: carrera terminada. ¡Lo lograste! 🏆🚀`,
-        `¡Título en mano! El ritual de pasaje más hermoso de Puan culminó con éxito 🎓🔥`,
-        `Cerrando esta etnografía vital con broche de oro. ¡Felicidades colega! 🌟📚`
+        `De Filo UBA al mundo: carrera terminada. ¡Lo lograste! 🏆🚀`
       ];
     }
     if (pct >= 70) {
       return [
         `¡Ya estás al ${pct}% de tu carrera! Falta poco, sigue así, ¡vamos que tú puedes! 🔥🎓`,
         `Huele a tesis: ${pct}% de la carrera aprobado. El último tirón es tuyo 📖🚀`,
-        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 💪✨`,
-        `El campo teórico está dominado al ${pct}%. ¡Ya casi cruzamos la meta puaner! ⛺🌟`,
-        `Cada vez más cerca de la tesina. ¡Ese ${pct}% demuestra tu aguante en Filo! ✊📚`
+        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 💪✨`
       ];
     }
     if (pct >= 50) {
       return [
         `¡Ya pasamos la mitad del camino (${pct}%)! El recorrido viene excelente 🚀📚`,
         `Mitad de carrera adentro (${pct}%). De acá en adelante, cada materia se disfruta el doble 🌿✨`,
-        `Cruzando el ${pct}% de Ciencias Antropológicas. ¡La base ya está súper firme! 💪🔥`,
-        `¡Mitad de trayecto superado! El espíritu de Puan nos impulsa a seguir adelante 🏛️💙`,
-        `Etnografiando cada cuatrimestre: ya logramos el ${pct}% de la carrera 📝🚀`
+        `Cruzando el ${pct}% de Ciencias Antropológicas. ¡La base ya está súper firme! 💪🔥`
       ];
     }
     if (pct >= 25) {
       return [
         `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada parcial suma un montón! 📝🔥`,
         `Construyendo el trayecto académico: ${pct}% completado. ¡A seguir con ese ritmo! 🌿📖`,
-        `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`,
-        `Las correlativas van cediendo paso a paso. ¡Ya llevamos el ${pct}%! 🌱💪`,
-        `Semestre a semestre armando el rompecabezas antropológico (${pct}%) 🧩📚`
+        `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`
       ];
     }
     return [
       `Arrancando el camino en Antropología: ya llevás el ${pct}% de la carrera 🌱📚`,
       `Recién empieza el viaje en Puan: ${pct}% completado. ¡A meterle con todo! ✨🚀`,
-      `Primeros pasos en la facultad: ${pct}% adentro. ¡Vamos por más! 💪🎓`,
-      `Iniciando el rito de iniciación en Filo UBA: ${pct}% y sumando 🧭📖`,
-      `Primeras lecturas, primeros teóricos: bienvenide al mundo antropológico (${pct}%) ☕🌿`
+      `Primeros pasos en la facultad: ${pct}% adentro. ¡Vamos por más! 💪🎓`
     ];
   };
 
   const quotesList = getMotivationalQuotes(porcentajeAvance);
   const currentQuote = quotesList[quoteIndex % quotesList.length];
 
-  // CANVAS DE COMPARTIR HISTORIA CON SALTO DE LÍNEA AUTOMÁTICO (TEXT WRAP)
   useEffect(() => {
     if (!showShareModal || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -557,7 +515,6 @@ export default function App() {
     ctx.fillText(`${aprobadasCount} / ${totalMaterias}`, W / 2 - 210, 1345);
     ctx.fillText(`${promedioSinAplazos}`, W / 2 + 210, 1345);
 
-    // FUNCIÓN DE SALTO DE LÍNEA AUTOMÁTICO (TEXT WRAP) PARA EL QUOTE
     ctx.fillStyle = '#B3EBF2';
     ctx.font = 'bold 38px sans-serif';
     ctx.textAlign = 'center';
@@ -580,11 +537,7 @@ export default function App() {
     }
     lines.push(line);
 
-    let startQuoteY = 1490;
-    if (lines.length > 1) {
-      startQuoteY = 1470;
-    }
-
+    let startQuoteY = lines.length > 1 ? 1470 : 1490;
     for (let k = 0; k < lines.length; k++) {
       ctx.fillText(lines[k], W / 2, startQuoteY + (k * 50));
     }
@@ -826,7 +779,6 @@ export default function App() {
               <DonutChart total={currentMateriasAll.length} aprobadas={aprobadasCount} regularizadas={regularizadasCount} cursando={cursandoCount} pendientes={pendientesCount} />
             </div>
 
-            {/* SECCIÓN PROMEDIO OPTIMIZADA CON MENOS ESPACIO Y PUNTO FINAL */}
             <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
               <div>
                 <div className="flex items-center justify-between mb-0.5">
@@ -834,13 +786,11 @@ export default function App() {
                   <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">{countNotas} notas</span>
                 </div>
                 
-                {/* Promedio con tamaño grande restaurado y optimizado */}
                 <div className="flex items-baseline gap-1.5 my-0.5">
                   <span className="text-6xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
                   <span className="text-base font-bold text-sky-300">/ 10</span>
                 </div>
                 
-                {/* Mensaje de salud mental con punto final y sin emoji sobrante */}
                 <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
                   <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay.</span>
@@ -852,7 +802,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* PODIO DE NOTAS (TOP 3) */}
             <div className="lg:col-span-3 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] uppercase tracking-wider font-black text-slate-700 flex items-center gap-1.5">
@@ -911,12 +860,18 @@ export default function App() {
             <div className="divide-y divide-slate-100">
               {currentBlockMaterias.map((m) => {
                 const st = studentData[selectedPlan]?.[m.id] || { estado: 'pendiente', nota: '', favorita: false };
+                const regimenActual = st.regimen || (m.regimen === 'final' ? 'final' : 'promocion');
+                const esPromocional = regimenActual === 'promocion';
                 const esFavorita = Boolean(st.favorita);
+
                 return (
                   <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1.5 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">{m.etapa}</span>
+                        <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
+                          {esPromocional ? '✨ Promocional' : '📝 Examen Final Obligatorio'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <button type="button" onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)} className="p-1 rounded-lg hover:bg-amber-50 transition">
@@ -957,7 +912,6 @@ export default function App() {
         </button>
       </footer>
 
-      {/* MODAL AVATAR CON IMÁGENES LOCALES */}
       {showAvatarModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
@@ -1008,7 +962,6 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL DE HISTORIA CON BOTÓN PARA CAMBIAR FRASE */}
       {showShareModal && (
         <div className="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto">
@@ -1022,151 +975,3 @@ export default function App() {
             <div className="flex items-center justify-between gap-2">
               <button type="button" onClick={() => setQuoteIndex(prev => prev + 1)} className="flex items-center justify-center gap-1.5 bg-sky-100 hover:bg-sky-200 text-sky-900 text-xs font-bold py-3 px-3 rounded-xl transition border border-sky-300" title="Cambiar frase">
                 <RefreshCw className="w-4 h-4 text-sky-700" /> Cambiar frase
-              </button>
-              <button type="button" onClick={handleDownloadStory} className="flex-1 flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl transition">
-                <Download className="w-4 h-4" /> Descargar PNG
-              </button>
-              <button type="button" onClick={handleNativeShare} className="flex-1 flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold py-3 rounded-xl transition">
-                <Share2 className="w-4 h-4" /> Compartir
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL DETALLE DE MATERIA (LIBRETA ORIGINAL CON PARCIALES, PROFES, COMISIONES Y DATOS COMPLETOS) */}
-      {activeDetailMateria && (() => {
-        const mat = activeDetailMateria;
-        const st = studentData[selectedPlan]?.[mat.id] || {};
-        return (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between border-b pb-3">
-                <div>
-                  <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900">{mat.etapa}</span>
-                  <h3 className="text-base font-black text-slate-900 mt-1">{mat.name}</h3>
-                </div>
-                <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
-              </div>
-
-              <div className="space-y-4">
-                {/* Cuatrimestre y Año de Cursada */}
-                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Año de Cursada</label>
-                    <input type="text" placeholder="Ej. 2026" value={st.anioCursada || ''} onChange={(e) => handleUpdateMateria(mat.id, 'anioCursada', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Cuatrimestre</label>
-                    <select value={st.cuatrimestreCursada || ''} onChange={(e) => handleUpdateMateria(mat.id, 'cuatrimestreCursada', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 font-semibold">
-                      <option value="">Seleccionar...</option>
-                      <option value="1° Cuatrimestre">1° Cuatrimestre</option>
-                      <option value="2° Cuatrimestre">2° Cuatrimestre</option>
-                      <option value="Curso de Verano">Curso de Verano</option>
-                      <option value="Curso de Invierno">Curso de Invierno</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Régimen de aprobación y Comisión */}
-                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Régimen</label>
-                    <select value={st.regimen || 'promocion'} onChange={(e) => handleUpdateMateria(mat.id, 'regimen', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800">
-                      <option value="promocion">Promoción Directa</option>
-                      <option value="regular">Examen Final (Regular)</option>
-                      <option value="libre">Examen Libre</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Comisión / Turno</label>
-                    <input type="text" placeholder="Ej. Cátedra A / Mañana" value={st.comision || ''} onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                  </div>
-                </div>
-
-                {/* Notas de Parciales e Intentos de Final */}
-                <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <h4 className="text-[11px] font-black uppercase text-slate-700 tracking-wider">Notas de Parciales e Intentos de Final</h4>
-                  <div className="grid grid-cols-3 gap-2.5">
-                    <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 1</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 2</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">Parcial 3 / Recup</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-center font-bold text-slate-800" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2.5 pt-2 border-t border-slate-200">
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-800 block mb-1">1° Examen Final</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-800 block mb-1">2° Examen Final</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-800 block mb-1">3° Examen Final</span>
-                      <input type="number" min="0" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50/80 border border-amber-300 rounded-xl p-2 text-xs text-center font-bold text-amber-950" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Docentes y Contacto */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase text-slate-500 block">Docente Teórico</label>
-                    <input type="text" placeholder="Nombre del profesor/a" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                    <input type="email" placeholder="Correo electrónico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase text-slate-500 block">Docente Práctico (JTP)</label>
-                    <input type="text" placeholder="Nombre del JTP / Ayudante" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                    <input type="email" placeholder="Correo electrónico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-2">
-                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow-md">
-                  Guardar y Cerrar
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {showSeminarioModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Seminarios (2C 2026)</h3>
-              <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 font-bold text-lg">×</button>
-            </div>
-            <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
-              {seminariosOferta.map(s => (
-                <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
-                  <div className="space-y-1 flex-1">
-                    <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{s.tipo.toUpperCase()}</span>
-                    <p className="font-bold text-slate-800 text-xs mt-1">{s.nombre}</p>
-                    <p className="text-[11px] text-slate-500">{s.docente}</p>
-                  </div>
-                  <button onClick={() => { handleAgregarSeminarioAElectivas(s); setShowSeminarioModal(false); setActiveBlock('electivas'); }} className="flex items-center justify-center gap-1.5 bg-sky-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                    <Plus className="w-4 h-4" /> Agregar a mis Electivas
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-end"><button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button></div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
