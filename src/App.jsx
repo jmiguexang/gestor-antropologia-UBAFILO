@@ -1086,18 +1086,18 @@ En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gesto
                 } else {
                   opcionesCatedras = [
                     'Cátedra Vargas',
-                    'Filosofía (042) - Beraldi',
-                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Pedrosa',
-                    'Introducción al Conocimiento de la Sociedad y el Estado (024) - Cátedra Denkberg',
-                    'Introducción al Pensamiento Científico (040) - Cátedra Buacar',
-                    'Introducción al Pensamiento Científico (040) - Cátedra Gimeno',
-                    'Introducción al Pensamiento Científico (040) - Cátedra Perot',
-                    'Economía (021) - Cátedra Di Pelino',
-                    'Economía (021) - Cátedra Miliá',
-                    'Psicología (015) - Cátedra Quattrocchi',
-                    'Psicología (015) - Cátedra Fiotti',
-                    'Semiología (043) - Verzero',
-                    'Sociología (014) - Bustos'
+                    'Cátedra Beraldi',
+                    'Cátedra Pedrosa',
+                    'Cátedra Denkberg',
+                    'Cátedra Buacar',
+                    'Cátedra Gimeno',
+                    'Cátedra Perot',
+                    'Cátedra Di Pelino',
+                    'Cátedra Miliá',
+                    'Cátedra Quattrocchi',
+                    'Cátedra Fiotti',
+                    'Cátedra Verzero',
+                    'Cátedra Bustos'
                   ];
                 }
 
