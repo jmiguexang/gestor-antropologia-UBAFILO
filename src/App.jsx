@@ -43,10 +43,32 @@ export default function App() {
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [copiedAlias, setCopiedAlias] = useState(false);
 
-  const [seminariosOferta, setSeminariosOferta] = useState([
-    { id: 'sem-1', tipo: 'sociocultural', nombre: 'Antropología de las emociones y los cuerpos', docente: 'Dr. Guber', cuatrimestre: '1C 2026' },
-    { id: 'sem-2', tipo: 'arqueologia', nombre: 'Arqueología pública y patrimonial en los Andes', docente: 'Dra. Endere', cuatrimestre: '1C 2026' }
+const [seminariosOferta, setSeminariosOferta] = useState([
+    // Orientación Sociocultural
+    { id: 'sem-1', tipo: 'sociocultural', nombre: 'Antropología Social (Antropología Rural y Antropología Social)', docente: 'Prof. Sebastián Valverde', cuatrimestre: '2C 2026' },
+    { id: 'sem-2', tipo: 'sociocultural', nombre: 'Reproducción social, desigualdades y digitalización en el mundo del trabajo', docente: 'Prof. Hernán Palermo y Prof. Verónica Casas', cuatrimestre: '2C 2026' },
+    { id: 'sem-3', tipo: 'sociocultural', nombre: 'Poder policial, burocracias penales y activismos', docente: 'Prof. María Victoria Pita y Prof. Florencia Corbelle', cuatrimestre: '2C 2026' },
+    { id: 'sem-4', tipo: 'sociocultural', nombre: 'Colonialidad, modernidad e imaginarios de nación', docente: 'Prof. Eduardo Luis Urbano', cuatrimestre: '2C 2026' },
+    { id: 'sem-5', tipo: 'sociocultural', nombre: 'Heterodoxias sociorreligiosas desde una perspectiva histórica y antropológica', docente: 'Prof. Pablo Wright', cuatrimestre: '2C 2026' },
+    { id: 'sem-6', tipo: 'sociocultural', nombre: 'Conflictividad penal juvenil: enfoques, métodos y estudios', docente: 'Prof. María Florencia Graziano y Federico Medina', cuatrimestre: '2C 2026' },
+    { id: 'sem-7', tipo: 'sociocultural', nombre: 'Antropología y economía política: poder, trabajo y ambiente', docente: 'Prof. Santiago Sorroche', cuatrimestre: '2C 2026' },
+
+    // Ambas Orientaciones
+    { id: 'sem-8', tipo: 'sociocultural', nombre: 'Comunicar la antropología', docente: 'Prof. Marisol Garcia y Prof. Roberta Aller', cuatrimestre: '2C 2026' },
+    { id: 'sem-9', tipo: 'arqueologia', nombre: 'Cambio climático, transdisciplina y adaptación basada en ecosistemas', docente: 'Prof. Constanza Riera y Prof. Paula Beatriz Martin', cuatrimestre: '2C 2026' },
+    { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: Las empresas autogestionadas frente al pluriempleo y el capitalismo de plataformas', docente: 'Prof. Andres Eduardo Ruggeri y Prof. Natalia Polti', cuatrimestre: '2C 2026' },
+
+    // Orientación Arqueológica
+    { id: 'sem-11', tipo: 'arqueologia', nombre: 'Teoría, interdisciplinariedad y debates contemporáneos en arqueología histórica', docente: 'Prof. María Jimena Cruz y Melisa Salerno', cuatrimestre: '2C 2026' },
+    { id: 'sem-12', tipo: 'arqueologia', nombre: 'La cultura bajo una nueva perspectiva evolutiva', docente: 'Prof. Viviana Scheinsohn', cuatrimestre: '2C 2026' },
+
+    // Otros Departamentos (PST)
+    { id: 'sem-13', tipo: 'sociocultural', nombre: 'PST: Producción y gestión de proyectos culturales en Filo', docente: 'Prof. Victoria Julia Lencina (Artes)', cuatrimestre: '2C 2026' },
+    { id: 'sem-14', tipo: 'sociocultural', nombre: 'PST: Diálogos entre arte y educación en el Museo Etnográfico', docente: 'Prof. Mariana Luterstein y Prof. María Eugenia Lanza (Artes)', cuatrimestre: '2C 2026' },
+    { id: 'sem-15', tipo: 'sociocultural', nombre: 'PST: Construcción de un espacio de recreación educativa para las infancias en el CIDAC', docente: 'Prof. Anahi Guelman y Prof. Mariel Karolonski (Cs. de la Educación)', cuatrimestre: '2C 2026' },
+    { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: Saberes y experiencias ambientales en diálogos comunitarios (Cooperativa Recuperadores Urbanos del Oeste)', docente: 'Prof. María Inés Carabajal y Prof. Lia Inés Bachman (Geografía)', cuatrimestre: '2C 2026' }
   ]);
+  
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   const [nuevoSeminarioNombre, setNuevoSeminarioNombre] = useState('');
   const [nuevoSeminarioDocente, setNuevoSeminarioDocente] = useState('');
