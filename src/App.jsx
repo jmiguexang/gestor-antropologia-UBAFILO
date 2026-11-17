@@ -582,7 +582,7 @@ export default function App() {
 
     let startQuoteY = 1490;
     if (lines.length > 1) {
-      startQuoteY = 1470; // Subir un poquito si ocupa 2 líneas para centrar perfecto
+      startQuoteY = 1470;
     }
 
     for (let k = 0; k < lines.length; k++) {
@@ -826,28 +826,28 @@ export default function App() {
               <DonutChart total={currentMateriasAll.length} aprobadas={aprobadasCount} regularizadas={regularizadasCount} cursando={cursandoCount} pendientes={pendientesCount} />
             </div>
 
-            {/* SECCIÓN PROMEDIO Y MENSAJE DE SALUD MENTAL AJUSTADO */}
+            {/* SECCIÓN PROMEDIO OPTIMIZADA CON MENOS ESPACIO Y PUNTO FINAL */}
             <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
               <div>
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-0.5">
                   <span className="text-[11px] uppercase tracking-wider text-sky-300 font-bold flex items-center gap-1.5"><Award className="w-4 h-4 text-sky-400" /> Promedio UBA</span>
                   <span className="bg-sky-800/80 text-sky-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">{countNotas} notas</span>
                 </div>
                 
-                {/* Tamaño de fuente del promedio restaurado a grande */}
-                <div className="flex items-baseline gap-1.5 my-1">
-                  <span className="text-5xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
-                  <span className="text-lg font-bold text-sky-300">/ 10</span>
+                {/* Promedio con tamaño grande restaurado y optimizado */}
+                <div className="flex items-baseline gap-1.5 my-0.5">
+                  <span className="text-6xl font-black tracking-tight text-white">{promedioSinAplazos}</span>
+                  <span className="text-base font-bold text-sky-300">/ 10</span>
                 </div>
                 
-                {/* Mensaje de salud mental optimizado y corto, sin emoji final */}
-                <div className="mt-2 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2.5 text-[10.5px] text-sky-100 leading-snug flex items-start gap-2">
+                {/* Mensaje de salud mental con punto final y sin emoji sobrante */}
+                <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay</span>
+                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay.</span>
                 </div>
               </div>
 
-              <button onClick={() => setShowShareModal(true)} className="w-full mt-3 bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5">
+              <button onClick={() => setShowShareModal(true)} className="w-full mt-2.5 bg-white/10 hover:bg-white/20 text-sky-100 border border-sky-400/30 text-[11px] font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-sky-300" /> Tarjeta IG / WhatsApp
               </button>
             </div>
@@ -1008,6 +1008,7 @@ export default function App() {
         </div>
       )}
 
+      {/* MODAL DE HISTORIA CON BOTÓN PARA CAMBIAR FRASE */}
       {showShareModal && (
         <div className="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto">
@@ -1015,12 +1016,19 @@ export default function App() {
               <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Sparkles className="w-4 h-4 text-sky-600" /> Historia de Avance</h3>
               <button onClick={() => setShowShareModal(false)} className="text-slate-400 font-bold text-xl">×</button>
             </div>
-            <div className="flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200">
+            <div className="flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200 relative">
               <canvas ref={canvasRef} width={1080} height={1920} className="w-56 h-auto rounded-xl shadow-lg border border-slate-300" />
             </div>
-            <div className="grid grid-cols-2 gap-2.5 pt-1">
-              <button type="button" onClick={handleDownloadStory} className="flex items-center justify-center gap-1.5 bg-slate-900 text-white text-xs font-bold py-3 rounded-xl"><Download className="w-4 h-4" /> Descargar PNG</button>
-              <button type="button" onClick={handleNativeShare} className="flex items-center justify-center gap-1.5 bg-sky-600 text-white text-xs font-bold py-3 rounded-xl"><Share2 className="w-4 h-4" /> Compartir</button>
+            <div className="flex items-center justify-between gap-2">
+              <button type="button" onClick={() => setQuoteIndex(prev => prev + 1)} className="flex items-center justify-center gap-1.5 bg-sky-100 hover:bg-sky-200 text-sky-900 text-xs font-bold py-3 px-3 rounded-xl transition border border-sky-300" title="Cambiar frase">
+                <RefreshCw className="w-4 h-4 text-sky-700" /> Cambiar frase
+              </button>
+              <button type="button" onClick={handleDownloadStory} className="flex-1 flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl transition">
+                <Download className="w-4 h-4" /> Descargar PNG
+              </button>
+              <button type="button" onClick={handleNativeShare} className="flex-1 flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold py-3 rounded-xl transition">
+                <Share2 className="w-4 h-4" /> Compartir
+              </button>
             </div>
           </div>
         </div>
