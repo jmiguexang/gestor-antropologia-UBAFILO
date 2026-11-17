@@ -7,7 +7,7 @@ import {
   Bookmark, User, LogOut, Trash2, 
   Mail, Users, FileText, CheckSquare, Layers, Loader2,
   Share2, Download, RefreshCw, Sparkles,
-  Star, Trophy, TrendingDown, Coffee, Copy, Check
+  Star, Trophy, TrendingDown, Coffee, Copy, Check, Plus
 } from 'lucide-react';
 
 const MP_ALIAS = 'juan.miguel.ch';
@@ -62,12 +62,14 @@ export default function App() {
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [copiedAlias, setCopiedAlias] = useState(false);
 
-  // Inicializamos directamente con la oferta oficial 2C 2026
   const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   const [nuevoSeminarioNombre, setNuevoSeminarioNombre] = useState('');
   const [nuevoSeminarioDocente, setNuevoSeminarioDocente] = useState('');
   const [nuevoSeminarioTipo, setNuevoSeminarioTipo] = useState('sociocultural');
+
+  // Estado para el Pop-up / Aviso flotante de seminario agregado
+  const [toastMessage, setToastMessage] = useState(null);
 
   const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
 
@@ -92,7 +94,6 @@ export default function App() {
         if (data.datos_academicos) setStudentData(data.datos_academicos);
         else setStudentData({ '2023': {}, '1985': {} });
 
-        // Forzamos la actualización al catálogo oficial si el usuario tenía una versión vieja guardada
         setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
 
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
@@ -122,6 +123,40 @@ export default function App() {
         console.error("Error al guardar en la nube:", err);
       }
     }
+  };
+
+  // Función para agregar un seminario directamente a las electivas del estudiante
+  const handleAgregarSeminarioAElectivas = (sem) => {
+    const customId = 'electiva-sem-' + sem.id + '-' + Date.now();
+    const textoSeminario = `${sem.nombre} (${sem.docente})`;
+
+    setStudentData(prev => {
+      const planState = prev[selectedPlan] || {};
+      const updated = {
+        ...prev,
+        [selectedPlan]: {
+          ...planState,
+          [customId]: {
+            estado: 'cursando',
+            nota: '',
+            aplazos: '0',
+            regimen: 'promocion',
+            customName: textoSeminario,
+            favorita: true,
+            cuatrimestreCursada: '2° Cuatrimestre',
+            anioCursada: '2026'
+          }
+        }
+      };
+      guardarDatosNube(updated);
+      return updated;
+    });
+
+    // Mostrar el aviso flotante (Pop-up)
+    setToastMessage("¡Tu seminario elegido ya se agregó a la pestaña electivas/seminarios!");
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
   };
 
   const parseNota10 = (val) => {
@@ -236,6 +271,15 @@ export default function App() {
     if (planObj.idiomas) list = [...list, ...planObj.idiomas];
     const electivasList = orientationObj.electivas || planObj.electivas || [];
     if (electivasList) list = [...list, ...electivasList];
+    
+    // Incluir también seminarios personalizados agregados dinámicamente en el estado
+    const planState = studentData[selectedPlan] || {};
+    Object.keys(planState).forEach(k => {
+      if (k.startsWith('electiva-sem-')) {
+        list.push({ id: k, name: 'Seminario / Electiva', etapa: 'Electiva', correlativa: '' });
+      }
+    });
+
     if (selectedPlan === '2023' && includeProfesorado && selectedOrientation !== 'profesorado') {
       const profObj = planObj.orientaciones['profesorado'];
       if (profObj) list = [...list, ...profObj.cfo];
@@ -244,7 +288,29 @@ export default function App() {
   };
 
   const currentMateriasAll = getAllMaterias();
-  const rawBlockMaterias = onlyFavorites ? currentMateriasAll : getBlockMaterias(activeBlock);
+  
+  // Modificamos para que el bloque 'electivas' también muestre los seminarios personalizados añadidos
+  const getBlockMateriasExtended = (block) => {
+    let base = getBlockMaterias(block);
+    if (block === 'electivas') {
+      const planState = studentData[selectedPlan] || {};
+      const customSeminarios = [];
+      Object.keys(planState).forEach(k => {
+        if (k.startsWith('electiva-sem-')) {
+          customSeminarios.push({
+            id: k,
+            name: 'Seminario / Electiva (Oferta 2C 2026)',
+            etapa: 'Electiva / PST',
+            correlativa: ''
+          });
+        }
+      });
+      return [...base, ...customSeminarios];
+    }
+    return base;
+  };
+
+  const rawBlockMaterias = onlyFavorites ? currentMateriasAll : getBlockMateriasExtended(activeBlock);
   const currentBlockMaterias = onlyFavorites
     ? rawBlockMaterias.filter(m => studentData[selectedPlan]?.[m.id]?.favorita)
     : rawBlockMaterias;
@@ -257,8 +323,6 @@ export default function App() {
 
   let sumNotas = 0;
   let countNotas = 0;
-  let sumHistorico = 0;
-  let countHistorico = 0;
 
   let highestMateria = null;
   let lowestMateria = null;
@@ -279,8 +343,6 @@ export default function App() {
       if (notaNum !== null && notaNum >= 4 && !esIdioma) {
         sumNotas += notaNum;
         countNotas++;
-        sumHistorico += notaNum;
-        countHistorico++;
 
         const displayName = st.customName ? `${m.name}: ${st.customName}` : m.name;
         if (!highestMateria || notaNum > highestMateria.nota) {
@@ -293,13 +355,6 @@ export default function App() {
     } else if (estado === 'regularizada') { regularizadasCount++; } 
     else if (estado === 'cursando') { cursandoCount++; } 
     else { pendientesCount++; }
-
-    if (aplazosNum > 0 && !esIdioma) {
-      for (let i = 0; i < aplazosNum; i++) {
-        sumHistorico += 2;
-        countHistorico++;
-      }
-    }
   });
 
   const promedioSinAplazos = countNotas > 0 ? (sumNotas / countNotas).toFixed(2) : '-';
@@ -696,6 +751,14 @@ export default function App() {
               <Loader2 className="w-6 h-6 text-sky-600 animate-spin" />
               <span className="text-xs font-bold text-slate-800">Cargando datos desde Supabase...</span>
             </div>
+          </div>
+        )}
+
+        {/* POP-UP / AVISO FLOTANTE DE SEMINARIO AGREGADO */}
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-sky-500 flex items-center gap-3 animate-bounce">
+            <Sparkles className="w-5 h-5 text-sky-400 shrink-0" />
+            <p className="text-xs font-bold">{toastMessage}</p>
           </div>
         )}
 
@@ -1223,23 +1286,10 @@ export default function App() {
 
               {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
-                  <select
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
-                  >
-                    <option value="">-- Seleccionar de la oferta disponible --</option>
-                    {seminariosOferta.map(sem => (
-                      <option key={sem.id} value={`${sem.nombre} (${sem.docente})`}>
-                        {sem.nombre} - {sem.docente} ({sem.tipo})
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-[10px] text-sky-800">También puede escribir un seminario personalizado:</p>
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Especifique nombre del seminario / optativa:</label>
                   <input
                     type="text"
-                    placeholder="O escriba el nombre del seminario electivo..."
+                    placeholder="Nombre del seminario..."
                     value={st.customName || ''}
                     onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
                     className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
@@ -1397,85 +1447,44 @@ export default function App() {
 
       {showSeminarioModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Oferta de Seminarios
+                <Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Oferta de Seminarios (2C 2026)
               </h3>
               <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-lg">×</button>
             </div>
 
-            <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <h4 className="text-xs font-bold uppercase text-slate-700">Nuevo Seminario</h4>
-              <input
-                type="text"
-                placeholder="Nombre del seminario..."
-                value={nuevoSeminarioNombre}
-                onChange={(e) => setNuevoSeminarioNombre(e.target.value)}
-                className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  placeholder="Docente / Cátedra..."
-                  value={nuevoSeminarioDocente}
-                  onChange={(e) => setNuevoSeminarioDocente(e.target.value)}
-                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
-                />
-                <select
-                  value={nuevoSeminarioTipo}
-                  onChange={(e) => setNuevoSeminarioTipo(e.target.value)}
-                  className="w-full bg-white border border-slate-300 text-slate-800 text-xs rounded-lg p-2 outline-none"
-                >
-                  <option value="sociocultural">Orientación Sociocultural</option>
-                  <option value="arqueologia">Orientación Arqueología</option>
-                </select>
-              </div>
-              <button
-                onClick={() => {
-                  if (nuevoSeminarioNombre.trim()) {
-                    const nuevos = [...seminariosOferta, {
-                      id: 'sem-' + Date.now(),
-                      tipo: nuevoSeminarioTipo,
-                      nombre: nuevoSeminarioNombre,
-                      docente: nuevoSeminarioDocente || 'Docente a confirmar',
-                      cuatrimestre: '2C 2026'
-                    }];
-                    setSeminariosOferta(nuevos);
-                    guardarDatosNube(studentData, nuevos);
-                    setNuevoSeminarioNombre('');
-                    setNuevoSeminarioDocente('');
-                  }
-                }}
-                className="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-2 rounded-lg transition"
-              >
-                + Añadir al catálogo
-              </button>
-            </div>
+            <p className="text-xs text-slate-600">
+              Haciendo clic en <strong>"+ Agregar a mis Electivas"</strong>, el seminario se incorporará automáticamente a tu listado académico en la pestaña <span className="font-bold text-sky-700">Electivas / Seminarios</span> para que puedas gestionarlo y registrar notas.
+            </p>
 
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              <h4 className="text-xs font-bold uppercase text-slate-500">Seminarios Disponibles</h4>
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
               {seminariosOferta.map(s => (
-                <div key={s.id} className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
-                  <div>
-                    <p className="font-bold text-slate-800">{s.nombre}</p>
-                    <p className="text-[10px] text-slate-500">{s.docente} • {s.tipo.toUpperCase()}</p>
+                <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
+                  <div className="space-y-1 flex-1">
+                    <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900 border border-sky-200">
+                      {s.tipo.toUpperCase()}
+                    </span>
+                    <p className="font-bold text-slate-800 text-xs mt-1">{s.nombre}</p>
+                    <p className="text-[11px] text-slate-500">{s.docente}</p>
                   </div>
+                  
                   <button
                     onClick={() => {
-                      const filtrados = seminariosOferta.filter(item => item.id !== s.id);
-                      setSeminariosOferta(filtrados);
-                      guardarDatosNube(studentData, filtrados);
+                      handleAgregarSeminarioAElectivas(s);
+                      setShowSeminarioModal(false);
+                      setActiveBlock('electivas');
                     }}
-                    className="text-slate-400 hover:text-red-600 p-1"
+                    className="flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm whitespace-nowrap"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Plus className="w-4 h-4" /> Agregar a mis Electivas
                   </button>
                 </div>
               ))}
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-2 border-t">
               <button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button>
             </div>
           </div>
