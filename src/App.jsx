@@ -86,59 +86,109 @@ export default function App() {
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   
   const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [avatarActual, setAvatarActual] = useState(AVATARES_ANTROPOLOGIA[4]);
+  const [avatarActual, setAvatarActual] = useState(() => {
+    const savedAvatar = localStorage.getItem('antropologia_avatar');
+    if (savedAvatar) {
+      try {
+        const parsed = JSON.parse(savedAvatar);
+        return AVATARES_ANTROPOLOGIA.find(a => a.id === parsed.id) || parsed;
+      } catch (e) { }
+    }
+    return AVATARES_ANTROPOLOGIA[4];
+  });
 
   const [toastMessage, setToastMessage] = useState(null);
-  const [studentData, setStudentData] = useState({ '2023': {}, '1985': {} });
+  const [studentData, setStudentData] = useState(() => {
+    const savedData = localStorage.getItem('antropologia_guest_data');
+    if (savedData) {
+      try { return JSON.parse(savedData); } catch (e) { }
+    }
+    return { '2023': {}, '1985': {} };
+  });
 
   useEffect(() => {
     if (session && session.tipo === 'registrado') {
       cargarDatosNube(session.email);
     } else if (session && session.tipo === 'invitado') {
-      setStudentData({ '2023': {}, '1985': {} });
+      const savedGuest = localStorage.getItem('antropologia_guest_data');
+      if (savedGuest) {
+        try { setStudentData(JSON.parse(savedGuest)); } catch (e) { setStudentData({ '2023': {}, '1985': {} }); }
+      }
     }
   }, [session]);
 
   const cargarDatosNube = async (email) => {
     setLoadingCloud(true);
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('estudiantes')
         .select('*')
         .eq('email', email)
         .maybeSingle();
 
-      if (data) {
-        if (data.datos_academicos) setStudentData(data.datos_academicos);
-        else setStudentData({ '2023': {}, '1985': {} });
+      if (error) {
+        console.error("Error consultando Supabase:", error);
+      }
 
+      if (data) {
+        const datosRecibidos = data.datos_academicos || { '2023': {}, '1985': {} };
+        setStudentData(datosRecibidos);
         setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
 
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
-        if (data.avatar) setAvatarActual(data.avatar);
+
+        // Recuperar avatar tanto si viene en columna 'avatar' como respaldo dentro de 'datos_academicos._avatar'
+        const rawAvatar = data.avatar || datosRecibidos._avatar;
+        if (rawAvatar) {
+          const avatarId = typeof rawAvatar === 'string' ? rawAvatar : rawAvatar.id;
+          const avatarEncontrado = AVATARES_ANTROPOLOGIA.find(a => a.id === avatarId) || (typeof rawAvatar === 'object' ? rawAvatar : AVATARES_ANTROPOLOGIA[4]);
+          setAvatarActual(avatarEncontrado);
+          localStorage.setItem('antropologia_avatar', JSON.stringify(avatarEncontrado));
+        }
       } else {
         setStudentData({ '2023': {}, '1985': {} });
       }
     } catch (err) {
       console.error("Error al conectar con Supabase:", err);
-      setStudentData({ '2023': {}, '1985': {} });
     } finally {
       setLoadingCloud(false);
     }
   };
 
-  const guardarDatosNube = async (nuevoData = studentData, nuevosSemis = seminariosOferta, nuevoAvatar = avatarActual) => {
+  const guardarDatosNube = async (
+    nuevoData = studentData,
+    nuevosSemis = seminariosOferta,
+    nuevoAvatar = avatarActual,
+    nuevoPlan = selectedPlan,
+    nuevaOrientacion = selectedOrientation
+  ) => {
+    // Respaldo local inmediato para invitados o fallos de red
+    localStorage.setItem('antropologia_guest_data', JSON.stringify(nuevoData));
+    if (nuevoAvatar) {
+      localStorage.setItem('antropologia_avatar', JSON.stringify(nuevoAvatar));
+    }
+
     if (session && session.tipo === 'registrado') {
       try {
-        await supabase.from('estudiantes').update({
-          datos_academicos: nuevoData,
+        // Guardamos también _avatar dentro del JSON datos_academicos como respaldo infalible
+        const payloadAcademico = {
+          ...nuevoData,
+          _avatar: nuevoAvatar
+        };
+
+        const { error } = await supabase.from('estudiantes').update({
+          datos_academicos: payloadAcademico,
           seminarios_oferta: nuevosSemis,
-          plan_actual: selectedPlan,
-          orientacion_actual: selectedOrientation,
+          plan_actual: nuevoPlan,
+          orientacion_actual: nuevaOrientacion,
           avatar: nuevoAvatar,
-          actualizado_en: new Date()
+          actualizado_en: new Date().toISOString()
         }).eq('email', session.email);
+
+        if (error) {
+          console.error("Error al actualizar en Supabase:", error);
+        }
       } catch (err) {
         console.error("Error al guardar en la nube:", err);
       }
@@ -148,7 +198,7 @@ export default function App() {
   const handleCambiarAvatar = (avatarObj) => {
     setAvatarActual(avatarObj);
     setShowAvatarModal(false);
-    guardarDatosNube(studentData, seminariosOferta, avatarObj);
+    guardarDatosNube(studentData, seminariosOferta, avatarObj, selectedPlan, selectedOrientation);
     setToastMessage(`¡Avatar actualizado a ${avatarObj.nombre}! 🏛️`);
     setTimeout(() => setToastMessage(null), 3500);
   };
@@ -175,7 +225,7 @@ export default function App() {
           }
         }
       };
-      guardarDatosNube(updated);
+      guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
 
@@ -195,7 +245,7 @@ export default function App() {
         ...prev,
         [selectedPlan]: planState
       };
-      guardarDatosNube(updated);
+      guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
   };
@@ -255,7 +305,7 @@ export default function App() {
           [id]: updatedMat
         }
       };
-      guardarDatosNube(updated);
+      guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
   };
@@ -634,8 +684,8 @@ export default function App() {
                           setLoadingCloud(false);
                           return;
                         }
-                        const datosVacios = { '2023': {}, '1985': {} };
                         const avatarPorDefecto = AVATARES_ANTROPOLOGIA[4];
+                        const datosVacios = { '2023': {}, '1985': {}, _avatar: avatarPorDefecto };
                         await supabase.from('estudiantes').insert([{
                           email: formEmail.trim(), nombre: formNombre.trim(), apellido: formApellido.trim(),
                           datos_academicos: datosVacios, seminarios_oferta: SEMINARIOS_OFERTA_2C_2026, avatar: avatarPorDefecto
@@ -678,7 +728,7 @@ export default function App() {
                 <div className="relative flex py-2 items-center">
                   <div className="flex-grow border-t border-sky-300"></div><span className="flex-shrink mx-4 text-sky-900 text-[10px] uppercase font-bold">O</span><div className="flex-grow border-t border-sky-300"></div>
                 </div>
-                <button onClick={() => { setStudentData({ '2023': {}, '1985': {} }); setSession({ nombre: 'Invitado', apellido: '', email: 'invitado@uba', tipo: 'invitado' }); }} className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2">
+                <button onClick={() => { setSession({ nombre: 'Invitado', apellido: '', email: 'invitado@uba', tipo: 'invitado' }); }} className="w-full bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2">
                   <User className="w-4 h-4 text-sky-700" /> Continuar como Invitado
                 </button>
               </div>
@@ -744,7 +794,7 @@ export default function App() {
                     </p>
                     <p className="text-[10px] text-slate-400">{session.email}</p>
                   </div>
-                  <button onClick={() => { setStudentData({ '2023': {}, '1985': {} }); setSession(null); }} className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm">
+                  <button onClick={() => { setSession(null); }} className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition ml-2 shadow-sm">
                     <LogOut className="w-3.5 h-3.5" /> Salir
                   </button>
                 </div>
@@ -758,14 +808,30 @@ export default function App() {
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-500 uppercase">Plan:</span>
-                <select value={selectedPlan} onChange={(e) => { setSelectedPlan(e.target.value); guardarDatosNube(studentData); }} className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none">
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => {
+                    const nuevoP = e.target.value;
+                    setSelectedPlan(nuevoP);
+                    guardarDatosNube(studentData, seminariosOferta, avatarActual, nuevoP, selectedOrientation);
+                  }}
+                  className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
+                >
                   {Object.entries(PLANS_DATA).map(([key, p]) => (<option key={key} value={key}>{p.name}</option>))}
                 </select>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-500 uppercase">Orientación:</span>
-                <select value={selectedOrientation} onChange={(e) => { setSelectedOrientation(e.target.value); guardarDatosNube(studentData); }} className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none">
+                <select
+                  value={selectedOrientation}
+                  onChange={(e) => {
+                    const nuevaO = e.target.value;
+                    setSelectedOrientation(nuevaO);
+                    guardarDatosNube(studentData, seminariosOferta, avatarActual, selectedPlan, nuevaO);
+                  }}
+                  className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
+                >
                   <option value="sociocultural">Licenciatura - Sociocultural</option>
                   <option value="arqueologia">Licenciatura - Arqueología</option>
                   {selectedPlan === '2023' && <option value="profesorado">Profesorado en Cs. Antropológicas</option>}
@@ -959,9 +1025,7 @@ export default function App() {
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 font-bold text-xl">×</button>
             </div>
             <p className="text-xs text-slate-600">
-            
-En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gestor te resulta útil para gestionar tu carrera y querés apoyar el proyecto con un mate virtual, ¡muchas gracias!
-              
+              En este ciclo constante de <strong>dar, recibir y devolver</strong>, si el gestor te resulta útil para gestionar tu carrera y querés apoyar el proyecto con un mate virtual, ¡muchas gracias!
             </p>
             <div className="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-sky-900 block">Alias de Mercado Pago:</span>
