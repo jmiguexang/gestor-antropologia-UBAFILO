@@ -32,7 +32,7 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
 ];
 
-// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA CON FOTOS REALES Y OFICIALES
+// AVATARES HISTÓRICOS DE LA ANTROPOLOGÍA (RETARTO ESTILO BUSTO / B&W)
 const AVATARES_ANTROPOLOGIA = [
   { 
     id: 'boas', 
@@ -46,7 +46,7 @@ const AVATARES_ANTROPOLOGIA = [
     nombre: 'Bronisław Malinowski', 
     rol: 'Padre del Trabajo de Campo / Funcionalismo', 
     emoji: '⛺', 
-    img: 'https://pdr-assets.b-cdn.net/essays/writing-his-life-through-the-other-the-anthropology-of-malinowski/11996928774_678d7abcc6_b.jpg' 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Bronislaw_Malinowski_1930s.jpg' 
   },
   { 
     id: 'mauss', 
@@ -60,7 +60,7 @@ const AVATARES_ANTROPOLOGIA = [
     nombre: 'Claude Lévi-Strauss', 
     rol: 'Estructuralismo Antropológico', 
     emoji: '🧩', 
-    img: 'https://cdn.britannica.com/77/236677-050-8F559BF9/Claude-Levi-Strauss-2001.jpg' 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/1/18/Claude_L%C3%A9vi-Strauss_%281908-2009%29.jpg' 
   },
   { 
     id: 'mead', 
@@ -70,11 +70,18 @@ const AVATARES_ANTROPOLOGIA = [
     img: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Margaret_Mead_%281901-1978%29.jpg' 
   },
   { 
+    id: 'benedict', 
+    nombre: 'Ruth Benedict', 
+    rol: 'Cultura y Personalidad', 
+    emoji: '🎭', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Ruth_Benedict_1930s.jpg' 
+  },
+  { 
     id: 'geertz', 
     nombre: 'Clifford Geertz', 
     rol: 'Antropología Simbólica e Interpretativa', 
     emoji: '✍️', 
-    img: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Photo_of_Clifford_Geertz_on_dust_jacket_of_The_Interpretation_of_Cultures.jpg' 
+    img: 'https://upload.wikimedia.org/wikipedia/en/b/b4/Photo_of_Clifford_Geertz_on_dust_jacket_of_The_Interpretation_of_Cultures.jpg' 
   },
   { 
     id: 'sahlins', 
@@ -86,7 +93,7 @@ const AVATARES_ANTROPOLOGIA = [
   { 
     id: 'douglas', 
     nombre: 'Mary Douglas', 
-    rol: 'Antropología del Riesgo, Pureza y Símbolos', 
+    rol: 'Antropología del Riesgo y Pureza', 
     emoji: '⚖️', 
     img: 'https://upload.wikimedia.org/wikipedia/en/e/ed/Mary_Douglas_%281921%E2%80%932007%29.jpg' 
   },
@@ -95,7 +102,21 @@ const AVATARES_ANTROPOLOGIA = [
     nombre: 'Victor Turner', 
     rol: 'Antropología del Ritual y Liminidad', 
     emoji: '🌿', 
-    img: 'https://anthroholic.com/wp-content/uploads/2025/06/Victor-Turner-Anthropologist-Biography-by-Anthroholic.webp' 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Victor_Turner_placeholder.jpg' 
+  },
+  { 
+    id: 'gluckman', 
+    nombre: 'Max Gluckman', 
+    rol: 'Escuela de Mánchester y Conflictos', 
+    emoji: '⚖️', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Max_Gluckman.jpg' 
+  },
+  { 
+    id: 'leach', 
+    nombre: 'Edmund Leach', 
+    rol: 'Estructuralismo Británico y Política', 
+    emoji: '🌐', 
+    img: 'https://upload.wikimedia.org/wikipedia/commons/2/22/Edmund_Leach_portrait.jpg' 
   },
   { 
     id: 'graeber', 
@@ -107,7 +128,7 @@ const AVATARES_ANTROPOLOGIA = [
   { 
     id: 'segato', 
     nombre: 'Rita Segato', 
-    rol: 'Antropología Feminista, Género y Violencia', 
+    rol: 'Antropología Feminista y Violencia', 
     emoji: '🔥', 
     img: 'https://www.lanacion.com.ar/resizer/v2/rita-segato-escritora-antropologa-y-activista-WMK4BRXFIBDUNAH7WC4ICIDR5A.jpg?auth=a5d6a7079725d76c9996ce7acea226661b77af8f7705c42efce4e0b6df2a5e96&width=768&quality=70&smart=false' 
   },
@@ -154,7 +175,7 @@ export default function App() {
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   
   const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [avatarActual, setAvatarActual] = useState(null);
+  const [avatarActual, setAvatarActual] = useState(AVATARES_ANTROPOLOGIA[3]); // Lévi-Strauss por defecto
 
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -185,7 +206,11 @@ export default function App() {
 
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
-        if (data.avatar) setAvatarActual(data.avatar);
+        
+        // Recuperar avatar guardado en la base de datos o asignar el predeterminado
+        if (data.avatar) {
+          setAvatarActual(data.avatar);
+        }
       } else {
         setStudentData({ '2023': {}, '1985': {} });
       }
@@ -902,12 +927,21 @@ export default function App() {
               </button>
 
               {session.tipo === 'invitado' ? (
-                <button
-                  onClick={() => setSession(null)}
-                  className="flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-extrabold shadow-sm transition animate-pulse"
-                >
-                  <Sparkles className="w-3.5 h-3.5" /> Sé parte de la memoria colectiva puaner. Registrate
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSession(null)}
+                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-extrabold shadow-sm transition animate-pulse"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" /> Sé parte de la memoria colectiva puaner. Registrate
+                  </button>
+                  <button 
+                    onClick={() => setSession(null)} 
+                    className="flex items-center gap-1 bg-red-700/80 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"
+                    title="Salir del modo invitado"
+                  >
+                    <LogOut className="w-3.5 h-3.5" /> Salir
+                  </button>
+                </div>
               ) : (
                 <div className="flex items-center gap-3 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
                   <div 
@@ -916,7 +950,7 @@ export default function App() {
                     title="Hacé clic para cambiar tu avatar de antropólogo/a histórico/a"
                   >
                     {avatarActual?.img ? (
-                      <img src={avatarActual.img} alt={avatarActual.nombre} className="w-8 h-8 rounded-full object-cover border-2 border-sky-400 shadow-sm" />
+                      <img src={avatarActual.img} alt={avatarActual.nombre} className="w-8 h-8 rounded-full object-cover border-2 border-sky-400 shadow-sm filter grayscale contrast-125" />
                     ) : (
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-sky-950 bg-sky-300 border-2 border-sky-400">
                         {session.nombre[0]}
@@ -1276,7 +1310,7 @@ export default function App() {
         </button>
       </footer>
 
-      {/* MODAL SELECCIÓN DE AVATAR HISTÓRICO REAL */}
+      {/* MODAL SELECCIÓN DE AVATAR HISTÓRICO EN B&W */}
       {showAvatarModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-5">
@@ -1300,7 +1334,7 @@ export default function App() {
                     className={`cursor-pointer rounded-2xl p-3 border text-center transition flex flex-col items-center justify-between space-y-2 ${esSeleccionado ? 'bg-sky-50 border-sky-500 shadow-md ring-2 ring-sky-400' : 'bg-slate-50 hover:bg-sky-50/50 border-slate-200'}`}
                   >
                     <div className="relative">
-                      <img src={av.img} alt={av.nombre} className="w-16 h-16 rounded-full object-cover shadow-md border-2 border-white" />
+                      <img src={av.img} alt={av.nombre} className="w-16 h-16 rounded-full object-cover shadow-md border-2 border-white filter grayscale contrast-125" />
                       <span className="absolute -bottom-1 -right-1 text-sm bg-white rounded-full px-1 shadow-xs">{av.emoji}</span>
                     </div>
                     <div>
@@ -1329,7 +1363,7 @@ export default function App() {
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner 🧉
+                <Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puanense 🧉
               </h3>
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
