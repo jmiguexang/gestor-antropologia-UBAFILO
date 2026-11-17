@@ -1034,6 +1034,7 @@ export default function App() {
         </div>
       )}
 
+      {/* MODAL DETALLE DE MATERIA (LIBRETA, PARCIALES, PROFES, COMISIONES) RESTAURADO */}
       {activeDetailMateria && (() => {
         const mat = activeDetailMateria;
         const st = studentData[selectedPlan]?.[mat.id] || {};
@@ -1041,18 +1042,81 @@ export default function App() {
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b pb-3">
-                <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
+                <div>
+                  <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{mat.etapa}</span>
+                  <h3 className="text-base font-black text-slate-900 mt-1">{mat.name}</h3>
+                </div>
                 <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
               </div>
-              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h4 className="text-xs font-bold uppercase text-slate-700">Notas de Parciales e Intentos de Final</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  <input type="number" placeholder="Parcial 1" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="bg-white border rounded-lg p-2 text-xs text-center" />
-                  <input type="number" placeholder="Parcial 2" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="bg-white border rounded-lg p-2 text-xs text-center" />
-                  <input type="number" placeholder="Final" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center" />
+
+              <div className="space-y-4">
+                {/* Régimen de aprobación */}
+                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Régimen</label>
+                    <select value={st.regimen || 'promocion'} onChange={(e) => handleUpdateMateria(mat.id, 'regimen', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold">
+                      <option value="promocion">Promoción Directa</option>
+                      <option value="regular">Examen Final (Regular)</option>
+                      <option value="libre">Examen Libre</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Comisión / Turno</label>
+                    <input type="text" placeholder="Ej. Cátedra A / Mañana" value={st.comision || ''} onChange={(e) => handleUpdateMateria(mat.id, 'comision', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs" />
+                  </div>
+                </div>
+
+                {/* Notas de Parciales y Finales */}
+                <div className="space-y-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                  <h4 className="text-xs font-bold uppercase text-slate-700">Notas de Parciales e Intentos de Final</h4>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <span className="text-[9px] font-semibold text-slate-500 block mb-1">Parcial 1</span>
+                      <input type="number" min="0" max="10" placeholder="Nota 1" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center" />
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-semibold text-slate-500 block mb-1">Parcial 2</span>
+                      <input type="number" min="0" max="10" placeholder="Nota 2" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center" />
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-semibold text-slate-500 block mb-1">Parcial 3 / Recup</span>
+                      <input type="number" min="0" max="10" placeholder="Recup" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200">
+                    <div>
+                      <span className="text-[9px] font-semibold text-amber-700 block mb-1">1° Final</span>
+                      <input type="number" min="0" max="10" placeholder="Final 1" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center" />
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-semibold text-amber-700 block mb-1">2° Final</span>
+                      <input type="number" min="0" max="10" placeholder="Final 2" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center" />
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-semibold text-amber-700 block mb-1">3° Final</span>
+                      <input type="number" min="0" max="10" placeholder="Final 3" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Docentes y Contacto */}
+                <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Docente Teórico</label>
+                    <input type="text" placeholder="Nombre prof." value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs mb-2" />
+                    <input type="email" placeholder="Correo electrónico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Docente Práctico</label>
+                    <input type="text" placeholder="Nombre JTP/Ayudante" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs mb-2" />
+                    <input type="email" placeholder="Correo electrónico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs" />
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-end"><button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl">Guardar y Cerrar</button></div>
+
+              <div className="flex justify-end pt-2">
+                <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition">Guardar y Cerrar</button>
+              </div>
             </div>
           </div>
         );
