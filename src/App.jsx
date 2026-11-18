@@ -762,7 +762,7 @@ export default function App() {
 
             <div className="flex items-center gap-3 flex-wrap justify-center">
               <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-1.5 bg-sky-500/25 hover:bg-sky-500/35 text-sky-200 border border-sky-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                <Coffee className="w-3.5 h-3.5 text-sky-300" /> Invitame un mate 🧉
+              Invitame un mate 🧉
               </button>
 
               {session.tipo === 'invitado' ? (
@@ -982,7 +982,7 @@ export default function App() {
       <footer className="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
         <p>Diseñado en estado de <strong>liminidad académica</strong> para Ciencias Antropológicas · FFyL UBA.</p>
         <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-2 bg-white hover:bg-sky-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold transition">
-          <Coffee className="w-4 h-4 text-sky-600" /> Invitame un mate 🧉
+          Invitame un mate 🧉
         </button>
       </footer>
 
