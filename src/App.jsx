@@ -1319,24 +1319,33 @@ export default function App() {
 
                 if (nombreMat.includes('epistemología')) {
                   opcionesCatedrasCFG = ['Cátedra Glavich', 'Cátedra Hernández'];
-                } else if (nombreMat.includes('historia y teoría de la antropología i') || nombreMat.includes('historia y teoria de la antropologia i') || nombreMat.includes('antropología i')) {
+                } 
+                else if (nombreMat.includes('historia y teoría de la antropología i')) {
                   opcionesCatedrasCFG = ['Cátedra Roca'];
-                } else if (nombreMat.includes('historia y teoría de la antropología ii') || nombreMat.includes('historia y teoria de la antropologia ii') || nombreMat.includes('antropología ii')) {
+                }
+                else if (nombreMat.includes('historia y teoría de la antropología ii')) {
                   opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
-                } else if (nombreMat.includes('problemas de antropología económica')) {
+                }
+                else if (nombreMat.includes('problemas de antropología económica')) {
                   opcionesCatedrasCFG = ['Cátedra Petz-Scaglia'];
-                } else if (nombreMat.includes('problemas de antropología simbólica')) {
+                }
+                else if (nombreMat.includes('problemas de antropología simbólica')) {
                   opcionesCatedrasCFG = ['Cátedra Wright'];
-                } else if (nombreMat.includes('antropología biológica')) {
+                }
+                else if (nombreMat.includes('antropología biológica')) {
                   opcionesCatedrasCFG = ['Cátedra Avena'];
-                } else if (nombreMat.includes('introducción a la arqueología')) {
+                }
+                else if (nombreMat.includes('introducción a la arqueología')) {
                   opcionesCatedrasCFG = ['Cátedra Lanza'];
-                } else if (nombreMat.includes('arqueología, legislación y comunidad')) {
+                } 
+                else if (nombreMat.includes('arqueología, legislación y comunidad')) {
                   opcionesCatedrasCFG = ['Cátedra Salerno'];
-                } else if (nombreMat.includes('problemas de antropología social y política')) {
+                }
+                else if (nombreMat.includes('problemas de antropología social y política')) {
                   opcionesCatedrasCFG = ['Cátedra Novaro', 'Cátedra Balbi', 'Cátedra Fernández', 'Cátedra Pita'];
-                } else {
-                  opcionesCatedrasCFG = ['Cátedra Única / General'];
+                }
+                else {
+                  opcionesCatedrasCFG = ['Cátedra x'];
                 }
 
                 return (
