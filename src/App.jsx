@@ -992,12 +992,18 @@ export default function App() {
                         <button type="button" onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)} className="p-1 rounded-lg hover:bg-amber-50 transition">
                           <Star className={`w-5 h-5 transition ${esFavorita ? 'fill-amber-400 text-amber-500 scale-110' : 'text-slate-300'}`} />
                         </button>
-                        {esMateriaCBC ? (
+                       {esMateriaCBC ? (
                           <div>
-                            <h3 className="font-bold text-slate-800 text-base">{m.name}</h3>
+                            <h3 className="font-bold text-slate-800 text-base">
+                              {st.materiaElectivaCBC || m.name}
+                            </h3>
                             {st.customName && (
                               <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
                             )}
+                          </div>
+                        ) : (
+                          <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
+                        )}
                           </div>
                         ) : (
                           <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
