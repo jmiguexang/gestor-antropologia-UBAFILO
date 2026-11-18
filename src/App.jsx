@@ -52,7 +52,6 @@ const AVATARES_ANTROPOLOGIA = [
   { id: 'viveiros', nombre: 'Eduardo Viveiros de Castro', rol: 'Antropología Ontológica y Perspectivismo', emoji: '🐆', img: '/avatares/eduardo-viveiros-de-castro.jpg' }
 ];
 
-// Función auxiliar de redondeo UBA XXI (CBC)
 const redondearUBAXXI = (promedio) => {
   if (promedio >= 3.01 && promedio <= 3.99) {
     return 3;
@@ -64,7 +63,6 @@ const redondearUBAXXI = (promedio) => {
   return Math.floor(promedio);
 };
 
-// Función auxiliar de redondeo FFyL (.5 a favor del estudiante)
 const redondearFFyL = (promedio) => {
   const decimales = Number((promedio - Math.floor(promedio)).toFixed(4));
   if (decimales >= 0.5) {
@@ -372,7 +370,6 @@ export default function App() {
         }
       };
 
-      // GUARDADO INMEDIATO EN LOCAL Y NUBE
       guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
@@ -1315,37 +1312,29 @@ export default function App() {
 
               {esCFG && (() => {
                 const nombreMat = mat.name.toLowerCase();
+                const idMat = mat.id.toLowerCase();
                 let opcionesCatedrasCFG = [];
 
-                if (nombreMat.includes('epistemología')) {
+                if (nombreMat.includes('epistemología') || idMat.includes('epistemologia')) {
                   opcionesCatedrasCFG = ['Cátedra Glavich', 'Cátedra Hernández'];
-                } 
-                else if (nombreMat.includes('historia y teoría de la antropología i')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología i') || nombreMat.includes('historia y teoria de la antropologia i') || idMat.includes('antropologia-i') || idMat.includes('historia-1')) {
                   opcionesCatedrasCFG = ['Cátedra Roca'];
-                }
-                else if (nombreMat.includes('historia y teoría de la antropología ii')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología ii') || nombreMat.includes('historia y teoria de la antropologia ii') || idMat.includes('antropologia-ii') || idMat.includes('historia-2')) {
                   opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
-                }
-                else if (nombreMat.includes('problemas de antropología económica')) {
+                } else if (nombreMat.includes('problemas de antropología económica') || idMat.includes('economica')) {
                   opcionesCatedrasCFG = ['Cátedra Petz-Scaglia'];
-                }
-                else if (nombreMat.includes('problemas de antropología simbólica')) {
+                } else if (nombreMat.includes('problemas de antropología simbólica') || idMat.includes('simbolica')) {
                   opcionesCatedrasCFG = ['Cátedra Wright'];
-                }
-                else if (nombreMat.includes('antropología biológica')) {
+                } else if (nombreMat.includes('antropología biológica') || idMat.includes('biologica')) {
                   opcionesCatedrasCFG = ['Cátedra Avena'];
-                }
-                else if (nombreMat.includes('introducción a la arqueología')) {
+                } else if (nombreMat.includes('introducción a la arqueología') || idMat.includes('arqueologia')) {
                   opcionesCatedrasCFG = ['Cátedra Lanza'];
-                } 
-                else if (nombreMat.includes('arqueología, legislación y comunidad')) {
+                } else if (nombreMat.includes('arqueología, legislación y comunidad') || idMat.includes('legislacion')) {
                   opcionesCatedrasCFG = ['Cátedra Salerno'];
-                }
-                else if (nombreMat.includes('problemas de antropología social y política')) {
+                } else if (nombreMat.includes('problemas de antropología social y política') || idMat.includes('social-y-politica')) {
                   opcionesCatedrasCFG = ['Cátedra Novaro', 'Cátedra Balbi', 'Cátedra Fernández', 'Cátedra Pita'];
-                }
-                else {
-                  opcionesCatedrasCFG = ['Cátedra x'];
+                } else {
+                  opcionesCatedrasCFG = ['Cátedra Única / General'];
                 }
 
                 return (
