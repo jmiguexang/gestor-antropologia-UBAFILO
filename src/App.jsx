@@ -131,6 +131,7 @@ export default function App() {
       }
 
       if (data) {
+        // Aseguramos que cargue correctamente el objeto completo guardado en Supabase
         const datosRecibidos = data.datos_academicos || { '2023': {}, '1985': {} };
         setStudentData(datosRecibidos);
         setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
@@ -162,6 +163,7 @@ export default function App() {
     nuevoPlan = selectedPlan,
     nuevaOrientacion = selectedOrientation
   ) => {
+    // Persistencia local inmediata para invitado y respaldo offline
     localStorage.setItem('antropologia_guest_data', JSON.stringify(nuevoData));
     if (nuevoAvatar) {
       localStorage.setItem('antropologia_avatar', JSON.stringify(nuevoAvatar));
@@ -302,6 +304,8 @@ export default function App() {
           [id]: updatedMat
         }
       };
+      
+      // Sincronización inmediata asegurando que customName y notas no se pierdan
       guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
