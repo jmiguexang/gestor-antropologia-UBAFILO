@@ -1001,15 +1001,8 @@ export default function App() {
                               <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
                             )}
                           </div>
-                        ) : (
-                          <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
-                        )}
-                          </div>
-                        ) : (
-                          <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
-                        )}
-                      </div>
-                    </div>
+                       </div>
+                      
                     <div className="flex items-center gap-3 flex-wrap justify-end">
                       {m.esCustomSeminario && (
                         <button onClick={() => handleEliminarSeminarioPersonalizado(m.id)} className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition"><Trash2 className="w-4 h-4" /></button>
