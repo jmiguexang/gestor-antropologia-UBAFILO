@@ -1319,9 +1319,9 @@ export default function App() {
 
                 if (nombreMat.includes('epistemología')) {
                   opcionesCatedrasCFG = ['Cátedra Glavich', 'Cátedra Hernández'];
-                } else if (nombreMat.includes('historia y teoría de la antropología 1')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología I')) {
                   opcionesCatedrasCFG = ['Cátedra Roca'];
-                } else if (nombreMat.includes('historia y teoría de la antropología 2')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología II')) {
                   opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
                 } else if (nombreMat.includes('problemas de antropología económica')) {
                   opcionesCatedrasCFG = ['Cátedra Petz-Scaglia'];
