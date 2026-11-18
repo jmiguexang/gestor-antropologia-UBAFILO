@@ -1319,7 +1319,7 @@ export default function App() {
                   opcionesCatedrasCFG = ['Cátedra Glavich', 'Cátedra Hernández'];
                 } else if (nombreMat.includes('historia y teoría de la antropología i') || nombreMat.includes('historia y teoria de la antropología i') || idMat.includes('antropologia-i') || idMat.includes('historia-1')) {
                   opcionesCatedrasCFG = ['Cátedra Roca'];
-                } else if (nombreMat.includes('historia y teoría de la antropología ii') || nombreMat.includes('historia y teoria de la antropología ii') || idMat.includes('antropologia-ii') || idMat.includes('historia-2')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología 2') || nombreMat.includes('historia y teoria de la antropología 2') || idMat.includes('antropologia-2') || idMat.includes('historia-2')) {
                   opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
                 } else if (nombreMat.includes('problemas de antropología económica') || idMat.includes('economica')) {
                   opcionesCatedrasCFG = ['Cátedra Petz-Scaglia'];
@@ -1334,7 +1334,7 @@ export default function App() {
                 } else if (nombreMat.includes('problemas de antropología social y política') || idMat.includes('social-y-politica')) {
                   opcionesCatedrasCFG = ['Cátedra Novaro', 'Cátedra Balbi', 'Cátedra Fernández', 'Cátedra Pita'];
                 } else {
-                  opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
+                  opcionesCatedrasCFG = ['Cátedra por confirmar'];
                 }
 
                 return (
