@@ -1317,7 +1317,7 @@ export default function App() {
 
                 if (nombreMat.includes('epistemología') || idMat.includes('epistemologia')) {
                   opcionesCatedrasCFG = ['Cátedra Glavich', 'Cátedra Hernández'];
-                } else if (nombreMat.includes('historia y teoría de la antropología i') || nombreMat.includes('historia y teoria de la antropología i') || idMat.includes('antropologia-i') || idMat.includes('historia-1')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología 1') || nombreMat.includes('historia y teoria de la antropología 1') || idMat.includes('antropologia-1') || idMat.includes('historia-1')) {
                   opcionesCatedrasCFG = ['Cátedra Roca'];
                 } else if (nombreMat.includes('historia y teoría de la antropología 2') || nombreMat.includes('historia y teoria de la antropología 2') || idMat.includes('antropologia-2') || idMat.includes('historia-2')) {
                   opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
