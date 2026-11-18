@@ -1212,7 +1212,8 @@ export default function App() {
                   
                 } else {
                   opcionesCatedras = [
-                   
+                    'Cátedra Pedrosa',
+                    'Cátedra Denkberg'
                   ];
                 }
 
