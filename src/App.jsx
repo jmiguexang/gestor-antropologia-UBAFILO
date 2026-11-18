@@ -1334,7 +1334,7 @@ export default function App() {
                 } else if (nombreMat.includes('problemas de antropología social y política') || idMat.includes('social-y-politica')) {
                   opcionesCatedrasCFG = ['Cátedra Novaro', 'Cátedra Balbi', 'Cátedra Fernández', 'Cátedra Pita'];
                 } else {
-                  opcionesCatedrasCFG = ['Cátedra Única / General'];
+                  opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
                 }
 
                 return (
