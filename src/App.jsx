@@ -295,7 +295,6 @@ export default function App() {
         const notaAprobadaFinal = [f1, f2, f3].find(f => !isNaN(f) && f >= 4);
 
         if (esMateriaCBC) {
-          // Régimen UBA XXI / CBC: 2 instancias parciales (.5 redondea hacia arriba -> 6.5 = 7)
           const instanciasParciales = [p1, p2].filter(n => !isNaN(n) && n >= 0);
           const promParcialesExacto = instanciasParciales.length === 2
             ? (instanciasParciales[0] + instanciasParciales[1]) / 2
@@ -1126,7 +1125,6 @@ export default function App() {
         const p2 = parseFloat(st.parcial2);
         const p3 = parseFloat(st.parcial3);
 
-        // Lógica de evaluación CBC / UBA XXI (.5 redondea hacia arriba -> 6.5 = 7)
         const instanciasCBC = [p1, p2].filter(n => !isNaN(n) && n >= 0);
         const promedioExactoCBC = instanciasCBC.length === 2 ? (instanciasCBC[0] + instanciasCBC[1]) / 2 : null;
         const notaFinalCBC = promedioExactoCBC !== null ? redondearUBAXXI(promedioExactoCBC) : null;
