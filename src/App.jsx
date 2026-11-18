@@ -1212,19 +1212,7 @@ export default function App() {
                   
                 } else {
                   opcionesCatedras = [
-                    'Cátedra Vargas',
-                    'Cátedra Beraldi',
-                    'Cátedra Pedrosa',
-                    'Cátedra Denkberg',
-                    'Cátedra Buacar',
-                    'Cátedra Gimeno',
-                    'Cátedra Perot',
-                    'Cátedra Di Pelino',
-                    'Cátedra Miliá',
-                    'Cátedra Quattrocchi',
-                    'Cátedra Fiotti',
-                    'Cátedra Verzero',
-                    'Cátedra Bustos'
+                   
                   ];
                 }
 
