@@ -131,7 +131,6 @@ export default function App() {
       }
 
       if (data) {
-        // Aseguramos que cargue correctamente el objeto completo guardado en Supabase
         const datosRecibidos = data.datos_academicos || { '2023': {}, '1985': {} };
         setStudentData(datosRecibidos);
         setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
@@ -163,7 +162,6 @@ export default function App() {
     nuevoPlan = selectedPlan,
     nuevaOrientacion = selectedOrientation
   ) => {
-    // Persistencia local inmediata para invitado y respaldo offline
     localStorage.setItem('antropologia_guest_data', JSON.stringify(nuevoData));
     if (nuevoAvatar) {
       localStorage.setItem('antropologia_avatar', JSON.stringify(nuevoAvatar));
@@ -304,8 +302,6 @@ export default function App() {
           [id]: updatedMat
         }
       };
-      
-      // Sincronización inmediata asegurando que customName y notas no se pierdan
       guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
@@ -328,7 +324,7 @@ export default function App() {
       case 'cfg': return planObj.cfg || [];
       case 'cfo': return orientationObj.cfo || [];
       case 'idiomas': return planObj.idiomas || [];
-      case 'electivas': return orientationObj.electivas || planObj.electivas || [];
+      case 'electivas': return planObj.electivas || planObj.electivas || [];
       case 'profesorado':
         const profObj = planObj.orientaciones['profesorado'];
         return profObj ? profObj.cfo : [];
@@ -871,7 +867,7 @@ export default function App() {
                 
                 <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio no te define, tranquilx...</span>
+                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay.</span>
                 </div>
               </div>
 
@@ -1121,13 +1117,16 @@ export default function App() {
 
                 if (nombreMat.includes('antropología')) {
                   opcionesCatedras = ['Cátedra Vargas'];
+                  
                 } else if (nombreMat.includes('filosofía')) {
                   opcionesCatedras = ['Cátedra Beraldi'];
+                  
                 } else if (nombreMat.includes('sociedad y estado')) {
                   opcionesCatedras = [
                     'Cátedra Pedrosa',
                     'Cátedra Denkberg'
                   ];
+                  
                 } else if (nombreMat.includes('pensamiento científico')) {
                   opcionesCatedras = [
                     'Cátedra Buacar',
@@ -1146,8 +1145,10 @@ export default function App() {
                   ];
                 } else if (nombreMat.includes('semiología')) {
                   opcionesCatedras = ['Cátedra Verzero'];
+                  
                 } else if (nombreMat.includes('sociología')) {
                   opcionesCatedras = ['Cátedra Bustos'];
+                  
                 } else {
                   opcionesCatedras = [
                     'Cátedra Vargas',
@@ -1312,7 +1313,7 @@ export default function App() {
                   {logroPromocion && (
                     <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
                       <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>¡Materia promocionada con éxito (promedio ≥ 7)! Zafaste del final.</span>
+                      <span>¡Promocionaste crack! Zafaste del final.</span>
                     </div>
                   )}
                 </div>
