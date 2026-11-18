@@ -7,7 +7,7 @@ import {
   Bookmark, User, LogOut, Trash2, 
   Mail, Users, FileText, CheckSquare, Layers, Loader2,
   Share2, Download, RefreshCw, Sparkles,
-  Star, Trophy, Coffee, Copy, Check, Plus, Camera, Heart
+  Star, Trophy, Coffee, Copy, Check, Plus, Camera, Heart, Clock
 } from 'lucide-react';
 
 const MP_ALIAS = 'juan.miguel.ch';
@@ -324,7 +324,7 @@ export default function App() {
       case 'cfg': return planObj.cfg || [];
       case 'cfo': return orientationObj.cfo || [];
       case 'idiomas': return planObj.idiomas || [];
-      case 'electivas': return planObj.electivas || planObj.electivas || [];
+      case 'electivas': return orientationObj.electivas || planObj.electivas || [];
       case 'profesorado':
         const profObj = planObj.orientaciones['profesorado'];
         return profObj ? profObj.cfo : [];
@@ -762,7 +762,7 @@ export default function App() {
 
             <div className="flex items-center gap-3 flex-wrap justify-center">
               <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-1.5 bg-sky-500/25 hover:bg-sky-500/35 text-sky-200 border border-sky-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-              Invitame un mate 🧉
+                <Coffee className="w-3.5 h-3.5 text-sky-300" /> Invitame un mate 🧉
               </button>
 
               {session.tipo === 'invitado' ? (
@@ -867,7 +867,7 @@ export default function App() {
                 
                 <div className="mt-1.5 bg-sky-950/80 border border-sky-400/30 rounded-xl p-2 text-[10px] text-sky-100 leading-snug flex items-start gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 fill-rose-400" />
-                  <span>El promedio no te define, tranquilx. Vos solo seguí esforzándote que tiempo para mejorar, siempre hay.</span>
+                  <span>El promedio no te define, tranquilx...</span>
                 </div>
               </div>
 
@@ -937,6 +937,8 @@ export default function App() {
                 const regimenActual = st.regimen || (m.regimen === 'final' ? 'final' : 'promocion');
                 const esPromocional = regimenActual === 'promocion';
                 const esFavorita = Boolean(st.favorita);
+                const esRegularizada = st.estado === 'regularizada';
+                const esFinalObligatorio = regimenActual === 'final';
 
                 return (
                   <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -953,7 +955,16 @@ export default function App() {
                         </button>
                         <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
                       </div>
+                      
+                      {/* ALERTA DE VENCIMIENTO DE REGULARIDAD (4 AÑOS) */}
+                      {esRegularizada && esFinalObligatorio && (
+                        <div className="mt-2 bg-amber-50 border border-amber-300 text-amber-900 px-3 py-2 rounded-xl text-xs flex items-center gap-2 shadow-2xs">
+                          <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                          <span><strong>¡Atención!</strong> Tenés 4 años para dar el final de esta materia. ¡No cuelgues y animate a anotarte para rendir!</span>
+                        </div>
+                      )}
                     </div>
+
                     <div className="flex items-center gap-3 flex-wrap justify-end">
                       {m.esCustomSeminario && (
                         <button onClick={() => handleEliminarSeminarioPersonalizado(m.id)} className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition"><Trash2 className="w-4 h-4" /></button>
@@ -982,7 +993,7 @@ export default function App() {
       <footer className="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
         <p>Diseñado en estado de <strong>liminidad académica</strong> para Ciencias Antropológicas · FFyL UBA.</p>
         <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-2 bg-white hover:bg-sky-50 text-slate-800 border border-slate-300 px-4 py-2 rounded-xl font-bold transition">
-          Invitame un mate 🧉
+          <Coffee className="w-4 h-4 text-sky-600" /> Invitame un mate 🧉
         </button>
       </footer>
 
@@ -1018,7 +1029,7 @@ export default function App() {
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 text-center">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">🧉 Reciprocidad puaner</h3>
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2"><Coffee className="w-4 h-4 text-sky-600" /> Reciprocidad puaner</h3>
               <button onClick={() => setShowDonateModal(false)} className="text-slate-400 font-bold text-xl">×</button>
             </div>
             <p className="text-xs text-slate-600">
@@ -1117,16 +1128,13 @@ export default function App() {
 
                 if (nombreMat.includes('antropología')) {
                   opcionesCatedras = ['Cátedra Vargas'];
-                  
                 } else if (nombreMat.includes('filosofía')) {
                   opcionesCatedras = ['Cátedra Beraldi'];
-                  
                 } else if (nombreMat.includes('sociedad y estado')) {
                   opcionesCatedras = [
                     'Cátedra Pedrosa',
                     'Cátedra Denkberg'
                   ];
-                  
                 } else if (nombreMat.includes('pensamiento científico')) {
                   opcionesCatedras = [
                     'Cátedra Buacar',
@@ -1145,10 +1153,8 @@ export default function App() {
                   ];
                 } else if (nombreMat.includes('semiología')) {
                   opcionesCatedras = ['Cátedra Verzero'];
-                  
                 } else if (nombreMat.includes('sociología')) {
                   opcionesCatedras = ['Cátedra Bustos'];
-                  
                 } else {
                   opcionesCatedras = [
                     'Cátedra Vargas',
@@ -1313,7 +1319,7 @@ export default function App() {
                   {logroPromocion && (
                     <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
                       <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>¡Promocionaste crack! Zafaste del final.</span>
+                      <span>¡Materia promocionada con éxito (promedio ≥ 7)! Zafaste del final.</span>
                     </div>
                   )}
                 </div>
