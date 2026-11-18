@@ -1354,6 +1354,69 @@ export default function App() {
                 );
               })()}
 
+              {/* Selector universal de cátedras para el CFO */}
+              {(() => {
+                const nombreMat = (mat.name || '').toLowerCase();
+                const idMat = (mat.id || '').toLowerCase();
+                let opcionesCatedrasCFO = [];
+
+                // Orientación Sociocultural y Comunes del CFO
+                if (nombreMat.includes('sociedades, culturas y estados') || idMat.includes('soc-1')) {
+                  opcionesCatedrasCFO = ['Cátedra Estruch - Rodríguez'];
+                } else if (nombreMat.includes('pueblos indígenas americanos') || idMat.includes('soc-2') || idMat.includes('arq-2')) {
+                  opcionesCatedrasCFO = ['Cátedra Lenton'];
+                } else if (nombreMat.includes('procesos culturales, folklore') || idMat.includes('soc-3')) {
+                  opcionesCatedrasCFO = ['Cátedra Fischman'];
+                } else if (nombreMat.includes('antropología lingüística') || idMat.includes('soc-4')) {
+                  opcionesCatedrasCFO = ['Cátedra Skura - Hecht'];
+                } else if (nombreMat.includes('teoría social') || idMat.includes('soc-5')) {
+                  opcionesCatedrasCFO = ['Cátedra Cabrera - Murgida'];
+                } else if (nombreMat.includes('teorías de la subjetividad') || idMat.includes('soc-6')) {
+                  opcionesCatedrasCFO = ['Cátedra Varela - Orellano'];
+                } 
+                // Orientación Arqueología
+                else if (nombreMat.includes('arqueología de áfrica') || idMat.includes('arq-1')) {
+                  opcionesCatedrasCFO = ['Cátedra Arqueología'];
+                } else if (nombreMat.includes('arqueología americana y argentina i') || idMat.includes('arq-2')) {
+                  opcionesCatedrasCFO = ['Cátedra Arqueología Americana I'];
+                } else if (nombreMat.includes('arqueología americana y argentina ii') || idMat.includes('arq-3')) {
+                  opcionesCatedrasCFO = ['Cátedra Williams'];
+                } else if (nombreMat.includes('arqueología argentina') || idMat.includes('arq-4')) {
+                  opcionesCatedrasCFO = ['Cátedra Scheinsohn'];
+                } else if (nombreMat.includes('materiales arqueológicos') || idMat.includes('arq-5')) {
+                  opcionesCatedrasCFO = ['Cátedra Sacchi - Borrazo'];
+                } else if (nombreMat.includes('geología para arqueólogos') || idMat.includes('arq-6')) {
+                  opcionesCatedrasCFO = ['Cátedra Favier Dubois'];
+                } else if (nombreMat.includes('teorías arqueológicas contemporáneas') || idMat.includes('arq-7')) {
+                  opcionesCatedrasCFO = ['Cátedra Arqueología Contemporánea'];
+                } else if (nombreMat.includes('modelos y métodos de análisis en arqueología') || idMat.includes('arq-8')) {
+                  opcionesCatedrasCFO = ['Cátedra Franco - Manzi'];
+                } else if (nombreMat.includes('metodología y técnicas de investigación arqueológica') || idMat.includes('arq-9')) {
+                  opcionesCatedrasCFO = ['Cátedra Metodología Arqueológica'];
+                } else if (nombreMat.includes('métodos cuantitativos en arqueología') || idMat.includes('arq-10')) {
+                  opcionesCatedrasCFO = ['Cátedra Cuantitativos Arqueología'];
+                }
+
+                if (opcionesCatedrasCFO.length > 0) {
+                  return (
+                    <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                      <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Cátedra del CFO:</label>
+                      <select
+                        value={st.customName || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                        className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                      >
+                        <option value="">-- Seleccionar cátedra --</option>
+                        {opcionesCatedrasCFO.map((cat, idx) => (
+                          <option key={idx} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
