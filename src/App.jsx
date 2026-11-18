@@ -1234,8 +1234,21 @@ export default function App() {
                 );
               })()}
 
-              {esElectiva && (
+            {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Materia Electiva:</label>
+                  <select
+                    value={st.materiaElectivaTipo || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'materiaElectivaTipo', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold mb-2"
+                  >
+                    <option value="">-- Seleccionar materia electiva --</option>
+                    <option value="Sociología">Sociología</option>
+                    <option value="Semiología">Semiología</option>
+                    <option value="Economía">Economía</option>
+                    <option value="Psicología">Psicología</option>
+                  </select>
+
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
                   <select
                     value={st.customName || ''}
