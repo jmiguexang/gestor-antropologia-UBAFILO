@@ -57,7 +57,7 @@ const redondearUBAXXI = (promedio) => {
   if (promedio >= 3.01 && promedio <= 3.99) {
     return 3;
   }
-  const decimales = promedio - Math.floor(promedio);
+  const decimales = Number((promedio - Math.floor(promedio)).toFixed(4));
   if (decimales >= 0.5) {
     return Math.ceil(promedio);
   }
@@ -295,7 +295,7 @@ export default function App() {
         const notaAprobadaFinal = [f1, f2, f3].find(f => !isNaN(f) && f >= 4);
 
         if (esMateriaCBC) {
-          // Régimen UBA XXI / CBC: 2 instancias parciales
+          // Régimen UBA XXI / CBC: 2 instancias parciales (.5 redondea hacia arriba -> 6.5 = 7)
           const instanciasParciales = [p1, p2].filter(n => !isNaN(n) && n >= 0);
           const promParcialesExacto = instanciasParciales.length === 2
             ? (instanciasParciales[0] + instanciasParciales[1]) / 2
@@ -308,9 +308,9 @@ export default function App() {
             updatedMat.nota = notaEnteraCBC.toString();
 
             if (instanciasParciales.length === 2 && field !== 'regimen') {
-              if (promParcialesExacto >= 7) {
+              if (notaEnteraCBC >= 7) {
                 updatedMat.regimen = 'promocion';
-              } else if (promParcialesExacto >= 4 && promParcialesExacto < 7) {
+              } else if (notaEnteraCBC >= 4 && notaEnteraCBC < 7) {
                 updatedMat.regimen = 'final';
               }
             }
@@ -1126,7 +1126,7 @@ export default function App() {
         const p2 = parseFloat(st.parcial2);
         const p3 = parseFloat(st.parcial3);
 
-        // Lógica de evaluación CBC / UBA XXI vs resto
+        // Lógica de evaluación CBC / UBA XXI (.5 redondea hacia arriba -> 6.5 = 7)
         const instanciasCBC = [p1, p2].filter(n => !isNaN(n) && n >= 0);
         const promedioExactoCBC = instanciasCBC.length === 2 ? (instanciasCBC[0] + instanciasCBC[1]) / 2 : null;
         const notaFinalCBC = promedioExactoCBC !== null ? redondearUBAXXI(promedioExactoCBC) : null;
@@ -1135,11 +1135,11 @@ export default function App() {
         const promedioParcialesCalc = validasParciales.length > 0 ? (validasParciales.reduce((a, b) => a + b, 0) / validasParciales.length) : 0;
 
         const logroPromocion = esCBC
-          ? (promedioExactoCBC !== null && promedioExactoCBC >= 7)
+          ? (notaFinalCBC !== null && notaFinalCBC >= 7)
           : (esPromocional && validasParciales.length >= 2 && promedioParcialesCalc >= 7);
 
-        const vaAFinalIndirectoCBC = esCBC && promedioExactoCBC !== null && promedioExactoCBC >= 4 && promedioExactoCBC < 7;
-        const reprobadoParcialesCBC = esCBC && promedioExactoCBC !== null && promedioExactoCBC < 4;
+        const vaAFinalIndirectoCBC = esCBC && notaFinalCBC !== null && notaFinalCBC >= 4 && notaFinalCBC < 7;
+        const reprobadoParcialesCBC = esCBC && notaFinalCBC !== null && notaFinalCBC < 4;
 
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1385,7 +1385,6 @@ export default function App() {
                   {esCBC && promedioExactoCBC !== null && (
                     <div className="bg-sky-50 border border-sky-200 text-sky-900 p-2.5 rounded-xl text-xs flex items-center justify-between mt-2">
                       <span>Promedio parciales: <strong>{promedioExactoCBC.toFixed(2)}</strong></span>
-                      <span>Nota entera CBC: <strong>{notaFinalCBC}</strong></span>
                     </div>
                   )}
 
