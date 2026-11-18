@@ -268,7 +268,7 @@ export default function App() {
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
         parcial1: '', parcial2: '', parcial3: '', 
         final1: '', final2: '', final3: '', 
-        customName: '', favorita: false
+        customName: '', favorita: false, materiaElectivaCBC: ''
       };
 
       let updatedMat = { ...matState, [field]: value };
@@ -445,7 +445,8 @@ export default function App() {
       if (notaNum !== null && notaNum >= 4 && !esIdioma) {
         sumNotasPromedio += notaNum;
         countNotasPromedio++;
-        notasAprobadasList.push({ name: st.customName ? `${m.name}: ${st.customName}` : m.name, nota: notaNum });
+        const nombreMostrar = cbcIdsSet.has(m.id) && st.materiaElectivaCBC ? st.materiaElectivaCBC : m.name;
+        notasAprobadasList.push({ name: st.customName ? `${nombreMostrar}: ${st.customName}` : nombreMostrar, nota: notaNum });
       }
 
       if (!esIdioma) {
@@ -994,7 +995,7 @@ export default function App() {
                         </button>
                         {esMateriaCBC ? (
                           <div>
-                            <h3 className="font-bold text-slate-800 text-base">{m.name}</h3>
+                            <h3 className="font-bold text-slate-800 text-base">{st.materiaElectivaCBC || m.name}</h3>
                             {st.customName && (
                               <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
                             )}
@@ -1173,63 +1174,66 @@ export default function App() {
               )}
 
               {esCBC && (() => {
-                const nombreMat = mat.name.toLowerCase();
+                const nombreOriginalLower = mat.name.toLowerCase();
+                const esEleccionCBC = nombreOriginalLower.includes('elección') || nombreOriginalLower.includes('eleccion') || nombreOriginalLower.includes('cbc 1') || nombreOriginalLower.includes('cbc 2');
+                const nombreMat = (esEleccionCBC && st.materiaElectivaCBC ? st.materiaElectivaCBC : mat.name).toLowerCase();
                 let opcionesCatedras = [];
 
                 if (nombreMat.includes('antropología')) {
                   opcionesCatedras = ['Cátedra Vargas'];
-                  
                 } else if (nombreMat.includes('filosofía')) {
                   opcionesCatedras = ['Cátedra Beraldi'];
-                  
                 } else if (nombreMat.includes('sociedad y estado')) {
-                  opcionesCatedras = [
-                    'Cátedra Pedrosa',
-                    'Cátedra Denkberg'
-                  ];
-                  
+                  opcionesCatedras = ['Cátedra Denkberg', 'Cátedra Pedrosa'];
                 } else if (nombreMat.includes('pensamiento científico')) {
-                  opcionesCatedras = [
-                    'Cátedra Buacar',
-                    'Cátedra Gimeno',
-                    'Cátedra Perot'
-                  ];
+                  opcionesCatedras = ['Cátedra Buacar', 'Cátedra Gimeno', 'Cátedra Perot'];
                 } else if (nombreMat.includes('economía')) {
-                  opcionesCatedras = [
-                    'Cátedra Di Pelino',
-                    'Cátedra Miliá'
-                  ];
+                  opcionesCatedras = ['Cátedra Di Pelino', 'Cátedra Miliá'];
                 } else if (nombreMat.includes('psicología')) {
-                  opcionesCatedras = [
-                    'Cátedra Quattrocchi',
-                    'Cátedra Fiotti'
-                  ];
+                  opcionesCatedras = ['Cátedra Quattrocchi', 'Cátedra Fiotti'];
                 } else if (nombreMat.includes('semiología')) {
                   opcionesCatedras = ['Cátedra Verzero'];
-                  
                 } else if (nombreMat.includes('sociología')) {
                   opcionesCatedras = ['Cátedra Bustos'];
-                  
                 } else {
-                  opcionesCatedras = [
-                    'Cátedra Pedrosa',
-                    'Cátedra Denkberg'
-                  ];
+                  opcionesCatedras = ['Cátedra Denkberg', 'Cátedra Pedrosa'];
                 }
 
                 return (
-                  <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                    <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Cátedra del CBC:</label>
-                    <select
-                      value={st.customName || ''}
-                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
-                    >
-                      <option value="">-- Seleccionar cátedra --</option>
-                      {opcionesCatedras.map((cat, idx) => (
-                        <option key={idx} value={cat}>{cat}</option>
-                      ))}
-                    </select>
+                  <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                    {esEleccionCBC && (
+                      <div>
+                        <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Seleccione la Materia Electiva:</label>
+                        <select
+                          value={st.materiaElectivaCBC || ''}
+                          onChange={(e) => {
+                            handleUpdateMateria(mat.id, 'materiaElectivaCBC', e.target.value);
+                            handleUpdateMateria(mat.id, 'customName', '');
+                          }}
+                          className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                        >
+                          <option value="">-- Seleccionar materia --</option>
+                          <option value="Sociología">Sociología</option>
+                          <option value="Semiología">Semiología</option>
+                          <option value="Economía">Economía</option>
+                          <option value="Psicología">Psicología</option>
+                        </select>
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Seleccione la Cátedra del CBC:</label>
+                      <select
+                        value={st.customName || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                        className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                      >
+                        <option value="">-- Seleccionar cátedra --</option>
+                        {opcionesCatedras.map((cat, idx) => (
+                          <option key={idx} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 );
               })()}
