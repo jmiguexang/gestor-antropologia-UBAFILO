@@ -64,6 +64,15 @@ const redondearUBAXXI = (promedio) => {
   return Math.floor(promedio);
 };
 
+// Función auxiliar de redondeo FFyL (.5 a favor del estudiante)
+const redondearFFyL = (promedio) => {
+  const decimales = Number((promedio - Math.floor(promedio)).toFixed(4));
+  if (decimales >= 0.5) {
+    return Math.ceil(promedio);
+  }
+  return Math.floor(promedio);
+};
+
 export default function App() {
   const [session, setSession] = useState(() => {
     const saved = localStorage.getItem('antropologia_session');
@@ -274,7 +283,9 @@ export default function App() {
       let updatedMat = { ...matState, [field]: value };
 
       const cbcIds = new Set((PLANS_DATA[selectedPlan]?.cbc || []).map(c => c.id));
+      const cfgIds = new Set((PLANS_DATA[selectedPlan]?.cfg || []).map(c => c.id));
       const esMateriaCBC = cbcIds.has(id);
+      const esMateriaCFG = cfgIds.has(id);
 
       if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'regimen'].includes(field)) {
         const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
@@ -313,6 +324,27 @@ export default function App() {
                 updatedMat.regimen = 'final';
               }
             }
+          }
+        } else if (esMateriaCFG) {
+          const instanciasParciales = (reg === 'promocion' ? [p1, p2, p3] : [p1, p2])
+            .filter(n => !isNaN(n) && n >= 0);
+          const promParcialesExacto = instanciasParciales.length > 0
+            ? instanciasParciales.reduce((a, b) => a + b, 0) / instanciasParciales.length
+            : null;
+          const notaParcialesRedondeada = promParcialesExacto !== null ? redondearFFyL(promParcialesExacto) : null;
+
+          const intentosFinales = [f1, f2, f3].filter(n => !isNaN(n) && n >= 0);
+
+          if (notaAprobadaFinal !== undefined && intentosFinales.length > 0) {
+            const promFinales = intentosFinales.reduce((a, b) => a + b, 0) / intentosFinales.length;
+            if (promParcialesExacto !== null) {
+              const notaDefinitiva = redondearFFyL((promParcialesExacto + promFinales) / 2);
+              updatedMat.nota = notaDefinitiva.toString();
+            } else {
+              updatedMat.nota = redondearFFyL(promFinales).toString();
+            }
+          } else if (notaParcialesRedondeada !== null) {
+            updatedMat.nota = notaParcialesRedondeada.toString();
           }
         } else {
           if (notaAprobadaFinal !== undefined) {
@@ -431,12 +463,14 @@ export default function App() {
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
   const cbcIdsSet = new Set((planObj.cbc || []).map(c => c.id));
+  const cfgIdsSet = new Set((planObj.cfg || []).map(c => c.id));
 
   currentMateriasAll.forEach(m => {
     const st = studentData[selectedPlan]?.[m.id] || {};
     const estado = st.estado || 'pendiente';
     const notaNum = st.nota !== '' && !isNaN(st.nota) ? parseFloat(st.nota) : null;
     const esIdioma = idiomasIds.has(m.id);
+    const esCFGMat = cfgIdsSet.has(m.id);
 
     if (st.favorita) favoritasCount++;
 
@@ -449,7 +483,7 @@ export default function App() {
         notasAprobadasList.push({ name: st.customName ? `${nombreMostrar}: ${st.customName}` : nombreMostrar, nota: notaNum });
       }
 
-      if (!esIdioma) {
+      if (!esIdioma && !esCFGMat) {
         [st.final1, st.final2, st.final3].forEach(fVal => {
           const fNum = parseFloat(fVal);
           if (!isNaN(fNum) && fNum > 0 && fNum < 4) {
@@ -979,6 +1013,7 @@ export default function App() {
                 const esPromocional = regimenActual === 'promocion';
                 const esFavorita = Boolean(st.favorita);
                 const esMateriaCBC = cbcIdsSet.has(m.id);
+                const esMateriaCFG = cfgIdsSet.has(m.id);
 
                 return (
                   <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -996,6 +1031,13 @@ export default function App() {
                         {esMateriaCBC ? (
                           <div>
                             <h3 className="font-bold text-slate-800 text-base">{st.materiaElectivaCBC || m.name}</h3>
+                            {st.customName && (
+                              <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
+                            )}
+                          </div>
+                        ) : esMateriaCFG ? (
+                          <div>
+                            <h3 className="font-bold text-slate-800 text-base">{m.name}</h3>
                             {st.customName && (
                               <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
                             )}
@@ -1018,7 +1060,7 @@ export default function App() {
                         <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
                         <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
                       </div>
-                      {(st.estado === 'aprobada' || (esMateriaCBC && st.nota !== '')) && (
+                      {(st.estado === 'aprobada' || ((esMateriaCBC || esMateriaCFG) && st.nota !== '')) && (
                         <input type="number" min="0" max="10" placeholder="Nota" value={st.nota || ''} onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)} className="w-12 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-1" />
                       )}
                     </div>
@@ -1121,6 +1163,7 @@ export default function App() {
         const esPromocional = regimenActual === 'promocion';
 
         const esCBC = activeBlock === 'cbc' || cbcIdsSet.has(mat.id);
+        const esCFG = activeBlock === 'cfg' || cfgIdsSet.has(mat.id);
         const esIdioma = activeBlock === 'idiomas';
         const esElectiva = activeBlock === 'electivas';
 
@@ -1128,19 +1171,51 @@ export default function App() {
         const p2 = parseFloat(st.parcial2);
         const p3 = parseFloat(st.parcial3);
 
+        const f1 = parseFloat(st.final1);
+        const f2 = parseFloat(st.final2);
+        const f3 = parseFloat(st.final3);
+
         const instanciasCBC = [p1, p2].filter(n => !isNaN(n) && n >= 0);
         const promedioExactoCBC = instanciasCBC.length === 2 ? (instanciasCBC[0] + instanciasCBC[1]) / 2 : null;
         const notaFinalCBC = promedioExactoCBC !== null ? redondearUBAXXI(promedioExactoCBC) : null;
+
+        const instanciasCFG = (esPromocional ? [p1, p2, p3] : [p1, p2]).filter(n => !isNaN(n) && n >= 0);
+        const promedioExactoCFG = instanciasCFG.length > 0
+          ? (instanciasCFG.reduce((a, b) => a + b, 0) / instanciasCFG.length)
+          : null;
+        const notaParcialesCFG = promedioExactoCFG !== null ? redondearFFyL(promedioExactoCFG) : null;
+
+        const intentosFinalesCFG = [f1, f2, f3].filter(n => !isNaN(n) && n >= 0);
+        const promedioFinalesCFG = intentosFinalesCFG.length > 0
+          ? (intentosFinalesCFG.reduce((a, b) => a + b, 0) / intentosFinalesCFG.length)
+          : null;
+        const notaFinalAprobadaCFG = [f1, f2, f3].find(f => !isNaN(f) && f >= 4);
+        const notaDefinitivaCFG = (notaFinalAprobadaCFG !== undefined && promedioFinalesCFG !== null && promedioExactoCFG !== null)
+          ? redondearFFyL((promedioExactoCFG + promedioFinalesCFG) / 2)
+          : null;
 
         const validasParciales = [p1, p2, p3].filter(n => !isNaN(n) && n >= 1);
         const promedioParcialesCalc = validasParciales.length > 0 ? (validasParciales.reduce((a, b) => a + b, 0) / validasParciales.length) : 0;
 
         const logroPromocion = esCBC
           ? (notaFinalCBC !== null && notaFinalCBC >= 7)
-          : (esPromocional && validasParciales.length >= 2 && promedioParcialesCalc >= 7);
+          : esCFG
+            ? (esPromocional && instanciasCFG.length === 3 && notaParcialesCFG !== null && notaParcialesCFG >= 7)
+            : (esPromocional && validasParciales.length >= 2 && promedioParcialesCalc >= 7);
 
         const vaAFinalIndirectoCBC = esCBC && notaFinalCBC !== null && notaFinalCBC >= 4 && notaFinalCBC < 7;
         const reprobadoParcialesCBC = esCBC && notaFinalCBC !== null && notaFinalCBC < 4;
+
+        const vaAFinalCFG = esCFG && !logroPromocion && (
+          (esPromocional && instanciasCFG.length === 3 && notaParcialesCFG !== null && notaParcialesCFG >= 4 && notaParcialesCFG < 7) ||
+          (!esPromocional && instanciasCFG.length === 2 && notaParcialesCFG !== null && notaParcialesCFG >= 4)
+        );
+        const reprobadoParcialesCFG = esCFG && (
+          (esPromocional && instanciasCFG.length === 3 && notaParcialesCFG !== null && notaParcialesCFG < 4) ||
+          (!esPromocional && instanciasCFG.length === 2 && notaParcialesCFG !== null && notaParcialesCFG < 4)
+        );
+
+        const ocultarTercerParcial = esCBC || (esCFG && !esPromocional);
 
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1238,6 +1313,19 @@ export default function App() {
                 );
               })()}
 
+              {esCFG && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Cátedra del CFG:</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Cátedra A / Titular de cátedra..."
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  />
+                </div>
+              )}
+
               {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
@@ -1288,6 +1376,14 @@ export default function App() {
                     <p>• <strong>Promoción directa:</strong> promedio de las 2 instancias parciales ≥ 7 puntos (sin examen final).</p>
                     <p>• <strong>Promoción indirecta:</strong> promedio entre 4 y 6,99 puntos → rinde examen final (aprueba con ≥ 4; validez de 3 turnos consecutivos).</p>
                     <p>• <strong>Redondeo:</strong> ≥ 0,50 sube; ≤ 0,49 baja; entre 3,01 y 3,99 redondea siempre hacia abajo (3).</p>
+                  </div>
+                )}
+                {esCFG && (
+                  <div className="mt-2 bg-white border border-slate-200 rounded-lg p-2.5 text-[10px] text-slate-600 space-y-1 leading-relaxed">
+                    <p className="font-bold text-slate-800">Régimen de Evaluación CFG (FFyL):</p>
+                    <p>• <strong>Promocional:</strong> promedio de 3 parciales ≥ 7 puntos promociona directo (con .5 a favor). Si no llega a 7, rinde final.</p>
+                    <p>• <strong>Final obligatorio:</strong> promedio de 2 parciales ≥ 4 puntos habilita a rendir final (con .5 a favor).</p>
+                    <p>• <strong>Nota definitiva con final:</strong> se promedian todos los intentos de final rendidos (hasta 3), y ese resultado se promedia con el promedio de parciales.</p>
                   </div>
                 )}
               </div>
@@ -1358,7 +1454,7 @@ export default function App() {
                 
                 <div className="space-y-2">
                   <span className="text-[10px] font-bold text-slate-600 block">Notas de Parciales / Regularidad</span>
-                  <div className={`grid ${esCBC ? 'grid-cols-2' : 'grid-cols-3'} gap-2`}>
+                  <div className={`grid ${ocultarTercerParcial ? 'grid-cols-2' : 'grid-cols-3'} gap-2`}>
                     <div>
                       <span className="text-[9px] font-bold text-slate-500 block mb-1">1er Parcial</span>
                       <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
@@ -1367,10 +1463,10 @@ export default function App() {
                       <span className="text-[9px] font-bold text-slate-500 block mb-1">2do Parcial</span>
                       <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                     </div>
-                    {!esCBC && (
+                    {!ocultarTercerParcial && (
                       <div>
-                        <span className="text-[9px] font-bold text-slate-500 block mb-1">3ro / Recup</span>
-                        <input type="number" min="1" max="10" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <span className="text-[9px] font-bold text-slate-500 block mb-1">{esCFG ? '3er Parcial' : '3ro / Recup'}</span>
+                        <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
                       </div>
                     )}
                   </div>
@@ -1378,6 +1474,12 @@ export default function App() {
                   {esCBC && promedioExactoCBC !== null && (
                     <div className="bg-sky-50 border border-sky-200 text-sky-900 p-2.5 rounded-xl text-xs flex items-center justify-between mt-2">
                       <span>Promedio parciales: <strong>{promedioExactoCBC.toFixed(2)}</strong></span>
+                    </div>
+                  )}
+
+                  {esCFG && promedioExactoCFG !== null && (
+                    <div className="bg-sky-50 border border-sky-200 text-sky-900 p-2.5 rounded-xl text-xs flex items-center justify-between mt-2">
+                      <span>Promedio parciales: <strong>{promedioExactoCFG.toFixed(2)}</strong> (Redondeo: <strong>{notaParcialesCFG}</strong>)</span>
                     </div>
                   )}
 
@@ -1396,6 +1498,20 @@ export default function App() {
                   )}
 
                   {reprobadoParcialesCBC && (
+                    <div className="bg-red-100 border border-red-300 text-red-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                      <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
+                      <span>Cursada reprobada (promedio inferior a 4).</span>
+                    </div>
+                  )}
+
+                  {vaAFinalCFG && (
+                    <div className="bg-amber-100 border border-amber-300 text-amber-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>Habilitado/a para examen final (tenés hasta 3 oportunidades).</span>
+                    </div>
+                  )}
+
+                  {reprobadoParcialesCFG && (
                     <div className="bg-red-100 border border-red-300 text-red-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
                       <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
                       <span>Cursada reprobada (promedio inferior a 4).</span>
@@ -1422,6 +1538,14 @@ export default function App() {
                       <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
                     </div>
                   </div>
+                  {esCFG && promedioFinalesCFG !== null && !logroPromocion && (
+                    <div className="bg-amber-50 border border-amber-200 text-amber-950 p-2 rounded-xl text-[11px] flex items-center justify-between mt-1">
+                      <span>Promedio intentos final: <strong>{promedioFinalesCFG.toFixed(2)}</strong></span>
+                      {notaDefinitivaCFG !== null && (
+                        <span>Nota definitiva (Final + Parciales): <strong>{notaDefinitivaCFG}</strong></span>
+                      )}
+                    </div>
+                  )}
                   {!logroPromocion && (
                     <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (&lt; 4) computan para el promedio general de la carrera.</p>
                   )}
