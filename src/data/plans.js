@@ -11,8 +11,8 @@ export const PLANS_DATA = {
     ],
     cfg: [
       { id: "cfg-1", name: "Epistemología de las Ciencias Sociales", etapa: "CFG", correlativa: "CBC aprobado" },
-      { id: "cfg-2", name: "Historia y Teoría de la Antropología I", etapa: "CFG", correlativa: "CBC aprobado" },
-      { id: "cfg-3", name: "Historia y Teoría de la Antropología II", etapa: "CFG", correlativa: "CBC aprobado" },
+      { id: "cfg-2", name: "Historia y Teoría de la Antropología 1", etapa: "CFG", correlativa: "CBC aprobado" },
+      { id: "cfg-3", name: "Historia y Teoría de la Antropología 2", etapa: "CFG", correlativa: "CBC aprobado" },
       { id: "cfg-4", name: "Problemas de Antropología Social y Política", etapa: "CFG", correlativa: "CBC aprobado" },
       { id: "cfg-5", name: "Problemas de Antropología Económica", etapa: "CFG", correlativa: "CBC aprobado" },
       { id: "cfg-6", name: "Problemas de Antropología Simbólica", etapa: "CFG", correlativa: "CBC aprobado" },
