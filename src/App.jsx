@@ -339,6 +339,8 @@ export default function App() {
           [id]: updatedMat
         }
       };
+
+      // GUARDADO INMEDIATO EN LOCAL Y NUBE
       guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
