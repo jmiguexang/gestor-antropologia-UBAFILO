@@ -504,36 +504,41 @@ export default function App() {
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
       return [
-        `¡100% completado! Oficialmente en la meta del título de Antropología 🎓✨`,
-        `Todo el esfuerzo de Puan valió la pena: 100% adentro. ¡A celebrar! 🥂🌿`,
-        `De Filo UBA al mundo: carrera terminada. ¡Lo lograste! 🏆🚀`
+        `¡100% completado! Se cerró el rito de pasaje: salimos de la liminidad para reintegrarnos al mundo con título en mano 🎓✨`,
+        `Después de tanto potlatch de horas de sueño y resúmenes, el prestigio académico es nuestro: ¡100% adentro! 🏆🥂`,
+        `La tesis está defendida y el mito de origen concluyó: de nativos en Puan a colegas en el campo 🚀🌿`,
+        `Rendir la última materia fue un auténtico hecho social total: cuerpo, mente, mates y familia celebrando el 100% 🎉🎁`
       ];
     }
     if (pct >= 70) {
       return [
-        `¡Ya estás al ${pct}% de tu carrera! Falta poco, sigue así, ¡vamos que tú puedes! 🔥🎓`,
-        `Huele a tesis: ${pct}% de la carrera aprobado. El último tirón es tuyo 📖🚀`,
-        `Con el ${pct}% adentro, la recta final ya se siente cerquita. ¡A no aflojar! 💪✨`
+        `Al ${pct}% de la carrera: ya practicamos el extrañamiento con nosotros mismos cuando nos vemos subrayando un domingo a la noche 📖⛺`,
+        `Con el ${pct}% adentro, esquivamos el peligro de las correlativas y mantenemos la pureza del promedio al estilo Mary Douglas ⚖️🔥`,
+        `Cruzando el ${pct}%: la mirada etnográfica ya está tan incorporada que hasta las charlas de sobremesa nos parecen trabajo de campo 🔍✨`,
+        `En el tramo final (${pct}%): aplicando la descripción densa de Geertz para entender qué quiso decir el docente en la consigna del parcial ✍️📚`
       ];
     }
     if (pct >= 50) {
       return [
-        `¡Ya pasamos la mitad del camino (${pct}%)! El recorrido viene excelente 🚀📚`,
-        `Mitad de carrera adentro (${pct}%). De acá en adelante, cada materia se disfruta el doble 🌿✨`,
-        `Cruzando el ${pct}% de Ciencias Antropológicas. ¡La base ya está súper firme! 💪🔥`
+        `Mitad de carrera adentro (${pct}%): habitando de lleno la liminidad de Turner. Ni ingresantes ni graduados, pero firmes en la trinchera 🌿🚀`,
+        `Con el ${pct}% aprobado, hacemos bricolaje teórico como Lévi-Strauss: armando respuestas brillantes con los apuntes que sobrevivieron 🧩💪`,
+        `Superando el ${pct}%: desnaturalizando el sentido común de que "no se llega al final" y deconstruyendo los mandatos de la cursada 🔥🏛️`,
+        `Al ${pct}% del recorrido: desde el perspectivismo amerindio, el aula y la biblioteca ya nos ven como parte de su propia especie 🐆✨`
       ];
     }
     if (pct >= 25) {
       return [
-        `Camino al 50%: ya tenés el ${pct}% adentro. ¡Cada parcial suma un montón! 📝🔥`,
-        `Construyendo el trayecto académico: ${pct}% completado. ¡A seguir con ese ritmo! 🌿📖`,
-        `Marchando firmes en Filo UBA: ${pct}% de la carrera aprobada 🚀✨`
+        `Llevás el ${pct}% adentro: escapando del panóptico del SIU Guaraní a fuerza de constancia, resúmenes y café 📝☕`,
+        `Construyendo el habitus puaner al ${pct}%: cada final aprobado reconfigura nuestra forma de leer y pensar la realidad 📖🌿`,
+        `Con el ${pct}% completado, ya sabemos que aprobar un parcial depende de una compleja red de reciprocidad entre compañeros/as 🎁🤝`,
+        `Marchando al ${pct}%: recolectando categorías analíticas con la paciencia de Boas armando su archivo etnográfico 📚🚀`
       ];
     }
     return [
-      `Arrancando el camino en Antropología: ya llevás el ${pct}% de la carrera 🌱📚`,
-      `Recién empieza el viaje en Puan: ${pct}% completado. ¡A meterle con todo! ✨🚀`,
-      `Primeros pasos en la facultad: ${pct}% adentro. ¡Vamos por más! 💪🎓`
+      `Arrancando la etnografía en Puan (${pct}%): aprendiendo los códigos simbólicos de la tribu universitaria 🌱📚`,
+      `Recién al ${pct}%: ejercitando el relativismo cultural para no entrar en pánico ante el primer programa de 40 textos ✨🚀`,
+      `Primeros pasos en la alteridad académica (${pct}%): observadores participantes en aulas llenas y pasillos con historia 💪🎓`,
+      `Con el ${pct}% adentro: iniciando el ciclo de dar, recibir y devolver apuntes en el ecosistema de Filo ✍️☕`
     ];
   };
 
