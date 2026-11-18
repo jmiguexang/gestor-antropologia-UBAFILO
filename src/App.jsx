@@ -1313,18 +1313,48 @@ export default function App() {
                 );
               })()}
 
-              {esCFG && (
-                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Cátedra del CFG:</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Cátedra A / Titular de cátedra..."
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
-                  />
-                </div>
-              )}
+              {esCFG && (() => {
+                const nombreMat = mat.name.toLowerCase();
+                let opcionesCatedrasCFG = [];
+
+                if (nombreMat.includes('epistemología')) {
+                  opcionesCatedrasCFG = ['Cátedra Glavich', 'Cátedra Hernández'];
+                } else if (nombreMat.includes('historia y teoría de la antropología i')) {
+                  opcionesCatedrasCFG = ['Cátedra Roca'];
+                } else if (nombreMat.includes('historia y teoría de la antropología ii')) {
+                  opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
+                } else if (nombreMat.includes('problemas de antropología económica')) {
+                  opcionesCatedrasCFG = ['Cátedra Petz-Scaglia'];
+                } else if (nombreMat.includes('problemas de antropología simbólica')) {
+                  opcionesCatedrasCFG = ['Cátedra Wright'];
+                } else if (nombreMat.includes('antropología biológica')) {
+                  opcionesCatedrasCFG = ['Cátedra Avena'];
+                } else if (nombreMat.includes('introducción a la arqueología')) {
+                  opcionesCatedrasCFG = ['Cátedra Lanza'];
+                } else if (nombreMat.includes('arqueología, legislación y comunidad')) {
+                  opcionesCatedrasCFG = ['Cátedra Salerno'];
+                } else if (nombreMat.includes('problemas de antropología social y política')) {
+                  opcionesCatedrasCFG = ['Cátedra Novaro', 'Cátedra Balbi', 'Cátedra Fernández', 'Cátedra Pita'];
+                } else {
+                  opcionesCatedrasCFG = ['Cátedra Única / General'];
+                }
+
+                return (
+                  <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                    <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Cátedra del CFG:</label>
+                    <select
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar cátedra --</option>
+                      {opcionesCatedrasCFG.map((cat, idx) => (
+                        <option key={idx} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              })()}
 
               {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
