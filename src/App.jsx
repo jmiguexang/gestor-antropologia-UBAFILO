@@ -992,17 +992,18 @@ export default function App() {
                         <button type="button" onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)} className="p-1 rounded-lg hover:bg-amber-50 transition">
                           <Star className={`w-5 h-5 transition ${esFavorita ? 'fill-amber-400 text-amber-500 scale-110' : 'text-slate-300'}`} />
                         </button>
-                       {esMateriaCBC ? (
+                        {esMateriaCBC ? (
                           <div>
-                            <h3 className="font-bold text-slate-800 text-base">
-                              {st.materiaElectivaCBC || m.name}
-                            </h3>
+                            <h3 className="font-bold text-slate-800 text-base">{m.name}</h3>
                             {st.customName && (
                               <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
                             )}
                           </div>
-                       </div>
-                      
+                        ) : (
+                          <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
+                        )}
+                      </div>
+                    </div>
                     <div className="flex items-center gap-3 flex-wrap justify-end">
                       {m.esCustomSeminario && (
                         <button onClick={() => handleEliminarSeminarioPersonalizado(m.id)} className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition"><Trash2 className="w-4 h-4" /></button>
@@ -1233,21 +1234,8 @@ export default function App() {
                 );
               })()}
 
-            {esElectiva && (
+              {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Materia Electiva:</label>
-                  <select
-                    value={st.materiaElectivaTipo || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'materiaElectivaTipo', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold mb-2"
-                  >
-                    <option value="">-- Seleccionar materia electiva --</option>
-                    <option value="Sociología">Sociología</option>
-                    <option value="Semiología">Semiología</option>
-                    <option value="Economía">Economía</option>
-                    <option value="Psicología">Psicología</option>
-                  </select>
-
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
                   <select
                     value={st.customName || ''}
