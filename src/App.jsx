@@ -1317,9 +1317,9 @@ export default function App() {
 
                 if (nombreMat.includes('epistemología') || idMat.includes('epistemologia')) {
                   opcionesCatedrasCFG = ['Cátedra Glavich', 'Cátedra Hernández'];
-                } else if (nombreMat.includes('historia y teoría de la antropología i') || nombreMat.includes('historia y teoria de la antropologia i') || idMat.includes('antropologia-i') || idMat.includes('historia-1')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología i') || nombreMat.includes('historia y teoria de la antropología i') || idMat.includes('antropologia-i') || idMat.includes('historia-1')) {
                   opcionesCatedrasCFG = ['Cátedra Roca'];
-                } else if (nombreMat.includes('historia y teoría de la antropología ii') || nombreMat.includes('historia y teoria de la antropologia ii') || idMat.includes('antropologia-ii') || idMat.includes('historia-2')) {
+                } else if (nombreMat.includes('historia y teoría de la antropología ii') || nombreMat.includes('historia y teoria de la antropología ii') || idMat.includes('antropologia-ii') || idMat.includes('historia-2')) {
                   opcionesCatedrasCFG = ['Cátedra Brac', 'Cátedra Garaño'];
                 } else if (nombreMat.includes('problemas de antropología económica') || idMat.includes('economica')) {
                   opcionesCatedrasCFG = ['Cátedra Petz-Scaglia'];
