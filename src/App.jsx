@@ -1015,7 +1015,6 @@ export default function App() {
                 const esPromocional = regimenActual === 'promocion';
                 const esFavorita = Boolean(st.favorita);
                 const esMateriaCBC = cbcIdsSet.has(m.id);
-                const esMateriaCFG = cfgIdsSet.has(m.id);
 
                 return (
                   <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1026,8 +1025,8 @@ export default function App() {
                           {esPromocional ? '✨ Promocional' : '📝 Examen Final Obligatorio'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2.5 flex-wrap">
-                        <button type="button" onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)} className="p-1 rounded-lg hover:bg-amber-50 transition">
+                      <div className="flex items-start gap-2.5">
+                        <button type="button" onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)} className="p-1 rounded-lg hover:bg-amber-50 transition mt-0.5">
                           <Star className={`w-5 h-5 transition ${esFavorita ? 'fill-amber-400 text-amber-500 scale-110' : 'text-slate-300'}`} />
                         </button>
                         {esMateriaCBC ? (
@@ -1037,15 +1036,13 @@ export default function App() {
                               <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
                             )}
                           </div>
-                        ) : esMateriaCFG ? (
+                        ) : (
                           <div>
                             <h3 className="font-bold text-slate-800 text-base">{m.name}</h3>
                             {st.customName && (
                               <p className="text-xs font-semibold text-sky-700 mt-0.5">({st.customName})</p>
                             )}
                           </div>
-                        ) : (
-                          <h3 className="font-bold text-slate-800 text-base">{st.customName ? `${m.name}: ${st.customName}` : m.name}</h3>
                         )}
                       </div>
                     </div>
@@ -1062,7 +1059,7 @@ export default function App() {
                         <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
                         <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
                       </div>
-                      {(st.estado === 'aprobada' || ((esMateriaCBC || esMateriaCFG) && st.nota !== '')) && (
+                      {(st.estado === 'aprobada' || ((esMateriaCBC || cfgIdsSet.has(m.id)) && st.nota !== '')) && (
                         <input type="number" min="0" max="10" placeholder="Nota" value={st.nota || ''} onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)} className="w-12 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-1" />
                       )}
                     </div>
