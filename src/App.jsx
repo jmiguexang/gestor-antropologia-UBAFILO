@@ -591,6 +591,24 @@ export default function App() {
   const denominadorHoras = selectedPlan === '2023' ? 3200 : Math.max(horasTotalesPlan, 1);
   const porcentajeAvance = Math.min(100, Math.round((horasAprobadas / denominadorHoras) * 100));
 
+  // Carga horaria total y avanzada del bloque actual
+  const materiasDelBloqueActual = getBlockMateriasExtended(activeBlock);
+  let horasTotalBloque = 0;
+  let horasAvanzadasBloque = 0;
+
+  materiasDelBloqueActual.forEach(m => {
+    const hs = getHorasMateria(m);
+    horasTotalBloque += hs;
+    const st = studentData[selectedPlan]?.[m.id] || {};
+    const esIdiomaItem = idiomasIds.has(m.id) || (m.etapa || '').toLowerCase().includes('idioma');
+
+    if (st.estado === 'aprobada') {
+      if (!esIdiomaItem || idiomasAprobadosIds.has(m.id)) {
+        horasAvanzadasBloque += hs;
+      }
+    }
+  });
+
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
       return [
@@ -1091,11 +1109,19 @@ export default function App() {
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-              <h2 className="text-base font-bold flex items-center gap-2 uppercase tracking-wide">
-                {onlyFavorites ? <><Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Materias Favoritas</> : <><BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock.toUpperCase()}</>}
-              </h2>
-              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">{currentBlockMaterias.length} materias</span>
+            <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-base font-bold flex items-center gap-2 uppercase tracking-wide">
+                  {onlyFavorites ? <><Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Materias Favoritas</> : <><BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock.toUpperCase()}</>}
+                </h2>
+                {!onlyFavorites && (
+                  <div className="mt-1 text-[11px] text-sky-200 leading-tight">
+                    <p>Carga horaria total del bloque: <strong>{horasTotalBloque} hs</strong></p>
+                    <p className="text-emerald-300">Carga horaria avanzada: <strong>{horasAvanzadasBloque} hs</strong></p>
+                  </div>
+                )}
+              </div>
+              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700 shrink-0">{currentBlockMaterias.length} materias</span>
             </div>
 
             <div className="divide-y divide-slate-100">
@@ -1255,6 +1281,7 @@ export default function App() {
         const esCFG = activeBlock === 'cfg' || cfgIdsSet.has(mat.id);
         const esIdioma = activeBlock === 'idiomas';
         const esElectiva = activeBlock === 'electivas';
+        const horasMateriaDetalle = getHorasMateria(mat);
 
         const p1 = parseFloat(st.parcial1);
         const p2 = parseFloat(st.parcial2);
@@ -1313,6 +1340,7 @@ export default function App() {
                 <div>
                   <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
                   <p className="text-[10px] text-slate-500">Configuración, selección de cátedra y notas</p>
+                  <p className="text-[11px] font-bold text-sky-800 mt-0.5">Carga horaria asignada: {horasMateriaDetalle} hs</p>
                 </div>
                 <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
               </div>
