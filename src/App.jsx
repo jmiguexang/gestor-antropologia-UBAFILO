@@ -499,7 +499,45 @@ export default function App() {
 
   const promedioGeneralUBA = countNotasPromedio > 0 ? (sumNotasPromedio / countNotasPromedio).toFixed(2) : '-';
   const totalMaterias = currentMateriasAll.length;
-  const porcentajeAvance = totalMaterias > 0 ? Math.round((aprobadasCount / totalMaterias) * 100) : 0;
+
+  // Cálculo ponderado por carga horaria oficial FFyL-UBA (Plan 2023 y Plan 1985)
+  const getHorasMateria = (m) => {
+    const idLower = (m.id || '').toLowerCase();
+    const nameLower = (m.name || '').toLowerCase();
+    const etapaLower = (m.etapa || '').toLowerCase();
+
+    if (cbcIdsSet.has(m.id) || etapaLower.includes('cbc')) return 64;
+    if (nameLower.includes('tesis') || idLower.includes('tesis')) return 160;
+    if (idiomasIds.has(m.id) || etapaLower.includes('idioma')) {
+      return nameLower.includes('nivel') ? 64 : 192;
+    }
+    if (
+      m.esCustomSeminario ||
+      idLower.includes('sem') ||
+      nameLower.includes('seminario') ||
+      nameLower.includes('pst') ||
+      etapaLower.includes('seminario')
+    ) {
+      return nameLower.includes('anual') || nameLower.includes('investigación') ? 128 : 64;
+    }
+    if (nameLower.includes('anual')) return 192;
+    return 96;
+  };
+
+  let horasAprobadas = 0;
+  let horasTotalesPlan = 0;
+
+  currentMateriasAll.forEach(m => {
+    const hs = getHorasMateria(m);
+    horasTotalesPlan += hs;
+    const st = studentData[selectedPlan]?.[m.id] || {};
+    if (st.estado === 'aprobada') {
+      horasAprobadas += hs;
+    }
+  });
+
+  const denominadorHoras = selectedPlan === '2023' ? 3200 : Math.max(horasTotalesPlan, 1);
+  const porcentajeAvance = Math.min(100, Math.round((horasAprobadas / denominadorHoras) * 100));
 
   const getMotivationalQuotes = (pct) => {
     if (pct >= 100) {
