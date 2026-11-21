@@ -276,7 +276,7 @@ export default function App() {
     setStudentData(prev => {
       const planState = prev[selectedPlan] || {};
       const matState = planState[id] || { 
-        estado: 'pendiente', nota: '', aplazos: '0', aplazosCBC: [], regimen: 'promocion', 
+        estado: 'pendiente', nota: '', aplazos: '0', aplazosCBC: [], aplazosCFG: [], regimen: 'promocion', 
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
         parcial1: '', parcial2: '', parcial3: '', 
@@ -483,6 +483,8 @@ export default function App() {
   let countNotasPromedio = 0;
   let sumNotasCBC = 0;
   let countNotasCBC = 0;
+  let sumNotasCFG = 0;
+  let countNotasCFG = 0;
   let notasAprobadasList = [];
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
@@ -499,7 +501,7 @@ export default function App() {
 
     if (st.favorita) favoritasCount++;
 
-    // Cursadas anteriores reprobadas del CBC (computan tanto para el promedio CBC como para el promedio general UBA)
+    // Cursadas anteriores reprobadas del CBC
     if (esCBCMat && Array.isArray(st.aplazosCBC)) {
       st.aplazosCBC.forEach(apVal => {
         if (apVal !== '' && !isNaN(apVal)) {
@@ -514,6 +516,21 @@ export default function App() {
       });
     }
 
+    // Cursadas anteriores reprobadas del CFG
+    if (esCFGMat && Array.isArray(st.aplazosCFG)) {
+      st.aplazosCFG.forEach(apVal => {
+        if (apVal !== '' && !isNaN(apVal)) {
+          const apNum = parseFloat(apVal);
+          if (apNum >= 0 && apNum < 4) {
+            sumNotasPromedio += apNum;
+            countNotasPromedio++;
+            sumNotasCFG += apNum;
+            countNotasCFG++;
+          }
+        }
+      });
+    }
+
     if (estado === 'aprobada') {
       aprobadasCount++;
       if (notaNum !== null && notaNum >= 4 && !esIdioma) {
@@ -522,6 +539,10 @@ export default function App() {
         if (esCBCMat) {
           sumNotasCBC += notaNum;
           countNotasCBC++;
+        }
+        if (esCFGMat) {
+          sumNotasCFG += notaNum;
+          countNotasCFG++;
         }
         const nombreMostrar = esCBCMat && st.materiaElectivaCBC ? st.materiaElectivaCBC : m.name;
         notasAprobadasList.push({ name: st.customName ? `${nombreMostrar}: ${st.customName}` : nombreMostrar, nota: notaNum });
@@ -550,6 +571,7 @@ export default function App() {
 
   const promedioGeneralUBA = countNotasPromedio > 0 ? (sumNotasPromedio / countNotasPromedio).toFixed(2) : '-';
   const promedioCBC = countNotasCBC > 0 ? (sumNotasCBC / countNotasCBC).toFixed(2) : '-';
+  const promedioCFG = countNotasCFG > 0 ? (sumNotasCFG / countNotasCFG).toFixed(2) : '-';
   const totalMaterias = currentMateriasAll.length;
 
   // Cálculo ponderado por carga horaria oficial FFyL-UBA (Plan 2023 y Plan 1985)
@@ -1183,6 +1205,9 @@ export default function App() {
                     {activeBlock === 'cbc' && (
                       <p className="text-amber-300 mt-0.5">Promedio CBC (con aplazos): <strong>{promedioCBC}</strong></p>
                     )}
+                    {activeBlock === 'cfg' && (
+                      <p className="text-amber-300 mt-0.5">Promedio CFG (con aplazos): <strong>{promedioCFG}</strong></p>
+                    )}
                   </div>
                 )}
               </div>
@@ -1398,6 +1423,7 @@ export default function App() {
 
         const ocultarTercerParcial = esCBC || (esCFG && !esPromocional);
         const aplazosCBCList = Array.isArray(st.aplazosCBC) ? st.aplazosCBC : [];
+        const aplazosCFGList = Array.isArray(st.aplazosCFG) ? st.aplazosCFG : [];
 
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1843,6 +1869,56 @@ export default function App() {
                       </div>
                     )}
                     <p className="text-[9px] text-slate-500">Si recursaste esta materia del CBC, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CBC y de la carrera.</p>
+                  </div>
+                )}
+
+                {esCFG && (
+                  <div className="space-y-2 pt-2 border-t border-slate-200">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos CFG)</span>
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateMateria(mat.id, 'aplazosCFG', [...aplazosCFGList, ''])}
+                        className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
+                      >
+                        <Plus className="w-3 h-3" /> Agregar aplazo
+                      </button>
+                    </div>
+                    {aplazosCFGList.length > 0 && (
+                      <div className="space-y-1.5">
+                        {aplazosCFGList.map((notaAp, idx) => (
+                          <div key={idx} className="flex items-center gap-2 bg-red-50/70 border border-red-200 rounded-lg px-2.5 py-1.5">
+                            <span className="text-[10px] font-bold text-red-900 flex-1">Intento {idx + 1} reprobado:</span>
+                            <input
+                              type="number"
+                              min="0"
+                              max="3"
+                              step="1"
+                              placeholder="0-3"
+                              value={notaAp}
+                              onChange={(e) => {
+                                const nuevaLista = [...aplazosCFGList];
+                                nuevaLista[idx] = e.target.value;
+                                handleUpdateMateria(mat.id, 'aplazosCFG', nuevaLista);
+                              }}
+                              className="w-16 bg-white border border-red-300 rounded-md p-1 text-xs text-center font-bold text-red-900"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const nuevaLista = aplazosCFGList.filter((_, i) => i !== idx);
+                                handleUpdateMateria(mat.id, 'aplazosCFG', nuevaLista);
+                              }}
+                              className="text-red-500 hover:text-red-700 font-bold text-sm px-1"
+                              title="Eliminar intento"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-[9px] text-slate-500">Si recursaste esta materia del CFG, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CFG y de la carrera.</p>
                   </div>
                 )}
 
