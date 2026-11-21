@@ -713,9 +713,7 @@ export default function App() {
   });
 
   const denominadorHoras = selectedPlan === '1985' ? 2867.2 : (selectedPlan === '2023' ? 3200 : Math.max(horasTotalesPlan, 1));
-  const porcentajeAvance = selectedPlan === '1985'
-    ? Math.min(100, Number(((horasAprobadas / denominadorHoras) * 100).toFixed(2)))
-    : Math.min(100, Math.round((horasAprobadas / denominadorHoras) * 100));
+  const porcentajeAvance = Math.min(100, Number(((horasAprobadas / denominadorHoras) * 100).toFixed(1)));
 
   const materiasDelBloqueActual = getBlockMateriasExtended(activeBlock);
   let horasTotalBloque = 0;
