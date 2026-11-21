@@ -172,10 +172,10 @@ export const PLANS_DATA = {
       }
     },
     idiomas: [
-      { id: "85id-lat-1", name: "Idioma Latino (Italiano/Francés/Portugués) - Nivel 1", etapa: "Idiomas 1985" },
+      { id: "85id-lat-1", name: "Idioma Latino - Nivel 1", etapa: "Idiomas 1985" },
       { id: "85id-lat-2", name: "Idioma Latino - Nivel 2", etapa: "Idiomas 1985" },
       { id: "85id-lat-3", name: "Idioma Latino - Nivel 3", etapa: "Idiomas 1985" },
-      { id: "85id-saj-1", name: "Idioma Sajón (Inglés/Alemán) - Nivel 1", etapa: "Idiomas 1985" },
+      { id: "85id-saj-1", name: "Idioma Sajón - Nivel 1", etapa: "Idiomas 1985" },
       { id: "85id-saj-2", name: "Idioma Sajón - Nivel 2", etapa: "Idiomas 1985" },
       { id: "85id-saj-3", name: "Idioma Sajón - Nivel 3", etapa: "Idiomas 1985" },
     ]
