@@ -276,12 +276,12 @@ export default function App() {
     setStudentData(prev => {
       const planState = prev[selectedPlan] || {};
       const matState = planState[id] || { 
-        estado: 'pendiente', nota: '', aplazos: '0', aplazosCBC: [], aplazosCFG: [], regimen: 'promocion', 
+        estado: 'pendiente', nota: '', aplazos: '0', aplazosCBC: [], aplazosCFG: [], aplazosCFO: [], regimen: 'promocion', 
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
         parcial1: '', parcial2: '', parcial3: '', 
         final1: '', final2: '', final3: '', 
-        customName: '', favorita: false, materiaElectivaCBC: ''
+        customName: '', codigoOptativa: '', favorita: false, materiaElectivaCBC: ''
       };
 
       let updatedMat = { ...matState, [field]: value };
@@ -485,11 +485,14 @@ export default function App() {
   let countNotasCBC = 0;
   let sumNotasCFG = 0;
   let countNotasCFG = 0;
+  let sumNotasCFO = 0;
+  let countNotasCFO = 0;
   let notasAprobadasList = [];
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
   const cbcIdsSet = new Set((planObj.cbc || []).map(c => c.id));
   const cfgIdsSet = new Set((planObj.cfg || []).map(c => c.id));
+  const cfoIdsSet = new Set(((orientationObj.cfo || []).filter(m => !esMateriaTesis(m))).map(c => c.id));
 
   currentMateriasAll.forEach(m => {
     const st = studentData[selectedPlan]?.[m.id] || {};
@@ -498,10 +501,10 @@ export default function App() {
     const esIdioma = idiomasIds.has(m.id);
     const esCBCMat = cbcIdsSet.has(m.id);
     const esCFGMat = cfgIdsSet.has(m.id);
+    const esCFOMat = cfoIdsSet.has(m.id);
 
     if (st.favorita) favoritasCount++;
 
-    // Cursadas anteriores reprobadas del CBC
     if (esCBCMat && Array.isArray(st.aplazosCBC)) {
       st.aplazosCBC.forEach(apVal => {
         if (apVal !== '' && !isNaN(apVal)) {
@@ -516,7 +519,6 @@ export default function App() {
       });
     }
 
-    // Cursadas anteriores reprobadas del CFG
     if (esCFGMat && Array.isArray(st.aplazosCFG)) {
       st.aplazosCFG.forEach(apVal => {
         if (apVal !== '' && !isNaN(apVal)) {
@@ -526,6 +528,20 @@ export default function App() {
             countNotasPromedio++;
             sumNotasCFG += apNum;
             countNotasCFG++;
+          }
+        }
+      });
+    }
+
+    if (esCFOMat && Array.isArray(st.aplazosCFO)) {
+      st.aplazosCFO.forEach(apVal => {
+        if (apVal !== '' && !isNaN(apVal)) {
+          const apNum = parseFloat(apVal);
+          if (apNum >= 0 && apNum < 4) {
+            sumNotasPromedio += apNum;
+            countNotasPromedio++;
+            sumNotasCFO += apNum;
+            countNotasCFO++;
           }
         }
       });
@@ -543,6 +559,10 @@ export default function App() {
         if (esCFGMat) {
           sumNotasCFG += notaNum;
           countNotasCFG++;
+        }
+        if (esCFOMat) {
+          sumNotasCFO += notaNum;
+          countNotasCFO++;
         }
         const nombreMostrar = esCBCMat && st.materiaElectivaCBC ? st.materiaElectivaCBC : m.name;
         notasAprobadasList.push({ name: st.customName ? `${nombreMostrar}: ${st.customName}` : nombreMostrar, nota: notaNum });
@@ -572,9 +592,9 @@ export default function App() {
   const promedioGeneralUBA = countNotasPromedio > 0 ? (sumNotasPromedio / countNotasPromedio).toFixed(2) : '-';
   const promedioCBC = countNotasCBC > 0 ? (sumNotasCBC / countNotasCBC).toFixed(2) : '-';
   const promedioCFG = countNotasCFG > 0 ? (sumNotasCFG / countNotasCFG).toFixed(2) : '-';
+  const promedioCFO = countNotasCFO > 0 ? (sumNotasCFO / countNotasCFO).toFixed(2) : '-';
   const totalMaterias = currentMateriasAll.length;
 
-  // Cálculo ponderado por carga horaria oficial FFyL-UBA (Plan 2023 y Plan 1985)
   const getHorasMateria = (m) => {
     const idLower = (m.id || '').toLowerCase();
     const nameLower = (m.name || '').toLowerCase();
@@ -601,7 +621,6 @@ export default function App() {
   let horasAprobadas = 0;
   let horasTotalesPlan = 0;
 
-  // Agrupamos idiomas por idioma base para que solo sumen al porcentaje cuando estén aprobados los 3 niveles (elemental, medio, avanzado)
   const idiomasMaterias = currentMateriasAll.filter(m => {
     const etapaLower = (m.etapa || '').toLowerCase();
     return idiomasIds.has(m.id) || etapaLower.includes('idioma');
@@ -665,7 +684,6 @@ export default function App() {
   const denominadorHoras = selectedPlan === '2023' ? 3200 : Math.max(horasTotalesPlan, 1);
   const porcentajeAvance = Math.min(100, Math.round((horasAprobadas / denominadorHoras) * 100));
 
-  // Carga horaria total y avanzada del bloque actual
   const materiasDelBloqueActual = getBlockMateriasExtended(activeBlock);
   let horasTotalBloque = 0;
   let horasAvanzadasBloque = 0;
@@ -1208,6 +1226,9 @@ export default function App() {
                     {activeBlock === 'cfg' && (
                       <p className="text-amber-300 mt-0.5">Promedio CFG (con aplazos): <strong>{promedioCFG}</strong></p>
                     )}
+                    {activeBlock === 'cfo' && (
+                      <p className="text-amber-300 mt-0.5">Promedio CFO (con aplazos): <strong>{promedioCFO}</strong></p>
+                    )}
                   </div>
                 )}
               </div>
@@ -1265,7 +1286,7 @@ export default function App() {
                         <button onClick={() => handleUpdateMateria(m.id, 'estado', 'regularizada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'regularizada' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500'}`}>Reg.</button>
                         <button onClick={() => handleUpdateMateria(m.id, 'estado', 'aprobada')} className={`px-2.5 py-1 text-xs font-bold rounded-lg ${st.estado === 'aprobada' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}>Aprob.</button>
                       </div>
-                      {(st.estado === 'aprobada' || ((esMateriaCBC || cfgIdsSet.has(m.id)) && st.nota !== '')) && (
+                      {(st.estado === 'aprobada' || ((esMateriaCBC || cfgIdsSet.has(m.id) || cfoIdsSet.has(m.id)) && st.nota !== '')) && (
                         <input type="number" min="0" max="10" placeholder="Nota" value={st.nota || ''} onChange={(e) => handleUpdateMateria(m.id, 'nota', e.target.value)} className="w-12 text-center bg-white border border-emerald-300 text-emerald-900 text-xs font-bold rounded-md py-1" />
                       )}
                     </div>
@@ -1369,6 +1390,7 @@ export default function App() {
 
         const esCBC = activeBlock === 'cbc' || cbcIdsSet.has(mat.id);
         const esCFG = activeBlock === 'cfg' || cfgIdsSet.has(mat.id);
+        const esCFO = activeBlock === 'cfo' || cfoIdsSet.has(mat.id);
         const esIdioma = activeBlock === 'idiomas';
         const esElectiva = activeBlock === 'electivas';
         const horasMateriaDetalle = getHorasMateria(mat);
@@ -1424,6 +1446,7 @@ export default function App() {
         const ocultarTercerParcial = esCBC || (esCFG && !esPromocional);
         const aplazosCBCList = Array.isArray(st.aplazosCBC) ? st.aplazosCBC : [];
         const aplazosCFGList = Array.isArray(st.aplazosCFG) ? st.aplazosCFG : [];
+        const aplazosCFOList = Array.isArray(st.aplazosCFO) ? st.aplazosCFO : [];
 
         return (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1436,6 +1459,38 @@ export default function App() {
                 </div>
                 <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
               </div>
+
+              {(() => {
+                const textoMateria = `${mat.id || ''} ${mat.name || ''} ${mat.etapa || ''}`.toLowerCase();
+                const esOptativa = textoMateria.includes('optativa') && !mat.esCustomSeminario;
+
+                if (!esOptativa) return null;
+
+                return (
+                  <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                    <div>
+                      <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Materia Optativa elegida:</label>
+                      <input
+                        type="text"
+                        placeholder="Escribí el nombre de la materia optativa..."
+                        value={st.customName || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                        className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Código de materia:</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 0421"
+                        value={st.codigoOptativa || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'codigoOptativa', e.target.value)}
+                        className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
 
               {esIdioma && (
                 <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
@@ -1566,13 +1621,11 @@ export default function App() {
                 );
               })()}
 
-              {/* Selector universal de cátedras para el CFO */}
               {(() => {
                 const nombreMat = (mat.name || '').toLowerCase();
                 const idMat = (mat.id || '').toLowerCase();
                 let opcionesCatedrasCFO = [];
 
-                // Orientación Sociocultural y Comunes del CFO
                 if (nombreMat.includes('sociedades, culturas y estados') || idMat.includes('soc-1')) {
                   opcionesCatedrasCFO = ['Cátedra Estruch - Rodríguez'];
                 } else if (nombreMat.includes('pueblos indígenas americanos') || idMat.includes('soc-2') || idMat.includes('arq-2')) {
@@ -1586,7 +1639,6 @@ export default function App() {
                 } else if (nombreMat.includes('teorías de la subjetividad') || idMat.includes('soc-6')) {
                   opcionesCatedrasCFO = ['Cátedra Varela - Orellano'];
                 } 
-                // Orientación Arqueología
                 else if (nombreMat.includes('arqueología de áfrica') || idMat.includes('arq-1')) {
                   opcionesCatedrasCFO = ['Cátedra Arqueología'];
                 } else if (nombreMat.includes('arqueología americana y argentina i') || idMat.includes('arq-2')) {
@@ -1952,6 +2004,56 @@ export default function App() {
                     </div>
                   )}
                   <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFG en una cursada pasada, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CFG y de la carrera.</p>
+                </div>
+              )}
+
+              {esCFO && (
+                <div className="space-y-2 bg-red-50/40 p-4 rounded-xl border border-red-200">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos CFO)</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateMateria(mat.id, 'aplazosCFO', [...aplazosCFOList, ''])}
+                      className="flex items-center gap-1 bg-white hover:bg-red-100 text-red-800 border border-red-200 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
+                    >
+                      <Plus className="w-3 h-3" /> Agregar aplazo
+                    </button>
+                  </div>
+                  {aplazosCFOList.length > 0 && (
+                    <div className="space-y-1.5">
+                      {aplazosCFOList.map((notaAp, idx) => (
+                        <div key={idx} className="flex items-center gap-2 bg-white border border-red-200 rounded-lg px-2.5 py-1.5">
+                          <span className="text-[10px] font-bold text-red-900 flex-1">Intento {idx + 1} reprobado:</span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="3"
+                            step="1"
+                            placeholder="0-3"
+                            value={notaAp}
+                            onChange={(e) => {
+                              const nuevaLista = [...aplazosCFOList];
+                              nuevaLista[idx] = e.target.value;
+                              handleUpdateMateria(mat.id, 'aplazosCFO', nuevaLista);
+                            }}
+                            className="w-16 bg-white border border-red-300 rounded-md p-1 text-xs text-center font-bold text-red-900"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nuevaLista = aplazosCFOList.filter((_, i) => i !== idx);
+                              handleUpdateMateria(mat.id, 'aplazosCFO', nuevaLista);
+                            }}
+                            className="text-red-500 hover:text-red-700 font-bold text-sm px-1"
+                            title="Eliminar intento"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFO en una cursada pasada, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CFO y de la carrera.</p>
                 </div>
               )}
 
