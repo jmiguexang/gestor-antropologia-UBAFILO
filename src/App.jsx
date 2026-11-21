@@ -1822,106 +1822,6 @@ export default function App() {
                   )}
                 </div>
 
-                {esCBC && (
-                  <div className="space-y-2 pt-2 border-t border-slate-200">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos CBC)</span>
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateMateria(mat.id, 'aplazosCBC', [...aplazosCBCList, ''])}
-                        className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
-                      >
-                        <Plus className="w-3 h-3" /> Agregar aplazo
-                      </button>
-                    </div>
-                    {aplazosCBCList.length > 0 && (
-                      <div className="space-y-1.5">
-                        {aplazosCBCList.map((notaAp, idx) => (
-                          <div key={idx} className="flex items-center gap-2 bg-red-50/70 border border-red-200 rounded-lg px-2.5 py-1.5">
-                            <span className="text-[10px] font-bold text-red-900 flex-1">Intento {idx + 1} reprobado:</span>
-                            <input
-                              type="number"
-                              min="0"
-                              max="3"
-                              step="1"
-                              placeholder="0-3"
-                              value={notaAp}
-                              onChange={(e) => {
-                                const nuevaLista = [...aplazosCBCList];
-                                nuevaLista[idx] = e.target.value;
-                                handleUpdateMateria(mat.id, 'aplazosCBC', nuevaLista);
-                              }}
-                              className="w-16 bg-white border border-red-300 rounded-md p-1 text-xs text-center font-bold text-red-900"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const nuevaLista = aplazosCBCList.filter((_, i) => i !== idx);
-                                handleUpdateMateria(mat.id, 'aplazosCBC', nuevaLista);
-                              }}
-                              className="text-red-500 hover:text-red-700 font-bold text-sm px-1"
-                              title="Eliminar intento"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <p className="text-[9px] text-slate-500">Si recursaste esta materia del CBC, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CBC y de la carrera.</p>
-                  </div>
-                )}
-
-                {esCFG && (
-                  <div className="space-y-2 pt-2 border-t border-slate-200">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos CFG)</span>
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateMateria(mat.id, 'aplazosCFG', [...aplazosCFGList, ''])}
-                        className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
-                      >
-                        <Plus className="w-3 h-3" /> Agregar aplazo
-                      </button>
-                    </div>
-                    {aplazosCFGList.length > 0 && (
-                      <div className="space-y-1.5">
-                        {aplazosCFGList.map((notaAp, idx) => (
-                          <div key={idx} className="flex items-center gap-2 bg-red-50/70 border border-red-200 rounded-lg px-2.5 py-1.5">
-                            <span className="text-[10px] font-bold text-red-900 flex-1">Intento {idx + 1} reprobado:</span>
-                            <input
-                              type="number"
-                              min="0"
-                              max="3"
-                              step="1"
-                              placeholder="0-3"
-                              value={notaAp}
-                              onChange={(e) => {
-                                const nuevaLista = [...aplazosCFGList];
-                                nuevaLista[idx] = e.target.value;
-                                handleUpdateMateria(mat.id, 'aplazosCFG', nuevaLista);
-                              }}
-                              className="w-16 bg-white border border-red-300 rounded-md p-1 text-xs text-center font-bold text-red-900"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const nuevaLista = aplazosCFGList.filter((_, i) => i !== idx);
-                                handleUpdateMateria(mat.id, 'aplazosCFG', nuevaLista);
-                              }}
-                              className="text-red-500 hover:text-red-700 font-bold text-sm px-1"
-                              title="Eliminar intento"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <p className="text-[9px] text-slate-500">Si recursaste esta materia del CFG, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CFG y de la carrera.</p>
-                  </div>
-                )}
-
                 <div className={`space-y-2 pt-2 border-t border-slate-200 transition ${logroPromocion ? 'opacity-40 pointer-events-none' : ''}`}>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">3 Intentos de Examen Final</span>
@@ -1954,6 +1854,106 @@ export default function App() {
                   )}
                 </div>
               </div>
+
+              {esCBC && (
+                <div className="space-y-2 bg-red-50/40 p-4 rounded-xl border border-red-200">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos CBC)</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateMateria(mat.id, 'aplazosCBC', [...aplazosCBCList, ''])}
+                      className="flex items-center gap-1 bg-white hover:bg-red-100 text-red-800 border border-red-200 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
+                    >
+                      <Plus className="w-3 h-3" /> Agregar aplazo
+                    </button>
+                  </div>
+                  {aplazosCBCList.length > 0 && (
+                    <div className="space-y-1.5">
+                      {aplazosCBCList.map((notaAp, idx) => (
+                        <div key={idx} className="flex items-center gap-2 bg-white border border-red-200 rounded-lg px-2.5 py-1.5">
+                          <span className="text-[10px] font-bold text-red-900 flex-1">Intento {idx + 1} reprobado:</span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="3"
+                            step="1"
+                            placeholder="0-3"
+                            value={notaAp}
+                            onChange={(e) => {
+                              const nuevaLista = [...aplazosCBCList];
+                              nuevaLista[idx] = e.target.value;
+                              handleUpdateMateria(mat.id, 'aplazosCBC', nuevaLista);
+                            }}
+                            className="w-16 bg-white border border-red-300 rounded-md p-1 text-xs text-center font-bold text-red-900"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nuevaLista = aplazosCBCList.filter((_, i) => i !== idx);
+                              handleUpdateMateria(mat.id, 'aplazosCBC', nuevaLista);
+                            }}
+                            className="text-red-500 hover:text-red-700 font-bold text-sm px-1"
+                            title="Eliminar intento"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CBC en una cursada pasada, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CBC y de la carrera.</p>
+                </div>
+              )}
+
+              {esCFG && (
+                <div className="space-y-2 bg-red-50/40 p-4 rounded-xl border border-red-200">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos CFG)</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateMateria(mat.id, 'aplazosCFG', [...aplazosCFGList, ''])}
+                      className="flex items-center gap-1 bg-white hover:bg-red-100 text-red-800 border border-red-200 text-[10px] font-bold px-2.5 py-1 rounded-lg transition"
+                    >
+                      <Plus className="w-3 h-3" /> Agregar aplazo
+                    </button>
+                  </div>
+                  {aplazosCFGList.length > 0 && (
+                    <div className="space-y-1.5">
+                      {aplazosCFGList.map((notaAp, idx) => (
+                        <div key={idx} className="flex items-center gap-2 bg-white border border-red-200 rounded-lg px-2.5 py-1.5">
+                          <span className="text-[10px] font-bold text-red-900 flex-1">Intento {idx + 1} reprobado:</span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="3"
+                            step="1"
+                            placeholder="0-3"
+                            value={notaAp}
+                            onChange={(e) => {
+                              const nuevaLista = [...aplazosCFGList];
+                              nuevaLista[idx] = e.target.value;
+                              handleUpdateMateria(mat.id, 'aplazosCFG', nuevaLista);
+                            }}
+                            className="w-16 bg-white border border-red-300 rounded-md p-1 text-xs text-center font-bold text-red-900"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nuevaLista = aplazosCFGList.filter((_, i) => i !== idx);
+                              handleUpdateMateria(mat.id, 'aplazosCFG', nuevaLista);
+                            }}
+                            className="text-red-500 hover:text-red-700 font-bold text-sm px-1"
+                            title="Eliminar intento"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFG en una cursada pasada, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CFG y de la carrera.</p>
+                </div>
+              )}
 
               <div className="flex justify-end pt-2">
                 <button onClick={() => setActiveDetailMateria(null)} className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl">Guardar y Cerrar</button>
