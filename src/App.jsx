@@ -489,9 +489,13 @@ export default function App() {
           }
         });
       }
-    } else if (estado === 'regularizada') { regularizadasCount++; } 
-    else if (estado === 'cursando') { cursandoCount++; } 
-    else { pendientesCount++; }
+    } else if (estado === 'regularizada') {
+      regularizadasCount++;
+    } else if (estado === 'cursando') {
+      cursandoCount++;
+    } else {
+      pendientesCount++;
+    }
   });
 
   notasAprobadasList.sort((a, b) => b.nota - a.nota);
@@ -1489,7 +1493,6 @@ export default function App() {
                 const idMat = (mat.id || '').toLowerCase();
                 let opcionesCatedrasCFO = [];
 
-                // Orientación Sociocultural y Comunes del CFO
                 if (nombreMat.includes('sociedades, culturas y estados') || idMat.includes('soc-1')) {
                   opcionesCatedrasCFO = ['Cátedra Estruch - Rodríguez'];
                 } else if (nombreMat.includes('pueblos indígenas americanos') || idMat.includes('soc-2') || idMat.includes('arq-2')) {
@@ -1502,9 +1505,7 @@ export default function App() {
                   opcionesCatedrasCFO = ['Cátedra Cabrera - Murgida'];
                 } else if (nombreMat.includes('teorías de la subjetividad') || idMat.includes('soc-6')) {
                   opcionesCatedrasCFO = ['Cátedra Varela - Orellano'];
-                } 
-                // Orientación Arqueología
-                else if (nombreMat.includes('arqueología de áfrica') || idMat.includes('arq-1')) {
+                } else if (nombreMat.includes('arqueología de áfrica') || idMat.includes('arq-1')) {
                   opcionesCatedrasCFO = ['Cátedra Arqueología'];
                 } else if (nombreMat.includes('arqueología americana y argentina i') || idMat.includes('arq-2')) {
                   opcionesCatedrasCFO = ['Cátedra Arqueología Americana I'];
