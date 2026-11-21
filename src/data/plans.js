@@ -109,9 +109,9 @@ export const PLANS_DATA = {
       { id: "cbc85-1", name: "Introducción al Pensamiento Científico", etapa: "CBC", creditos: 6 },
       { id: "cbc85-2", name: "Introducción al Conocimiento de la Sociedad y el Estado", etapa: "CBC", creditos: 6 },
       { id: "cbc85-3", name: "Antropología", etapa: "CBC", creditos: 6 },
-      { id: "cbc85-4", name: "Filosofía", etapa: "CBC", creditos: 6 },
-      { id: "cbc85-opt-1", name: "Materia a elección CBC 1", etapa: "CBC", creditos: 6, isChoice: true, options: ["Semiología", "Sociología", "Economía", "Psicología"] },
-      { id: "cbc85-opt-2", name: "Materia a elección CBC 2", etapa: "CBC", creditos: 6, isChoice: true, options: ["Semiología", "Sociología", "Economía", "Psicología"] },
+      { id: "cbc85-4", name: "Sociología", etapa: "CBC", creditos: 6 },
+      { id: "cbc85-opt-1", name: "Materia a elección CBC 1", etapa: "CBC", creditos: 6, isChoice: true, options: ["Semiología", "Filosofía", "Economía", "Psicología"] },
+      { id: "cbc85-opt-2", name: "Materia a elección CBC 2", etapa: "CBC", creditos: 6, isChoice: true, options: ["Semiología", "Filosofía", "Economía", "Psicología"] },
     ],
     cfg: [
       { id: "bas-1", name: "Antropología Sistemática I (organización social y política)", etapa: "Materias Básicas" },
