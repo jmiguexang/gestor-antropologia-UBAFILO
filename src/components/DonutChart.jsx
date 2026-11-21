@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function DonutChart({ total, aprobadas, regularizadas, cursando, pendientes }) {
+export function DonutChart({ total, aprobadas, regularizadas, cursando, pendientes, porcentaje }) {
   const safeTotal = Math.max(total, 1);
 
   // Porcentajes reales sobre el total de materias del plan
@@ -8,7 +8,9 @@ export function DonutChart({ total, aprobadas, regularizadas, cursando, pendient
   const pctRegularizadas = (regularizadas / safeTotal) * 100;
   const pctCursando = (cursando / safeTotal) * 100;
 
-  const porcentajePrincipal = Math.round(pctAprobadas);
+  const porcentajePrincipal = typeof porcentaje === 'number' && !isNaN(porcentaje)
+    ? porcentaje
+    : Math.round(pctAprobadas);
 
   // Geometría exacta del círculo SVG
   const size = 200;
