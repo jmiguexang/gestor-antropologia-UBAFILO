@@ -1035,7 +1035,16 @@ export default function App() {
         <main className="max-w-7xl mx-auto px-4 pt-6 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-6">
-              <DonutChart total={currentMateriasAll.length} aprobadas={aprobadasCount} regularizadas={regularizadasCount} cursando={cursandoCount} pendientes={pendientesCount} />
+              <DonutChart
+                total={currentMateriasAll.length}
+                aprobadas={aprobadasCount}
+                regularizadas={regularizadasCount}
+                cursando={cursandoCount}
+                pendientes={pendientesCount}
+                porcentaje={porcentajeAvance}
+                horasAprobadas={horasAprobadas}
+                horasTotales={denominadorHoras}
+              />
             </div>
 
             <div className="lg:col-span-3 bg-gradient-to-br from-sky-900 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between border border-sky-950">
