@@ -631,6 +631,25 @@ export default function App() {
     const nameLower = (m.name || '').toLowerCase();
     const etapaLower = (m.etapa || '').toLowerCase();
 
+    if (selectedPlan === '2023') {
+      const esSeminario =
+        m.esCustomSeminario ||
+        idLower.includes('sem') ||
+        nameLower.includes('seminario') ||
+        nameLower.includes('pst') ||
+        etapaLower.includes('seminario');
+
+      const esAnual =
+        nameLower.includes('anual') ||
+        etapaLower.includes('anual') ||
+        nameLower.includes('2 cuatrimestres');
+
+      if (esSeminario) {
+        return esAnual ? 128 : 64; // Seminario anual: 128 h | Seminario cuatrimestral / de verano: 64 h
+      }
+      return esAnual ? 192 : 96; // Materia anual: 192 h | Materia cuatrimestral / de verano: 96 h
+    }
+
     if (cbcIdsSet.has(m.id) || etapaLower.includes('cbc')) return 64;
     if (nameLower.includes('tesis') || idLower.includes('tesis')) return 160;
     if (idiomasIds.has(m.id) || etapaLower.includes('idioma')) {
