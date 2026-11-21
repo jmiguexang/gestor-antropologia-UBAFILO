@@ -71,6 +71,12 @@ const redondearFFyL = (promedio) => {
   return Math.floor(promedio);
 };
 
+const esMateriaTesis = (m) => {
+  const nameLower = (m?.name || '').toLowerCase();
+  const idLower = (m?.id || '').toLowerCase();
+  return nameLower.includes('tesis de licenciatura') || idLower.includes('tesis');
+};
+
 export default function App() {
   const [session, setSession] = useState(() => {
     const saved = localStorage.getItem('antropologia_session');
@@ -386,13 +392,26 @@ export default function App() {
   const planObj = PLANS_DATA[selectedPlan];
   const orientationObj = planObj.orientaciones[selectedOrientation] || planObj.orientaciones['sociocultural'];
 
+  const getTesisMaterias = () => {
+    if (Array.isArray(planObj.tesis)) return planObj.tesis;
+    if (Array.isArray(orientationObj.tesis)) return orientationObj.tesis;
+    const fromCfo = (orientationObj.cfo || []).filter(esMateriaTesis);
+    if (fromCfo.length > 0) return fromCfo;
+    const fromPlanCfo = Object.values(planObj.orientaciones || {})
+      .flatMap(o => o?.cfo || [])
+      .filter(esMateriaTesis);
+    if (fromPlanCfo.length > 0) return [fromPlanCfo[0]];
+    return [];
+  };
+
   const getBlockMaterias = (block) => {
     switch (block) {
       case 'cbc': return planObj.cbc || [];
       case 'cfg': return planObj.cfg || [];
-      case 'cfo': return orientationObj.cfo || [];
+      case 'cfo': return (orientationObj.cfo || []).filter(m => !esMateriaTesis(m));
+      case 'electivas': return orientationObj.electivas || planObj.electivas || [];
+      case 'tesis': return getTesisMaterias();
       case 'idiomas': return planObj.idiomas || [];
-      case 'electivas': return planObj.electivas || planObj.electivas || [];
       case 'profesorado':
         const profObj = planObj.orientaciones['profesorado'];
         return profObj ? profObj.cfo : [];
@@ -401,17 +420,23 @@ export default function App() {
   };
 
   const getAllMaterias = () => {
-    let list = [...(planObj.cbc || []), ...(planObj.cfg || []), ...(orientationObj.cfo || [])];
-    if (planObj.idiomas) list = [...list, ...planObj.idiomas];
+    let list = [
+      ...(planObj.cbc || []),
+      ...(planObj.cfg || []),
+      ...((orientationObj.cfo || []).filter(m => !esMateriaTesis(m)))
+    ];
     const electivasList = orientationObj.electivas || planObj.electivas || [];
     if (electivasList) list = [...list, ...electivasList];
-    
+
     const planState = studentData[selectedPlan] || {};
     Object.keys(planState).forEach(k => {
       if (k.startsWith('electiva-sem-')) {
         list.push({ id: k, name: 'Seminario / Electiva', etapa: 'Electiva', correlativa: '' });
       }
     });
+
+    list = [...list, ...getTesisMaterias()];
+    if (planObj.idiomas) list = [...list, ...planObj.idiomas];
 
     if (selectedPlan === '2023' && includeProfesorado && selectedOrientation !== 'profesorado') {
       const profObj = planObj.orientaciones['profesorado'];
@@ -1109,8 +1134,9 @@ export default function App() {
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cbc'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cbc' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CBC</button>
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfg'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfg' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CFG</button>
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfo'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfo' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CFO</button>
-              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('idiomas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Idiomas</button>
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('electivas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'electivas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Electivas / Seminarios</button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('tesis'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'tesis' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Tesis</button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('idiomas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Idiomas</button>
             </div>
             <button onClick={() => setOnlyFavorites(prev => !prev)} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 border ${onlyFavorites ? 'bg-amber-400 text-amber-950 border-amber-500 shadow-sm' : 'bg-amber-50 text-amber-900 border-amber-200'}`}>
               <Star className={`w-3.5 h-3.5 ${onlyFavorites ? 'fill-amber-950' : 'fill-amber-400 text-amber-500'}`} /> Mis Favoritas ({favoritasCount})
