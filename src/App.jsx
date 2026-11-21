@@ -109,6 +109,9 @@ export default function App() {
 
   const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
+  const [nuevoSemNombre, setNuevoSemNombre] = useState('');
+  const [nuevoSemDocente, setNuevoSemDocente] = useState('');
+  const [nuevoSemTipo, setNuevoSemTipo] = useState('sociocultural');
   
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [avatarActual, setAvatarActual] = useState(() => {
@@ -158,7 +161,11 @@ export default function App() {
       if (data) {
         const datosRecibidos = data.datos_academicos || { '2023': {}, '1985': {} };
         setStudentData(datosRecibidos);
-        setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
+        setSeminariosOferta(
+          Array.isArray(data.seminarios_oferta) && data.seminarios_oferta.length > 0
+            ? data.seminarios_oferta
+            : SEMINARIOS_OFERTA_2C_2026
+        );
 
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
@@ -222,6 +229,30 @@ export default function App() {
     setShowAvatarModal(false);
     guardarDatosNube(studentData, seminariosOferta, avatarObj, selectedPlan, selectedOrientation);
     setToastMessage(`¡Avatar actualizado a ${avatarObj.nombre}! 🏛️`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleAgregarSeminarioManualACatalogo = (e) => {
+    e.preventDefault();
+    const nombreLimpio = nuevoSemNombre.trim();
+    const docenteLimpio = nuevoSemDocente.trim() || 'DOCENTE A CONFIRMAR';
+    if (!nombreLimpio) return;
+
+    const nuevoSem = {
+      id: 'sem-manual-' + Date.now(),
+      tipo: nuevoSemTipo,
+      nombre: nombreLimpio.toUpperCase(),
+      docente: docenteLimpio,
+      cuatrimestre: 'Manual'
+    };
+
+    const updatedOferta = [nuevoSem, ...seminariosOferta];
+    setSeminariosOferta(updatedOferta);
+    guardarDatosNube(studentData, updatedOferta, avatarActual, selectedPlan, selectedOrientation);
+    setNuevoSemNombre('');
+    setNuevoSemDocente('');
+    setNuevoSemTipo('sociocultural');
+    setToastMessage("¡Seminario agregado al catálogo!");
     setTimeout(() => setToastMessage(null), 3500);
   };
 
@@ -2072,6 +2103,43 @@ export default function App() {
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Seminarios (2C 2026)</h3>
               <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 font-bold text-lg">×</button>
             </div>
+
+            <form onSubmit={handleAgregarSeminarioManualACatalogo} className="bg-sky-50 border border-sky-200 rounded-xl p-3.5 space-y-2.5">
+              <p className="text-xs font-bold uppercase text-sky-900">Agregar seminario manualmente al catálogo</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <input
+                  type="text"
+                  placeholder="Nombre del seminario *"
+                  value={nuevoSemNombre}
+                  onChange={(e) => setNuevoSemNombre(e.target.value)}
+                  className="sm:col-span-2 bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs font-semibold"
+                />
+                <select
+                  value={nuevoSemTipo}
+                  onChange={(e) => setNuevoSemTipo(e.target.value)}
+                  className="bg-white border border-sky-300 rounded-lg px-2.5 py-2 text-xs font-semibold"
+                >
+                  <option value="sociocultural">Sociocultural</option>
+                  <option value="arqueologia">Arqueología</option>
+                </select>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  placeholder="Docente / Cátedra (opcional)"
+                  value={nuevoSemDocente}
+                  onChange={(e) => setNuevoSemDocente(e.target.value)}
+                  className="flex-1 bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
+                />
+                <button
+                  type="submit"
+                  className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition shrink-0"
+                >
+                  <Plus className="w-4 h-4" /> Guardar en Catálogo
+                </button>
+              </div>
+            </form>
+
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
               {seminariosOferta.map(s => (
                 <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
