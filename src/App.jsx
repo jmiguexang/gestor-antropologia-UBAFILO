@@ -612,9 +612,13 @@ export default function App() {
           }
         });
       }
-    } else if (estado === 'regularizada') { regularizadasCount++; } 
-    else if (estado === 'cursando') { cursandoCount++; } 
-    else { pendientesCount++; }
+    } else if (estado === 'regularizada') {
+      regularizadasCount++;
+    } else if (estado === 'cursando') {
+      cursandoCount++;
+    } else {
+      pendientesCount++;
+    }
   });
 
   notasAprobadasList.sort((a, b) => b.nota - a.nota);
@@ -645,9 +649,9 @@ export default function App() {
         nameLower.includes('2 cuatrimestres');
 
       if (esSeminario) {
-        return esAnual ? 128 : 64;
+        return esAnual ? 128 : 64; // Seminario anual: 128 h | Seminario cuatrimestral / de verano: 64 h[cite: 1]
       }
-      return esAnual ? 192 : 96;
+      return esAnual ? 192 : 96; // Materia anual: 192 h | Materia cuatrimestral / de verano: 96 h[cite: 1]
     }
 
     if (cbcIdsSet.has(m.id) || etapaLower.includes('cbc')) return 64;
