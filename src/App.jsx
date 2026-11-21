@@ -645,9 +645,9 @@ export default function App() {
         nameLower.includes('2 cuatrimestres');
 
       if (esSeminario) {
-        return esAnual ? 128 : 64; // Seminario anual: 128 h | Seminario cuatrimestral / de verano: 64 h
+        return esAnual ? 128 : 64;
       }
-      return esAnual ? 192 : 96; // Materia anual: 192 h | Materia cuatrimestral / de verano: 96 h
+      return esAnual ? 192 : 96;
     }
 
     if (cbcIdsSet.has(m.id) || etapaLower.includes('cbc')) return 64;
@@ -1268,8 +1268,12 @@ export default function App() {
                 </h2>
                 {!onlyFavorites && (
                   <div className="mt-1 text-[11px] text-sky-200 leading-tight">
-                    <p>Carga horaria total del bloque: <strong>{horasTotalBloque} hs</strong></p>
-                    <p className="text-emerald-300">Carga horaria avanzada: <strong>{horasAvanzadasBloque} hs</strong></p>
+                    {activeBlock !== 'tesis' && (
+                      <>
+                        <p>Carga horaria total del bloque: <strong>{horasTotalBloque} hs</strong></p>
+                        <p className="text-emerald-300">Carga horaria avanzada: <strong>{horasAvanzadasBloque} hs</strong></p>
+                      </>
+                    )}
                     {activeBlock === 'cbc' && (
                       <p className="text-amber-300 mt-0.5">Promedio CBC (con aplazos): <strong>{promedioCBC}</strong></p>
                     )}
