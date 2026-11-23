@@ -230,6 +230,16 @@ const OPCIONES_MATERIA_METODOLOGICA_EJERCICIO = [
   'Ejercicio Profesional de la Antropología'
 ];
 
+const OPCIONES_PSICOLOGIA_1985 = [
+  'psicología general',
+  'psicología evolutiva'
+];
+
+const OPCIONES_TEORIA_SOCIOLOGICA_1985 = [
+  'teoría sociológica',
+  'sociología sistémica'
+];
+
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -1903,6 +1913,18 @@ export default function App() {
           nombreMatLower.includes('materia metodologica') ||
           nombreMatLower.includes('ejercicio profesional');
 
+        const esPsicologia1985CFO =
+          selectedPlan === '1985' &&
+          activeBlock === 'cfo' &&
+          (nombreMatLower.includes('psicología general o evolutiva') ||
+            nombreMatLower.includes('psicologia general o evolutiva'));
+
+        const esTeoriaSociologica1985CFO =
+          selectedPlan === '1985' &&
+          activeBlock === 'cfo' &&
+          (nombreMatLower.includes('teoría sociológica o sociología de la educación') ||
+            nombreMatLower.includes('teoria sociologica o sociologia de la educacion'));
+
         const esElectivaArqueologiaCFO =
           activeBlock === 'cfo' &&
           (nombreMatLower.includes('materia electiva arqueología') ||
@@ -2193,7 +2215,35 @@ export default function App() {
                 );
               })()}
 
-              {esMateriaMetodologicaEjercicio ? (
+              {esPsicologia1985CFO ? (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la materia:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar opción --</option>
+                    {OPCIONES_PSICOLOGIA_1985.map((opcion) => (
+                      <option key={opcion} value={opcion}>{opcion}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : esTeoriaSociologica1985CFO ? (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la materia:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar opción --</option>
+                    {OPCIONES_TEORIA_SOCIOLOGICA_1985.map((opcion) => (
+                      <option key={opcion} value={opcion}>{opcion}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : esMateriaMetodologicaEjercicio ? (
                 <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la materia:</label>
                   <select
