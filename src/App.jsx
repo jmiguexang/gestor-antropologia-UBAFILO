@@ -183,6 +183,48 @@ const getClaseEtiquetaOrientacion = (tipo) => {
   return 'bg-sky-100 text-sky-900 border border-sky-200';
 };
 
+const FACULTADES_UBA = [
+  'Facultad de Filosofía y Letras (FFyL)',
+  'Facultad de Ciencias Sociales (FSOC)',
+  'Facultad de Ciencias Exactas y Naturales (FCEN)',
+  'Facultad de Psicología',
+  'Facultad de Ciencias Económicas (FCE)',
+  'Facultad de Derecho',
+  'Facultad de Medicina',
+  'Facultad de Arquitectura, Diseño y Urbanismo (FADU)',
+  'Facultad de Ingeniería (FIUBA)',
+  'Facultad de Agronomía (FAUBA)',
+  'Facultad de Ciencias Veterinarias (FCV)',
+  'Facultad de Farmacia y Bioquímica (FFyB)',
+  'Facultad de Odontología',
+  'Ciclo Básico Común (CBC) / UBA XXI'
+];
+
+const AREAS_TEMATICAS_SOCIOCULTURAL = {
+  'Antropología histórica y memoria': [
+    'Conquistas, resistencias y memorias indígenas',
+    'Pueblos indígenas y estados',
+    'Antropologías latinoamericanas',
+    'América en contexto'
+  ],
+  'Procesos socioeconómicos: producción, reproducción y transformación social': [
+    'Capitalismo actual, trabajo y trabajadores',
+    'Configuraciones socio-ambientales y territoriales en el espacio urbano y rural',
+    'Relaciones de género y organización social de los cuidados'
+  ],
+  'Procesos políticos, instituciones y prácticas': [
+    'Antropología del estado y las políticas públicas',
+    'Sujetos sociales y políticos en perspectiva Antropológica',
+    'Abordajes antropológicos de la salud y las Biociencias',
+    'Antropología y Educación'
+  ],
+  'Procesos culturales, ideología y poder': [
+    'Dinámicas contemporáneas del campo de la cultura',
+    'Discurso, imagen y alteridad',
+    'Religiones, mitos y rituales en la modernidad'
+  ]
+};
+
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -721,7 +763,8 @@ export default function App() {
         desdeCatalogoSeminarios: false,
         parcial1: '', parcial2: '', parcial3: '', 
         final1: '', final2: '', final3: '', 
-        customName: '', codigoOptativa: '', favorita: false, materiaElectivaCBC: ''
+        customName: '', codigoOptativa: '', facultadElectiva: '', carreraElectiva: '', areaTematicaElectiva: '',
+        favorita: false, materiaElectivaCBC: ''
       };
 
       let updatedMat = { ...matState, [field]: value };
@@ -1879,6 +1922,23 @@ export default function App() {
           });
         }
 
+        const esElectivaSociocultural =
+          selectedOrientation === 'sociocultural' &&
+          (esElectiva || nombreMatLower.includes('electiva') || nombreMatLower.includes('área temática') || nombreMatLower.includes('area tematica'));
+
+        const esElectivaLibreUBA =
+          esElectivaSociocultural &&
+          (nombreMatLower.includes('cualquier orientación') ||
+            nombreMatLower.includes('cualquier orientacion') ||
+            nombreMatLower.includes('facultad') ||
+            nombreMatLower.includes('libre'));
+
+        const esElectivaAreaTematica =
+          esElectivaSociocultural && !esElectivaLibreUBA;
+
+        const areaSeleccionada = st.areaTematicaElectiva || '';
+        const materiasAreaSeleccionada = AREAS_TEMATICAS_SOCIOCULTURAL[areaSeleccionada] || [];
+
         const p1 = parseFloat(st.parcial1);
         const p2 = parseFloat(st.parcial2);
         const p3 = parseFloat(st.parcial3);
@@ -1964,7 +2024,7 @@ export default function App() {
 
               {(() => {
                 const textoMateria = `${mat.id || ''} ${mat.name || ''} ${mat.etapa || ''}`.toLowerCase();
-                const esOptativa = textoMateria.includes('optativa') && !mat.esCustomSeminario;
+                const esOptativa = textoMateria.includes('optativa') && !mat.esCustomSeminario && !esElectivaSociocultural;
 
                 if (!esOptativa) return null;
 
@@ -2203,7 +2263,94 @@ export default function App() {
                 return null;
               })()}
 
-              {esElectiva && (
+              {esElectivaLibreUBA && (
+                <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Materia Electiva Libre (UBA):</label>
+                  <div>
+                    <span className="text-[10px] font-bold text-sky-900 block mb-1">Facultad de la UBA:</span>
+                    <select
+                      value={st.facultadElectiva || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'facultadElectiva', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar facultad --</option>
+                      {FACULTADES_UBA.map((fac) => (
+                        <option key={fac} value={fac}>{fac}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-sky-900 block mb-1">Carrera:</span>
+                    <input
+                      type="text"
+                      placeholder="Escribí la carrera..."
+                      value={st.carreraElectiva || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'carreraElectiva', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-sky-900 block mb-1">Nombre de la materia:</span>
+                    <input
+                      type="text"
+                      placeholder="Escribí el nombre de la materia..."
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-sky-900 block mb-1">Código de la materia:</span>
+                    <input
+                      type="text"
+                      placeholder="Escribí el código de la materia..."
+                      value={st.codigoOptativa || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'codigoOptativa', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {esElectivaAreaTematica && (
+                <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Seleccione el Área Temática:</label>
+                    <select
+                      value={areaSeleccionada}
+                      onChange={(e) => {
+                        handleUpdateMateria(mat.id, 'areaTematicaElectiva', e.target.value);
+                        handleUpdateMateria(mat.id, 'customName', '');
+                      }}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar área temática --</option>
+                      {Object.keys(AREAS_TEMATICAS_SOCIOCULTURAL).map((area) => (
+                        <option key={area} value={area}>{area}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Seleccione la Materia del Área Temática:</label>
+                    <select
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      disabled={!areaSeleccionada}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold disabled:bg-slate-100 disabled:text-slate-400"
+                    >
+                      <option value="">
+                        {areaSeleccionada ? '-- Seleccionar materia --' : '-- Primero elegí un área temática --'}
+                      </option>
+                      {materiasAreaSeleccionada.map((opcionMat) => (
+                        <option key={opcionMat} value={opcionMat}>{opcionMat}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {esElectiva && !esElectivaSociocultural && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
                   <select
