@@ -248,17 +248,19 @@ export default function App() {
     e.preventDefault();
     const nombreLimpio = nuevoSemNombre.trim();
     const codigoLimpio = nuevoSemCodigo.trim();
-    const docenteLimpio = nuevoSemDocente.trim() || 'DOCENTE A CONFIRMAR';
-    if (!nombreLimpio) return;
+    const docenteLimpio = nuevoSemDocente.trim();
 
-    if (codigoLimpio) {
-      const yaExiste = seminariosOferta.some(
-        (s) => (s.codigo || '').trim().toLowerCase() === codigoLimpio.toLowerCase()
-      );
-      if (yaExiste) {
-        alert("El seminario que estás intentando ingresar ya está en la lista.");
-        return;
-      }
+    if (!nombreLimpio || !codigoLimpio || !docenteLimpio || !nuevoSemTipo || !nuevoSemAnio || !nuevoSemCuatrimestre) {
+      alert("Todos los campos son obligatorios para agregar un seminario al catálogo.");
+      return;
+    }
+
+    const yaExiste = seminariosOferta.some(
+      (s) => (s.codigo || '').trim().toLowerCase() === codigoLimpio.toLowerCase()
+    );
+    if (yaExiste) {
+      alert("El seminario que estás intentando ingresar ya está en la lista.");
+      return;
     }
 
     const nuevoSem = {
@@ -282,11 +284,67 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleAgregarSeminarioAElectivas = (sem) => {
-    const customId = 'electiva-sem-' + sem.id + '-' + Date.now();
+  const handleAgregarSeminarioACursada = (sem) => {
+    const planObjActual = PLANS_DATA[selectedPlan];
+    const orientObjActual =
+      planObjActual?.orientaciones?.[selectedOrientation] ||
+      planObjActual?.orientaciones?.['sociocultural'];
+    const cfoList = (orientObjActual?.cfo || []).filter(m => !esMateriaTesis(m));
+
+    const slotsSeminariosCFO = cfoList.filter((m) => {
+      const n = (m.name || '').toLowerCase();
+      return (
+        n.includes('seminario de la orientación en arqueología') ||
+        n.includes('seminario de la orientacion en arqueologia') ||
+        n.includes('seminario de la orientación') ||
+        n.includes('seminario de la orientacion') ||
+        n.includes('seminario')
+      );
+    });
+
+    const planStateActual = studentData[selectedPlan] || {};
+    const slotLibre =
+      slotsSeminariosCFO.find((m) => {
+        const stSlot = planStateActual[m.id] || {};
+        return !stSlot.customName && (!stSlot.estado || stSlot.estado === 'pendiente');
+      }) ||
+      slotsSeminariosCFO.find((m) => !(planStateActual[m.id]?.customName)) ||
+      slotsSeminariosCFO[0];
+
     const textoSeminario = `${sem.nombre} (${sem.docente})`;
 
-    setStudentData(prev => {
+    if (slotLibre) {
+      setStudentData((prev) => {
+        const planState = prev[selectedPlan] || {};
+        const matPrev = planState[slotLibre.id] || {};
+        const updated = {
+          ...prev,
+          [selectedPlan]: {
+            ...planState,
+            [slotLibre.id]: {
+              ...matPrev,
+              estado: 'cursando',
+              customName: textoSeminario,
+              docenteTeorico: sem.docente || matPrev.docenteTeorico || '',
+              cuatrimestreCursada: sem.cuatrimestre || '2° Cuatrimestre',
+              anioCursada: sem.anio || '2026'
+            }
+          }
+        };
+        guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
+        return updated;
+      });
+
+      setShowSeminarioModal(false);
+      setOnlyFavorites(false);
+      setActiveBlock('cfo');
+      setToastMessage(`¡Seminario asignado en CFO (${slotLibre.name})!`);
+      setTimeout(() => setToastMessage(null), 4000);
+      return;
+    }
+
+    const customId = 'electiva-sem-' + sem.id + '-' + Date.now();
+    setStudentData((prev) => {
       const planState = prev[selectedPlan] || {};
       const updated = {
         ...prev,
@@ -308,7 +366,10 @@ export default function App() {
       return updated;
     });
 
-    setToastMessage("¡Seminario agregado a tus electivas!");
+    setShowSeminarioModal(false);
+    setOnlyFavorites(false);
+    setActiveBlock('electivas');
+    setToastMessage("¡Seminario agregado a tu cursada!");
     setTimeout(() => setToastMessage(null), 4000);
   };
 
@@ -1922,6 +1983,7 @@ export default function App() {
                       <option value="">-- Período --</option>
                       <option value="1° Cuatrimestre">1° Cuatrimestre</option>
                       <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                      <option value="Anual">Anual</option>
                       <option value="Verano">Verano</option>
                     </select>
                   </div>
@@ -2257,10 +2319,11 @@ export default function App() {
             </div>
 
             <form onSubmit={handleAgregarSeminarioManualACatalogo} className="bg-sky-50 border border-sky-200 rounded-xl p-3.5 space-y-2.5">
-              <p className="text-xs font-bold uppercase text-sky-900">Agregar seminario manualmente al catálogo</p>
+              <p className="text-xs font-bold uppercase text-sky-900">Agregar seminario al catálogo (todos los campos obligatorios)</p>
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                 <input
                   type="text"
+                  required
                   placeholder="Nombre del seminario *"
                   value={nuevoSemNombre}
                   onChange={(e) => setNuevoSemNombre(e.target.value)}
@@ -2268,12 +2331,14 @@ export default function App() {
                 />
                 <input
                   type="text"
-                  placeholder="Código (opcional)"
+                  required
+                  placeholder="Código *"
                   value={nuevoSemCodigo}
                   onChange={(e) => setNuevoSemCodigo(e.target.value)}
                   className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
                 />
                 <select
+                  required
                   value={nuevoSemTipo}
                   onChange={(e) => setNuevoSemTipo(e.target.value)}
                   className="bg-white border border-sky-300 rounded-lg px-2.5 py-2 text-xs font-semibold"
@@ -2284,6 +2349,7 @@ export default function App() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <select
+                  required
                   value={nuevoSemAnio}
                   onChange={(e) => setNuevoSemAnio(e.target.value)}
                   className="bg-white border border-sky-300 rounded-lg px-2.5 py-2 text-xs font-semibold"
@@ -2297,19 +2363,22 @@ export default function App() {
                   <option value="2020">2020</option>
                 </select>
                 <select
+                  required
                   value={nuevoSemCuatrimestre}
                   onChange={(e) => setNuevoSemCuatrimestre(e.target.value)}
                   className="bg-white border border-sky-300 rounded-lg px-2.5 py-2 text-xs font-semibold"
                 >
                   <option value="1° Cuatrimestre">1° Cuatrimestre</option>
                   <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                  <option value="Anual">Anual</option>
                   <option value="Verano">Verano</option>
                 </select>
               </div>
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
-                  placeholder="Docente / Cátedra (opcional)"
+                  required
+                  placeholder="Docente / Cátedra *"
                   value={nuevoSemDocente}
                   onChange={(e) => setNuevoSemDocente(e.target.value)}
                   className="flex-1 bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
@@ -2343,6 +2412,7 @@ export default function App() {
                 <option value="todos">Todos los cuatrimestres</option>
                 <option value="1° Cuatrimestre">1° Cuatrimestre</option>
                 <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                <option value="Anual">Anual</option>
                 <option value="Verano">Verano</option>
               </select>
             </div>
@@ -2363,8 +2433,8 @@ export default function App() {
                     <p className="font-bold text-slate-800 text-xs mt-1">{s.nombre}</p>
                     <p className="text-[11px] text-slate-500">{s.docente}</p>
                   </div>
-                  <button onClick={() => { handleAgregarSeminarioAElectivas(s); setShowSeminarioModal(false); setActiveBlock('electivas'); }} className="flex items-center justify-center gap-1.5 bg-sky-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
-                    <Plus className="w-4 h-4" /> Agregar a mis Electivas
+                  <button onClick={() => handleAgregarSeminarioACursada(s)} className="flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shrink-0">
+                    <Plus className="w-4 h-4" /> Agregar a mi cursada
                   </button>
                 </div>
               ))}
