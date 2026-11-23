@@ -14,22 +14,22 @@ const MP_ALIAS = 'juan.miguel.ch';
 
 // Respaldo inicial si la tabla seminarios_catalogo no responde
 const SEMINARIOS_OFERTA_2C_2026 = [
-  { id: 'sem-1', tipo: 'sociocultural', codigo: '', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-2', tipo: 'sociocultural', codigo: '', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-3', tipo: 'sociocultural', codigo: '', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-4', tipo: 'sociocultural', codigo: '', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN (MODALIDAD PRESENCIAL)', docente: 'PROF. URBANO, Eduardo Luis', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-5', tipo: 'sociocultural', codigo: '', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA. ALGUNOS EJEMPLOS DE EUROPA Y ARGENTINA (MODALIDAD PRESENCIAL)', docente: 'PROF. Pablo WRIGHT', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-6', tipo: 'sociocultural', codigo: '', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-7', tipo: 'sociocultural', codigo: '', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-8', tipo: 'sociocultural', codigo: '', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-9', tipo: 'arqueologia', codigo: '', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-10', tipo: 'sociocultural', codigo: '', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-11', tipo: 'arqueologia', codigo: '', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-12', tipo: 'arqueologia', codigo: '', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-13', tipo: 'sociocultural', codigo: '', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-14', tipo: 'sociocultural', codigo: '', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-15', tipo: 'sociocultural', codigo: '', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
-  { id: 'sem-16', tipo: 'sociocultural', codigo: '', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', anio: '2026', cuatrimestre: '2° Cuatrimestre' }
+  { id: 'sem-1', tipo: 'sociocultural', codigo: '', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-2', tipo: 'sociocultural', codigo: '', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-3', tipo: 'sociocultural', codigo: '', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-4', tipo: 'sociocultural', codigo: '', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN (MODALIDAD PRESENCIAL)', docente: 'PROF. URBANO, Eduardo Luis', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-5', tipo: 'sociocultural', codigo: '', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA. ALGUNOS EJEMPLOS DE EUROPA Y ARGENTINA (MODALIDAD PRESENCIAL)', docente: 'PROF. Pablo WRIGHT', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-6', tipo: 'sociocultural', codigo: '', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-7', tipo: 'sociocultural', codigo: '', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-8', tipo: 'sociocultural', codigo: '', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-9', tipo: 'arqueologia', codigo: '', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-10', tipo: 'sociocultural', codigo: '', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
+  { id: 'sem-11', tipo: 'arqueologia', codigo: '', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-12', tipo: 'arqueologia', codigo: '', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
+  { id: 'sem-13', tipo: 'sociocultural', codigo: '', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
+  { id: 'sem-14', tipo: 'sociocultural', codigo: '', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
+  { id: 'sem-15', tipo: 'sociocultural', codigo: '', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
+  { id: 'sem-16', tipo: 'sociocultural', codigo: '', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true }
 ];
 
 const ANIOS_OPCIONES = Array.from({ length: 27 }, (_, idx) => String(2026 - idx));
@@ -127,6 +127,27 @@ const formatearListaDocentes = (lista) =>
     .map((d) => formatearNombreDocente(d))
     .filter(Boolean)
     .join(' / ');
+
+const esSeminarioPst = (sem) => {
+  if (typeof sem?.esPst === 'boolean') return sem.esPst;
+  const n = (sem?.nombre || '').toLowerCase();
+  return (
+    n.startsWith('pst:') ||
+    n.startsWith('pst ') ||
+    n.includes('prácticas socioeducativas territorializadas') ||
+    n.includes('practicas socioeducativas territorializadas')
+  );
+};
+
+const limpiarTituloSeminarioCFO = (rawNombre) => {
+  if (!rawNombre) return '';
+  let limpio = rawNombre.trim();
+  limpio = limpio.replace(/\s*\([^)]*\)\s*$/, '').trim();
+  limpio = limpio.replace(/^(pst\s*:\s*|pst\s+)/i, '').trim();
+  limpio = limpio.replace(/\bseminarios?\b/gi, ' ');
+  limpio = limpio.replace(/\s{2,}/g, ' ').replace(/^[\s\-–—:]+|[\s\-–—:]+$/g, '').trim();
+  return limpio;
+};
 
 const getEtiquetaOrientacion = (tipo) => {
   const t = (tipo || '').toLowerCase();
@@ -235,6 +256,7 @@ export default function App() {
   const [nuevoSemTipo, setNuevoSemTipo] = useState('sociocultural');
   const [nuevoSemAnio, setNuevoSemAnio] = useState('2026');
   const [nuevoSemCuatrimestre, setNuevoSemCuatrimestre] = useState('2° Cuatrimestre');
+  const [nuevoSemEsPst, setNuevoSemEsPst] = useState(false);
   const [filtroSemAnio, setFiltroSemAnio] = useState('todos');
   const [filtroSemAnioInput, setFiltroSemAnioInput] = useState('');
   const [filtroSemCuatrimestre, setFiltroSemCuatrimestre] = useState('todos');
@@ -386,6 +408,7 @@ export default function App() {
     setNuevoSemTipo('sociocultural');
     setNuevoSemAnio('2026');
     setNuevoSemCuatrimestre('2° Cuatrimestre');
+    setNuevoSemEsPst(false);
   };
 
   const handleIniciarEdicionSeminario = (sem) => {
@@ -395,6 +418,7 @@ export default function App() {
     setNuevoSemTipo(sem.tipo || 'sociocultural');
     setNuevoSemAnio(sem.anio || '2026');
     setNuevoSemCuatrimestre(sem.cuatrimestre || '2° Cuatrimestre');
+    setNuevoSemEsPst(esSeminarioPst(sem));
     const docentesSeparados = (sem.docente || '').split('/').map((d) => d.trim());
     setNuevoSemDocente1(docentesSeparados[0] || '');
     setNuevoSemDocente2(docentesSeparados[1] || '');
@@ -444,7 +468,8 @@ export default function App() {
         nombre: nombreLimpio.toUpperCase(),
         docente: docenteLimpio,
         anio: nuevoSemAnio,
-        cuatrimestre: nuevoSemCuatrimestre
+        cuatrimestre: nuevoSemCuatrimestre,
+        esPst: Boolean(nuevoSemEsPst)
       };
 
       const { error } = await supabase
@@ -474,7 +499,8 @@ export default function App() {
       nombre: nombreLimpio.toUpperCase(),
       docente: docenteLimpio,
       anio: nuevoSemAnio,
-      cuatrimestre: nuevoSemCuatrimestre
+      cuatrimestre: nuevoSemCuatrimestre,
+      esPst: Boolean(nuevoSemEsPst)
     };
 
     const { error } = await supabase
@@ -523,27 +549,46 @@ export default function App() {
       planObjActual?.orientaciones?.['sociocultural'];
     const cfoList = (orientObjActual?.cfo || []).filter(m => !esMateriaTesis(m));
 
-    const slotsSeminariosCFO = cfoList.filter((m) => {
+    const esPstSem = esSeminarioPst(sem);
+
+    const slotsPstCFO = cfoList.filter((m) => {
       const n = (m.name || '').toLowerCase();
       return (
-        n.includes('seminario de la orientación en arqueología') ||
-        n.includes('seminario de la orientacion en arqueologia') ||
-        n.includes('seminario de la orientación') ||
-        n.includes('seminario de la orientacion') ||
-        n.includes('seminario')
+        n.includes('prácticas socioeducativas territorializadas') ||
+        n.includes('practicas socioeducativas territorializadas') ||
+        n.includes('pst')
       );
     });
 
+    const slotsOrientacionCFO = cfoList.filter((m) => {
+      const n = (m.name || '').toLowerCase();
+      const esPstSlot =
+        n.includes('prácticas socioeducativas territorializadas') ||
+        n.includes('practicas socioeducativas territorializadas') ||
+        n.includes('pst');
+      return (
+        !esPstSlot &&
+        (n.includes('seminario de la orientación en arqueología') ||
+          n.includes('seminario de la orientacion en arqueologia') ||
+          n.includes('seminario de la orientación') ||
+          n.includes('seminario de la orientacion') ||
+          n.includes('seminario'))
+      );
+    });
+
+    const candidatosSlot = esPstSem ? slotsPstCFO : slotsOrientacionCFO;
     const planStateActual = studentData[selectedPlan] || {};
+
     const slotLibre =
-      slotsSeminariosCFO.find((m) => {
+      candidatosSlot.find((m) => {
         const stSlot = planStateActual[m.id] || {};
         return !stSlot.customName && (!stSlot.estado || stSlot.estado === 'pendiente');
       }) ||
-      slotsSeminariosCFO.find((m) => !(planStateActual[m.id]?.customName)) ||
-      slotsSeminariosCFO[0];
+      candidatosSlot.find((m) => !(planStateActual[m.id]?.customName)) ||
+      candidatosSlot[0];
 
-    const textoSeminario = `${sem.nombre} (${sem.docente})`;
+    const tituloLimpio = limpiarTituloSeminarioCFO(sem.nombre);
+    const docentesPartes = (sem.docente || '').split('/').map((d) => d.trim());
 
     if (slotLibre) {
       setStudentData((prev) => {
@@ -556,8 +601,14 @@ export default function App() {
             [slotLibre.id]: {
               ...matPrev,
               estado: 'cursando',
-              customName: textoSeminario,
-              docenteTeorico: sem.docente || matPrev.docenteTeorico || '',
+              customName: tituloLimpio,
+              desdeCatalogoSeminarios: true,
+              docente1: docentesPartes[0] || matPrev.docente1 || '',
+              docente2: docentesPartes[1] || matPrev.docente2 || '',
+              docente3: docentesPartes[2] || matPrev.docente3 || '',
+              emailDocente1: matPrev.emailDocente1 || '',
+              emailDocente2: matPrev.emailDocente2 || '',
+              emailDocente3: matPrev.emailDocente3 || '',
               cuatrimestreCursada: sem.cuatrimestre || '2° Cuatrimestre',
               anioCursada: sem.anio || '2026'
             }
@@ -587,7 +638,14 @@ export default function App() {
             nota: '',
             aplazos: '0',
             regimen: 'promocion',
-            customName: textoSeminario,
+            customName: tituloLimpio,
+            desdeCatalogoSeminarios: true,
+            docente1: docentesPartes[0] || '',
+            docente2: docentesPartes[1] || '',
+            docente3: docentesPartes[2] || '',
+            emailDocente1: '',
+            emailDocente2: '',
+            emailDocente3: '',
             favorita: true,
             cuatrimestreCursada: sem.cuatrimestre || '2° Cuatrimestre',
             anioCursada: sem.anio || '2026'
@@ -603,6 +661,37 @@ export default function App() {
     setActiveBlock('electivas');
     setToastMessage("¡Seminario agregado a tu cursada!");
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleVaciarSeminarioEnLibreta = (id) => {
+    setStudentData((prev) => {
+      const planState = prev[selectedPlan] || {};
+      const matPrev = planState[id] || {};
+      const updated = {
+        ...prev,
+        [selectedPlan]: {
+          ...planState,
+          [id]: {
+            ...matPrev,
+            estado: 'pendiente',
+            nota: '',
+            customName: '',
+            desdeCatalogoSeminarios: false,
+            docente1: '',
+            docente2: '',
+            docente3: '',
+            emailDocente1: '',
+            emailDocente2: '',
+            emailDocente3: ''
+          }
+        }
+      };
+      guardarDatosNube(updated, avatarActual, selectedPlan, selectedOrientation);
+      return updated;
+    });
+    setActiveDetailMateria(null);
+    setToastMessage("Seminario eliminado de la cursada. El espacio quedó disponible.");
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   const handleEliminarSeminarioPersonalizado = (id) => {
@@ -630,6 +719,8 @@ export default function App() {
         modalidadCursada: '', trabajoPractico: '', trabajoFinal: '',
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
+        docente1: '', emailDocente1: '', docente2: '', emailDocente2: '', docente3: '', emailDocente3: '',
+        desdeCatalogoSeminarios: false,
         parcial1: '', parcial2: '', parcial3: '', 
         final1: '', final2: '', final3: '', 
         customName: '', codigoOptativa: '', favorita: false, materiaElectivaCBC: ''
@@ -1767,6 +1858,7 @@ export default function App() {
             nombreMatLower.includes('seminario de la orientación en arqueología') ||
             nombreMatLower.includes('seminario de la orientacion en arqueologia'));
         const modalidadActual = st.modalidadCursada || '';
+        const esSeminarioCargadoCatalogo = Boolean(st.desdeCatalogoSeminarios) || (esSeminarioCuatrimestral64 && Boolean(st.customName));
 
         const esElectivaArqueologiaCFO =
           activeBlock === 'cfo' &&
@@ -1856,11 +1948,29 @@ export default function App() {
               <div className="flex items-center justify-between border-b pb-3">
                 <div>
                   <h3 className="text-base font-black text-slate-900">{mat.name}</h3>
+                  {st.customName && (
+                    <p className="text-xs font-bold text-sky-700 mt-0.5">{st.customName}</p>
+                  )}
                   <p className="text-[10px] text-slate-500">Configuración, selección de cátedra y notas</p>
                   <p className="text-[11px] font-bold text-sky-800 mt-0.5">Carga horaria asignada: {horasMateriaDetalle} hs</p>
                 </div>
                 <button onClick={() => setActiveDetailMateria(null)} className="text-slate-400 font-bold text-xl">×</button>
               </div>
+
+              {esSeminarioCargadoCatalogo && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center justify-between gap-2">
+                  <p className="text-[11px] font-semibold text-red-900">
+                    ¿Cargaste un seminario que no correspondía? Podés eliminarlo para dejar este espacio vacío.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleVaciarSeminarioEnLibreta(mat.id)}
+                    className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition shrink-0"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> Eliminar seminario
+                  </button>
+                </div>
+              )}
 
               {(() => {
                 const textoMateria = `${mat.id || ''} ${mat.name || ''} ${mat.etapa || ''}`.toLowerCase();
@@ -2231,14 +2341,33 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 pt-2">
-                  <input type="text" placeholder="Profesor Teórico" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                  <input type="email" placeholder="Correo Teórico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <input type="text" placeholder="Profesor Práctico" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                  <input type="email" placeholder="Correo Práctico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
-                </div>
+                {esSeminarioCargadoCatalogo ? (
+                  <div className="space-y-2 pt-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <input type="text" placeholder="Profesor/a 1" value={st.docente1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docente1', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                      <input type="email" placeholder="Correo Profesor/a 1" value={st.emailDocente1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailDocente1', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input type="text" placeholder="Profesor/a 2" value={st.docente2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docente2', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                      <input type="email" placeholder="Correo Profesor/a 2" value={st.emailDocente2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailDocente2', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input type="text" placeholder="Profesor/a 3" value={st.docente3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docente3', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                      <input type="email" placeholder="Correo Profesor/a 3" value={st.emailDocente3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailDocente3', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <input type="text" placeholder="Profesor Teórico" value={st.docenteTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docenteTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                      <input type="email" placeholder="Correo Teórico" value={st.emailTeorico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailTeorico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <input type="text" placeholder="Profesor Práctico" value={st.docentePractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'docentePractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                      <input type="email" placeholder="Correo Práctico" value={st.emailPractico || ''} onChange={(e) => handleUpdateMateria(mat.id, 'emailPractico', e.target.value)} className="bg-white border rounded-lg p-2 text-xs" />
+                    </div>
+                  </>
+                )}
               </div>
 
               {esSeminarioCuatrimestral64 ? (
@@ -2633,22 +2762,33 @@ export default function App() {
                   className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
                 />
               </div>
-              <div className="flex justify-end gap-2">
-                {editandoSemId && (
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <label className="flex items-center gap-2 text-xs font-bold text-sky-950 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={nuevoSemEsPst}
+                    onChange={(e) => setNuevoSemEsPst(e.target.checked)}
+                    className="w-4 h-4 rounded border-sky-400 text-sky-700 focus:ring-sky-500"
+                  />
+                  Es un PST (Práctica Socioeducativa Territorializada)
+                </label>
+                <div className="flex items-center gap-2">
+                  {editandoSemId && (
+                    <button
+                      type="button"
+                      onClick={limpiarFormularioSeminario}
+                      className="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-lg transition"
+                    >
+                      Cancelar
+                    </button>
+                  )}
                   <button
-                    type="button"
-                    onClick={limpiarFormularioSeminario}
-                    className="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-lg transition"
+                    type="submit"
+                    className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition shrink-0"
                   >
-                    Cancelar
+                    {editandoSemId ? <><Check className="w-4 h-4" /> Guardar Cambios</> : <><Plus className="w-4 h-4" /> Guardar en Catálogo</>}
                   </button>
-                )}
-                <button
-                  type="submit"
-                  className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition shrink-0"
-                >
-                  {editandoSemId ? <><Check className="w-4 h-4" /> Guardar Cambios</> : <><Plus className="w-4 h-4" /> Guardar en Catálogo</>}
-                </button>
+                </div>
               </div>
             </form>
 
@@ -2735,6 +2875,11 @@ export default function App() {
                       <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded ${getClaseEtiquetaOrientacion(s.tipo)}`}>
                         {getEtiquetaOrientacion(s.tipo)}
                       </span>
+                      {esSeminarioPst(s) && (
+                        <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-200">
+                          PST
+                        </span>
+                      )}
                       {s.codigo && <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">Cód: {s.codigo}</span>}
                       {(s.anio || s.cuatrimestre) && (
                         <span className="text-[9px] font-semibold text-slate-500">
