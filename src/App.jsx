@@ -14,22 +14,22 @@ const MP_ALIAS = 'juan.miguel.ch';
 
 // OFERTA OFICIAL ACTUALIZADA 2C 2026 - CIENCIAS ANTROPOLÓGICAS (FFyL UBA)
 const SEMINARIOS_OFERTA_2C_2026 = [
-  { id: 'sem-1', tipo: 'sociocultural', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', cuatrimestre: '2C 2026' },
-  { id: 'sem-2', tipo: 'sociocultural', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', cuatrimestre: '2C 2026' },
-  { id: 'sem-3', tipo: 'sociocultural', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', cuatrimestre: '2C 2026' },
-  { id: 'sem-4', tipo: 'sociocultural', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN (MODALIDAD PRESENCIAL)', docente: 'PROF. URBANO, Eduardo Luis', cuatrimestre: '2C 2026' },
-  { id: 'sem-5', tipo: 'sociocultural', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA. ALGUNOS EJEMPLOS DE EUROPA Y ARGENTINA (MODALIDAD PRESENCIAL)', docente: 'PROF. Pablo WRIGHT', cuatrimestre: '2C 2026' },
-  { id: 'sem-6', tipo: 'sociocultural', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', cuatrimestre: '2C 2026' },
-  { id: 'sem-7', tipo: 'sociocultural', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', cuatrimestre: '2C 2026' },
-  { id: 'sem-8', tipo: 'sociocultural', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', cuatrimestre: '2C 2026' },
-  { id: 'sem-9', tipo: 'arqueologia', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', cuatrimestre: '2C 2026' },
-  { id: 'sem-10', tipo: 'sociocultural', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', cuatrimestre: '2C 2026' },
-  { id: 'sem-11', tipo: 'arqueologia', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', cuatrimestre: '2C 2026' },
-  { id: 'sem-12', tipo: 'arqueologia', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', cuatrimestre: '2C 2026' },
-  { id: 'sem-13', tipo: 'sociocultural', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', cuatrimestre: '2C 2026' },
-  { id: 'sem-14', tipo: 'sociocultural', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', cuatrimestre: '2C 2026' },
-  { id: 'sem-15', tipo: 'sociocultural', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', cuatrimestre: '2C 2026' },
-  { id: 'sem-16', tipo: 'sociocultural', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', cuatrimestre: '2C 2026' }
+  { id: 'sem-1', tipo: 'sociocultural', codigo: '', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-2', tipo: 'sociocultural', codigo: '', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-3', tipo: 'sociocultural', codigo: '', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-4', tipo: 'sociocultural', codigo: '', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN (MODALIDAD PRESENCIAL)', docente: 'PROF. URBANO, Eduardo Luis', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-5', tipo: 'sociocultural', codigo: '', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA. ALGUNOS EJEMPLOS DE EUROPA Y ARGENTINA (MODALIDAD PRESENCIAL)', docente: 'PROF. Pablo WRIGHT', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-6', tipo: 'sociocultural', codigo: '', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-7', tipo: 'sociocultural', codigo: '', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-8', tipo: 'sociocultural', codigo: '', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-9', tipo: 'arqueologia', codigo: '', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-10', tipo: 'sociocultural', codigo: '', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-11', tipo: 'arqueologia', codigo: '', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-12', tipo: 'arqueologia', codigo: '', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-13', tipo: 'sociocultural', codigo: '', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-14', tipo: 'sociocultural', codigo: '', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-15', tipo: 'sociocultural', codigo: '', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
+  { id: 'sem-16', tipo: 'sociocultural', codigo: '', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', anio: '2026', cuatrimestre: '2° Cuatrimestre' }
 ];
 
 const AVATARES_ANTROPOLOGIA = [
@@ -120,6 +120,10 @@ export default function App() {
   const [nuevoSemCodigo, setNuevoSemCodigo] = useState('');
   const [nuevoSemDocente, setNuevoSemDocente] = useState('');
   const [nuevoSemTipo, setNuevoSemTipo] = useState('sociocultural');
+  const [nuevoSemAnio, setNuevoSemAnio] = useState('2026');
+  const [nuevoSemCuatrimestre, setNuevoSemCuatrimestre] = useState('2° Cuatrimestre');
+  const [filtroSemAnio, setFiltroSemAnio] = useState('todos');
+  const [filtroSemCuatrimestre, setFiltroSemCuatrimestre] = useState('todos');
   
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [avatarActual, setAvatarActual] = useState(() => {
@@ -247,13 +251,24 @@ export default function App() {
     const docenteLimpio = nuevoSemDocente.trim() || 'DOCENTE A CONFIRMAR';
     if (!nombreLimpio) return;
 
+    if (codigoLimpio) {
+      const yaExiste = seminariosOferta.some(
+        (s) => (s.codigo || '').trim().toLowerCase() === codigoLimpio.toLowerCase()
+      );
+      if (yaExiste) {
+        alert("El seminario que estás intentando ingresar ya está en la lista.");
+        return;
+      }
+    }
+
     const nuevoSem = {
       id: 'sem-manual-' + Date.now(),
       tipo: nuevoSemTipo,
       codigo: codigoLimpio,
       nombre: nombreLimpio.toUpperCase(),
       docente: docenteLimpio,
-      cuatrimestre: 'Manual'
+      anio: nuevoSemAnio,
+      cuatrimestre: nuevoSemCuatrimestre
     };
 
     const updatedOferta = [nuevoSem, ...seminariosOferta];
@@ -284,8 +299,8 @@ export default function App() {
             regimen: 'promocion',
             customName: textoSeminario,
             favorita: true,
-            cuatrimestreCursada: '2° Cuatrimestre',
-            anioCursada: '2026'
+            cuatrimestreCursada: sem.cuatrimestre || '2° Cuatrimestre',
+            anioCursada: sem.anio || '2026'
           }
         }
       };
@@ -1033,6 +1048,16 @@ export default function App() {
       </div>
     );
   }
+
+  const aniosDisponiblesCatalogo = Array.from(
+    new Set(seminariosOferta.map((s) => s.anio).filter(Boolean))
+  ).sort((a, b) => String(b).localeCompare(String(a)));
+
+  const seminariosFiltrados = seminariosOferta.filter((s) => {
+    const matchAnio = filtroSemAnio === 'todos' || (s.anio || '') === filtroSemAnio;
+    const matchCuatri = filtroSemCuatrimestre === 'todos' || (s.cuatrimestre || '') === filtroSemCuatrimestre;
+    return matchAnio && matchCuatri;
+  });
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-16 flex flex-col justify-between">
@@ -2257,6 +2282,30 @@ export default function App() {
                   <option value="arqueologia">Arqueología</option>
                 </select>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <select
+                  value={nuevoSemAnio}
+                  onChange={(e) => setNuevoSemAnio(e.target.value)}
+                  className="bg-white border border-sky-300 rounded-lg px-2.5 py-2 text-xs font-semibold"
+                >
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
+                </select>
+                <select
+                  value={nuevoSemCuatrimestre}
+                  onChange={(e) => setNuevoSemCuatrimestre(e.target.value)}
+                  className="bg-white border border-sky-300 rounded-lg px-2.5 py-2 text-xs font-semibold"
+                >
+                  <option value="1° Cuatrimestre">1° Cuatrimestre</option>
+                  <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                  <option value="Verano">Verano</option>
+                </select>
+              </div>
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
@@ -2274,11 +2323,43 @@ export default function App() {
               </div>
             </form>
 
+            <div className="flex flex-wrap items-center gap-2 bg-slate-100 p-2.5 rounded-xl border border-slate-200">
+              <span className="text-[10px] font-bold uppercase text-slate-600">Filtrar por:</span>
+              <select
+                value={filtroSemAnio}
+                onChange={(e) => setFiltroSemAnio(e.target.value)}
+                className="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold"
+              >
+                <option value="todos">Todos los años</option>
+                {aniosDisponiblesCatalogo.map((an) => (
+                  <option key={an} value={an}>{an}</option>
+                ))}
+              </select>
+              <select
+                value={filtroSemCuatrimestre}
+                onChange={(e) => setFiltroSemCuatrimestre(e.target.value)}
+                className="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold"
+              >
+                <option value="todos">Todos los cuatrimestres</option>
+                <option value="1° Cuatrimestre">1° Cuatrimestre</option>
+                <option value="2° Cuatrimestre">2° Cuatrimestre</option>
+                <option value="Verano">Verano</option>
+              </select>
+            </div>
+
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
-              {seminariosOferta.map(s => (
+              {seminariosFiltrados.map(s => (
                 <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
                   <div className="space-y-1 flex-1">
-                    <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{s.tipo.toUpperCase()}</span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{s.tipo.toUpperCase()}</span>
+                      {s.codigo && <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">Cód: {s.codigo}</span>}
+                      {(s.anio || s.cuatrimestre) && (
+                        <span className="text-[9px] font-semibold text-slate-500">
+                          {[s.anio, s.cuatrimestre].filter(Boolean).join(' · ')}
+                        </span>
+                      )}
+                    </div>
                     <p className="font-bold text-slate-800 text-xs mt-1">{s.nombre}</p>
                     <p className="text-[11px] text-slate-500">{s.docente}</p>
                   </div>
