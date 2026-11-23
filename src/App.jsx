@@ -1905,9 +1905,9 @@ export default function App() {
               {esSeminarioCuatrimestral64 ? (
                 <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                   <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <span className="text-[10px] font-bold text-slate-600 block mb-1">Entrega de trabajo práctico o examen domiciliario</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
+                    <div className="flex flex-col justify-between">
+                      <span className="text-[10px] font-bold text-slate-600 block mb-1.5">Trabajo práctico o examen domiciliario</span>
                       <input
                         type="number"
                         min="0"
@@ -1919,8 +1919,8 @@ export default function App() {
                         className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold"
                       />
                     </div>
-                    <div>
-                      <span className="text-[10px] font-bold text-slate-600 block mb-1">Entrega de trabajo final o monografía</span>
+                    <div className="flex flex-col justify-between">
+                      <span className="text-[10px] font-bold text-slate-600 block mb-1.5">Trabajo final o monografía</span>
                       <input
                         type="number"
                         min="0"
