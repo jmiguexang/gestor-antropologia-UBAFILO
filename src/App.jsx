@@ -128,6 +128,20 @@ const formatearListaDocentes = (lista) =>
     .filter(Boolean)
     .join(' / ');
 
+const getEtiquetaOrientacion = (tipo) => {
+  const t = (tipo || '').toLowerCase();
+  if (t === 'ambas') return 'SOCIOCULTURAL Y ARQUEOLOGÍA';
+  if (t === 'arqueologia') return 'ARQUEOLOGÍA';
+  return 'SOCIOCULTURAL';
+};
+
+const getClaseEtiquetaOrientacion = (tipo) => {
+  const t = (tipo || '').toLowerCase();
+  if (t === 'ambas') return 'bg-purple-100 text-purple-900 border border-purple-200';
+  if (t === 'arqueologia') return 'bg-amber-100 text-amber-900 border border-amber-200';
+  return 'bg-sky-100 text-sky-900 border border-sky-200';
+};
+
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -2100,7 +2114,7 @@ export default function App() {
                     <option value="">-- Seleccionar de la oferta disponible --</option>
                     {seminariosOferta.map(sem => (
                       <option key={sem.id} value={`${sem.nombre} (${sem.docente})`}>
-                        {sem.nombre} - {sem.docente} ({sem.tipo})
+                        {sem.nombre} - {sem.docente} ({getEtiquetaOrientacion(sem.tipo)})
                       </option>
                     ))}
                   </select>
@@ -2358,7 +2372,7 @@ export default function App() {
                       </div>
                     )}
                     {!logroPromocion && (
-                      <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (&lt; 4) computan para el promedio general de la carrera.</p>
+                      <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (menor a 4) computan para el promedio general de la carrera.</p>
                     )}
                   </div>
                 </div>
@@ -2410,7 +2424,7 @@ export default function App() {
                       ))}
                     </div>
                   )}
-                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CBC en una cursada pasada, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CBC y de la carrera.</p>
+                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CBC en una cursada pasada, cargá aquí las notas reprobadas (menores a 4) para que computen en el promedio del CBC y de la carrera.</p>
                 </div>
               )}
 
@@ -2460,7 +2474,7 @@ export default function App() {
                       ))}
                     </div>
                   )}
-                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFG en una cursada pasada, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CFG y de la carrera.</p>
+                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFG en una cursada pasada, cargá aquí las notas reprobadas (menores a 4) para que computen en el promedio del CFG y de la carrera.</p>
                 </div>
               )}
 
@@ -2510,7 +2524,7 @@ export default function App() {
                       ))}
                     </div>
                   )}
-                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFO en una cursada pasada, cargá aquí las notas reprobadas (&lt; 4) para que computen en el promedio del CFO y de la carrera.</p>
+                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFO en una cursada pasada, cargá aquí las notas reprobadas (menores a 4) para que computen en el promedio del CFO y de la carrera.</p>
                 </div>
               )}
 
@@ -2718,7 +2732,9 @@ export default function App() {
                 <div key={s.id} className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border gap-3 ${editandoSemId === s.id ? 'bg-sky-50 border-sky-400' : 'bg-slate-50 border-slate-200'}`}>
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{s.tipo.toUpperCase()}</span>
+                      <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded ${getClaseEtiquetaOrientacion(s.tipo)}`}>
+                        {getEtiquetaOrientacion(s.tipo)}
+                      </span>
                       {s.codigo && <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">Cód: {s.codigo}</span>}
                       {(s.anio || s.cuatrimestre) && (
                         <span className="text-[9px] font-semibold text-slate-500">
