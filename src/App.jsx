@@ -48,14 +48,12 @@ const capitalizarPalabra = (pal) => {
 const formatearNombreDocente = (raw) => {
   if (!raw || !raw.trim()) return '';
 
-  // Extrae sufijo entre paréntesis si existe, ej. "(Depto de Artes)"
   let sufijo = '';
   let texto = raw.trim().replace(/\s*\(([^)]+)\)\s*$/, (_, inner) => {
     sufijo = ` (${inner.trim()})`;
     return '';
   }).trim();
 
-  // Quita prefijos previos si los escribió
   texto = texto.replace(/^(prof\.?|profesor(?:a)?|doc\.?|lic\.?|dr\.?|dra\.?)\s+/i, '').trim();
   if (!texto) return '';
 
@@ -69,7 +67,6 @@ const formatearNombreDocente = (raw) => {
     const izqEsMayus = izqTrim === izqTrim.toUpperCase() && /[A-ZÁÉÍÓÚÜÑ]/.test(izqTrim);
     const derEsMayus = derTrim === derTrim.toUpperCase() && /[A-ZÁÉÍÓÚÜÑ]/.test(derTrim);
 
-    // Si está en formato "Nombre, APELLIDO" lo invierte; si ya está en "APELLIDO, Nombre" lo respeta
     if (derEsMayus && !izqEsMayus) {
       apellido = derTrim;
       nombre = izqTrim;
@@ -86,7 +83,6 @@ const formatearNombreDocente = (raw) => {
       const mayusTokens = tokens.filter(esMayusToken);
 
       if (mayusTokens.length > 0 && mayusTokens.length < tokens.length) {
-        // Reconoce palabras en MAYÚSCULAS como apellido y el resto como nombre
         const apArr = [];
         const nomArr = [];
         tokens.forEach((t, idx) => {
@@ -99,7 +95,6 @@ const formatearNombreDocente = (raw) => {
         apellido = apArr.join(' ');
         nombre = nomArr.join(' ');
       } else {
-        // Sin mayúsculas distintivas: último token como apellido (o últimos 2 si hay partícula)
         if (tokens.length >= 3 && PARTICULAS_APELLIDO.has(tokens[tokens.length - 2].toLowerCase())) {
           apellido = tokens.slice(-2).join(' ');
           nombre = tokens.slice(0, -2).join(' ');
@@ -2574,6 +2569,7 @@ export default function App() {
                 >
                   <option value="sociocultural">Sociocultural</option>
                   <option value="arqueologia">Arqueología</option>
+                  <option value="ambas">Ambas</option>
                 </select>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
