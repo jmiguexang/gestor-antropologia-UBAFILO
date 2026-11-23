@@ -1263,15 +1263,29 @@ export default function App() {
                 const esPromocional = regimenActual === 'promocion';
                 const esFavorita = Boolean(st.favorita);
                 const esMateriaCBC = cbcIdsSet.has(m.id);
+                const nombreMatCardLower = (m.name || '').toLowerCase();
+                const esSeminarioCard64 =
+                  getHorasMateria(m) === 64 &&
+                  (nombreMatCardLower.includes('prácticas socioeducativas territorializadas') ||
+                    nombreMatCardLower.includes('practicas socioeducativas territorializadas') ||
+                    nombreMatCardLower.includes('pst') ||
+                    nombreMatCardLower.includes('seminario de la orientación en arqueología') ||
+                    nombreMatCardLower.includes('seminario de la orientacion en arqueologia'));
 
                 return (
                   <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1.5 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">{m.etapa}</span>
-                        <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
-                          {esPromocional ? '✨ Promocional' : '📝 Examen Final Obligatorio'}
-                        </span>
+                        {esSeminarioCard64 ? (
+                          <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border bg-sky-50 text-sky-800 border-sky-200">
+                            {st.modalidadCursada ? `🧭 Modalidad: ${st.modalidadCursada}` : '🧭 Modalidad sin elegir'}
+                          </span>
+                        ) : (
+                          <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
+                            {esPromocional ? '✨ Promocional' : '📝 Examen Final Obligatorio'}
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-start gap-2.5">
                         <button type="button" onClick={() => handleUpdateMateria(m.id, 'favorita', !esFavorita)} className="p-1 rounded-lg hover:bg-amber-50 transition mt-0.5">
