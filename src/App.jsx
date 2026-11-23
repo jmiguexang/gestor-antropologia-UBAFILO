@@ -52,6 +52,13 @@ const AVATARES_ANTROPOLOGIA = [
   { id: 'viveiros', nombre: 'Eduardo Viveiros de Castro', rol: 'Antropología Ontológica y Perspectivismo', emoji: '🐆', img: '/avatares/eduardo-viveiros-de-castro.jpg' }
 ];
 
+const OPCIONES_ELECTIVAS_ARQUEOLOGIA = [
+  'Ejercicio profesional de la arqueología',
+  'Arqueología de Tiempos Modernos',
+  'Materiales Biológicos en Arqueología',
+  'Estudios Interdisciplinarios en Arqueología'
+];
+
 const redondearUBAXXI = (promedio) => {
   if (promedio >= 3.01 && promedio <= 3.99) {
     return 3;
@@ -683,7 +690,6 @@ export default function App() {
     }
     const st = studentData[selectedPlan]?.[m.id] || {};
 
-    // Los idiomas no se consideran para el porcentaje de avance
     if (st.estado === 'aprobada' && !esIdiomaItem) {
       horasAprobadas += hs;
     }
@@ -1405,6 +1411,25 @@ export default function App() {
         const esElectiva = activeBlock === 'electivas';
         const horasMateriaDetalle = getHorasMateria(mat);
 
+        const electivasBaseLista = orientationObj.electivas || planObj.electivas || [];
+        const esElectivaArqueologia =
+          selectedOrientation === 'arqueologia' &&
+          esElectiva &&
+          !mat.esCustomSeminario &&
+          electivasBaseLista.some(el => el.id === mat.id);
+
+        const opcionesElectivasOcupadasEnOtras = new Set();
+        if (esElectivaArqueologia) {
+          electivasBaseLista.forEach(el => {
+            if (el.id !== mat.id) {
+              const otraVal = studentData[selectedPlan]?.[el.id]?.customName;
+              if (OPCIONES_ELECTIVAS_ARQUEOLOGIA.includes(otraVal)) {
+                opcionesElectivasOcupadasEnOtras.add(otraVal);
+              }
+            }
+          });
+        }
+
         const p1 = parseFloat(st.parcial1);
         const p2 = parseFloat(st.parcial2);
         const p3 = parseFloat(st.parcial3);
@@ -1691,7 +1716,27 @@ export default function App() {
                 return null;
               })()}
 
-              {esElectiva && (
+              {esElectivaArqueologia ? (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la alternativa de Electiva (Arqueología):</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar alternativa --</option>
+                    {OPCIONES_ELECTIVAS_ARQUEOLOGIA.map((opcion) => (
+                      <option
+                        key={opcion}
+                        value={opcion}
+                        disabled={opcionesElectivasOcupadasEnOtras.has(opcion)}
+                      >
+                        {opcion}{opcionesElectivasOcupadasEnOtras.has(opcion) ? ' (Ya elegida en la otra electiva)' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
                   <select
