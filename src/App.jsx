@@ -894,14 +894,14 @@ export default function App() {
   const planObj = PLANS_DATA[selectedPlan];
   const orientationObj = planObj.orientaciones[selectedOrientation] || planObj.orientaciones['sociocultural'];
 
-  const getCfgAjustado = () => {
-    const baseCfg = planObj.cfg || [];
+  const getCfoArqueologia1985Ajustado = () => {
+    const baseCfo = (orientationObj.cfo || []).filter(m => !esMateriaTesis(m));
     if (selectedPlan === '1985' && selectedOrientation === 'arqueologia') {
       const resultado = [];
       let optativaProcesada = false;
       let seminariosProcesados = false;
 
-      baseCfg.forEach((m, idx) => {
+      baseCfo.forEach((m, idx) => {
         const n = (m.name || '').toLowerCase();
         const esOpt = n.includes('optativa');
         const esSem = n.includes('seminario');
@@ -924,15 +924,15 @@ export default function App() {
           return;
         }
 
-        resultado.push({ ...m, id: m.id || `cfg-1985-arq-${idx}` });
+        resultado.push({ ...m, id: m.id || `cfo-1985-arq-${idx}` });
       });
 
       return resultado;
     }
-    return baseCfg;
+    return baseCfo;
   };
 
-  const currentCfgList = getCfgAjustado();
+  const currentCfoList = getCfoArqueologia1985Ajustado();
 
   const getTesisMaterias = () => {
     if (Array.isArray(planObj.tesis)) return planObj.tesis;
@@ -949,8 +949,8 @@ export default function App() {
   const getBlockMaterias = (block) => {
     switch (block) {
       case 'cbc': return planObj.cbc || [];
-      case 'cfg': return currentCfgList;
-      case 'cfo': return (orientationObj.cfo || []).filter(m => !esMateriaTesis(m));
+      case 'cfg': return planObj.cfg || [];
+      case 'cfo': return currentCfoList;
       case 'electivas': return orientationObj.electivas || planObj.electivas || [];
       case 'tesis': return getTesisMaterias();
       case 'idiomas': return planObj.idiomas || [];
@@ -964,8 +964,8 @@ export default function App() {
   const getAllMaterias = () => {
     let list = [
       ...(planObj.cbc || []),
-      ...currentCfgList,
-      ...((orientationObj.cfo || []).filter(m => !esMateriaTesis(m)))
+      ...(planObj.cfg || []),
+      ...currentCfoList
     ];
     const electivasList = orientationObj.electivas || planObj.electivas || [];
     if (electivasList) list = [...list, ...electivasList];
@@ -1033,8 +1033,8 @@ export default function App() {
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
   const cbcIdsSet = new Set((planObj.cbc || []).map(c => c.id));
-  const cfgIdsSet = new Set(currentCfgList.map(c => c.id));
-  const cfoIdsSet = new Set(((orientationObj.cfo || []).filter(m => !esMateriaTesis(m))).map(c => c.id));
+  const cfgIdsSet = new Set((planObj.cfg || []).map(c => c.id));
+  const cfoIdsSet = new Set(currentCfoList.map(c => c.id));
 
   currentMateriasAll.forEach(m => {
     const st = studentData[selectedPlan]?.[m.id] || {};
