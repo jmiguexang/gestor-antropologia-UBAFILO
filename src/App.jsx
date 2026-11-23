@@ -649,9 +649,9 @@ export default function App() {
         nameLower.includes('2 cuatrimestres');
 
       if (esSeminario) {
-        return esAnual ? 128 : 64; // Seminario anual: 128 h | Seminario cuatrimestral / de verano: 64 h[cite: 1]
+        return esAnual ? 128 : 64;
       }
-      return esAnual ? 192 : 96; // Materia anual: 192 h | Materia cuatrimestral / de verano: 96 h[cite: 1]
+      return esAnual ? 192 : 96;
     }
 
     if (cbcIdsSet.has(m.id) || etapaLower.includes('cbc')) return 64;
@@ -675,63 +675,17 @@ export default function App() {
   let horasAprobadas = 0;
   let horasTotalesPlan = 0;
 
-  const idiomasMaterias = currentMateriasAll.filter(m => {
-    const etapaLower = (m.etapa || '').toLowerCase();
-    return idiomasIds.has(m.id) || etapaLower.includes('idioma');
-  });
-
-  const gruposIdiomas = {};
-  idiomasMaterias.forEach(m => {
-    const st = studentData[selectedPlan]?.[m.id] || {};
-    const nameLower = (m.name || '').toLowerCase();
-    const baseKey = (st.customName || m.name || m.id)
-      .toLowerCase()
-      .replace(/\b(nivel\s*(i|ii|iii|1|2|3)|elemental|medio|avanzado|intermedio|superior|básico|basico)\b/g, '')
-      .replace(/[-–—:|()]/g, ' ')
-      .trim() || m.id;
-
-    if (!gruposIdiomas[baseKey]) {
-      gruposIdiomas[baseKey] = { items: [], nivelesAprobados: new Set() };
-    }
-    gruposIdiomas[baseKey].items.push(m);
-
-    if (st.estado === 'aprobada') {
-      if (nameLower.includes('elemental') || nameLower.includes('básico') || nameLower.includes('basico') || /\b(nivel\s*1|nivel\s*i)\b/.test(nameLower)) {
-        gruposIdiomas[baseKey].nivelesAprobados.add('elemental');
-      } else if (nameLower.includes('medio') || nameLower.includes('intermedio') || /\b(nivel\s*2|nivel\s*ii)\b/.test(nameLower)) {
-        gruposIdiomas[baseKey].nivelesAprobados.add('medio');
-      } else if (nameLower.includes('avanzado') || nameLower.includes('superior') || /\b(nivel\s*3|nivel\s*iii)\b/.test(nameLower)) {
-        gruposIdiomas[baseKey].nivelesAprobados.add('avanzado');
-      } else {
-        gruposIdiomas[baseKey].nivelesAprobados.add(`item-${m.id}`);
-      }
-    }
-  });
-
-  const idiomasAprobadosIds = new Set();
-  Object.values(gruposIdiomas).forEach(grupo => {
-    const tieneTresNiveles =
-      grupo.nivelesAprobados.has('elemental') &&
-      grupo.nivelesAprobados.has('medio') &&
-      grupo.nivelesAprobados.has('avanzado');
-
-    const aprobadoPorConteo = grupo.items.length >= 3 && grupo.nivelesAprobados.size >= 3;
-
-    if (tieneTresNiveles || aprobadoPorConteo) {
-      grupo.items.forEach(item => idiomasAprobadosIds.add(item.id));
-    }
-  });
-
   currentMateriasAll.forEach(m => {
     const hs = getHorasMateria(m);
-    horasTotalesPlan += hs;
-    const st = studentData[selectedPlan]?.[m.id] || {};
     const esIdiomaItem = idiomasIds.has(m.id) || (m.etapa || '').toLowerCase().includes('idioma');
+    if (!esIdiomaItem) {
+      horasTotalesPlan += hs;
+    }
+    const st = studentData[selectedPlan]?.[m.id] || {};
 
-    if (st.estado === 'aprobada') {
-      if (!esIdiomaItem || idiomasAprobadosIds.has(m.id)) {
-        horasAprobadas += hs;
-      }
+    // Los idiomas no se consideran para el porcentaje de avance
+    if (st.estado === 'aprobada' && !esIdiomaItem) {
+      horasAprobadas += hs;
     }
   });
 
@@ -748,10 +702,8 @@ export default function App() {
     const st = studentData[selectedPlan]?.[m.id] || {};
     const esIdiomaItem = idiomasIds.has(m.id) || (m.etapa || '').toLowerCase().includes('idioma');
 
-    if (st.estado === 'aprobada') {
-      if (!esIdiomaItem || idiomasAprobadosIds.has(m.id)) {
-        horasAvanzadasBloque += hs;
-      }
+    if (st.estado === 'aprobada' && !esIdiomaItem) {
+      horasAvanzadasBloque += hs;
     }
   });
 
