@@ -2103,7 +2103,30 @@ export default function App() {
                 return (
                   <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
                     <div>
-                      <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Materia Optativa elegida:</label>
+                      <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Facultad:</label>
+                      <select
+                        value={st.facultadElectiva || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'facultadElectiva', e.target.value)}
+                        className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                      >
+                        <option value="">-- Seleccionar facultad --</option>
+                        {FACULTADES_UBA.map((fac) => (
+                          <option key={fac} value={fac}>{fac}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Carrera:</label>
+                      <input
+                        type="text"
+                        placeholder="Escribí la carrera..."
+                        value={st.carreraElectiva || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'carreraElectiva', e.target.value)}
+                        className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Nombre de la materia:</label>
                       <input
                         type="text"
                         placeholder="Escribí el nombre de la materia optativa..."
@@ -2298,24 +2321,59 @@ export default function App() {
                   </select>
                 </div>
               ) : esElectivaArqueologiaCFO ? (
-                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Materia Electiva de Arqueología:</label>
-                  <select
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
-                  >
-                    <option value="">-- Seleccionar opción --</option>
-                    {OPCIONES_ELECTIVAS_ARQUEOLOGIA.map((opcion) => (
-                      <option
-                        key={opcion}
-                        value={opcion}
-                        disabled={opcionesElectivasOcupadasEnOtras.has(opcion)}
-                      >
-                        {opcion}{opcionesElectivasOcupadasEnOtras.has(opcion) ? ' (Ya elegida en la otra electiva)' : ''}
-                      </option>
-                    ))}
-                  </select>
+                <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Facultad:</label>
+                    <select
+                      value={st.facultadElectiva || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'facultadElectiva', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar facultad --</option>
+                      {FACULTADES_UBA.map((fac) => (
+                        <option key={fac} value={fac}>{fac}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Carrera:</label>
+                    <input
+                      type="text"
+                      placeholder="Escribí la carrera..."
+                      value={st.carreraElectiva || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'carreraElectiva', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Nombre de la materia electiva:</label>
+                    <select
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar opción --</option>
+                      {OPCIONES_ELECTIVAS_ARQUEOLOGIA.map((opcion) => (
+                        <option
+                          key={opcion}
+                          value={opcion}
+                          disabled={opcionesElectivasOcupadasEnOtras.has(opcion)}
+                        >
+                          {opcion}{opcionesElectivasOcupadasEnOtras.has(opcion) ? ' (Ya elegida en la otra electiva)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Código de materia:</label>
+                    <input
+                      type="text"
+                      placeholder="Escribí el código de la materia..."
+                      value={st.codigoOptativa || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'codigoOptativa', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
                 </div>
               ) : (() => {
                 const nombreMat = (mat.name || '').toLowerCase();
@@ -2466,27 +2524,61 @@ export default function App() {
 
               {esElectiva && !esElectivaSociocultural && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
-                  <select
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
-                  >
-                    <option value="">-- Seleccionar de la oferta disponible --</option>
-                    {seminariosOferta.map(sem => (
-                      <option key={sem.id} value={`${sem.nombre} (${sem.docente})`}>
-                        {sem.nombre} - {sem.docente} ({getEtiquetaOrientacion(sem.tipo)})
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-[10px] text-sky-800">También puede escribir un seminario personalizado:</p>
-                  <input
-                    type="text"
-                    placeholder="O escriba el nombre del seminario electivo..."
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
-                  />
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Facultad:</label>
+                    <select
+                      value={st.facultadElectiva || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'facultadElectiva', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar facultad --</option>
+                      {FACULTADES_UBA.map((fac) => (
+                        <option key={fac} value={fac}>{fac}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Carrera:</label>
+                    <input
+                      type="text"
+                      placeholder="Escribí la carrera..."
+                      value={st.carreraElectiva || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'carreraElectiva', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Nombre de la materia:</label>
+                    <select
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold mb-2"
+                    >
+                      <option value="">-- Seleccionar de la oferta disponible --</option>
+                      {seminariosOferta.map(sem => (
+                        <option key={sem.id} value={`${sem.nombre} (${sem.docente})`}>
+                          {sem.nombre} - {sem.docente} ({getEtiquetaOrientacion(sem.tipo)})
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="O escribí el nombre de la materia electiva..."
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Código de la materia:</label>
+                    <input
+                      type="text"
+                      placeholder="Escribí el código de la materia..."
+                      value={st.codigoOptativa || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'codigoOptativa', e.target.value)}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs"
+                    />
+                  </div>
                 </div>
               )}
 
