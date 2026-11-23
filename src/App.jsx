@@ -1411,16 +1411,27 @@ export default function App() {
         const esElectiva = activeBlock === 'electivas';
         const horasMateriaDetalle = getHorasMateria(mat);
 
-        const electivasBaseLista = orientationObj.electivas || planObj.electivas || [];
-        const esElectivaArqueologia =
-          selectedOrientation === 'arqueologia' &&
-          esElectiva &&
-          !mat.esCustomSeminario &&
-          electivasBaseLista.some(el => el.id === mat.id);
+        const nombreMatLower = (mat.name || '').toLowerCase();
+        const esElectivaArqueologiaCFO =
+          activeBlock === 'cfo' &&
+          (nombreMatLower.includes('materias electivas de arqueología') ||
+            nombreMatLower.includes('materias electivas de arqueologia') ||
+            nombreMatLower.includes('electivas de arqueología') ||
+            nombreMatLower.includes('electivas de arqueologia'));
+
+        const materiasElectivasArqCFO = (orientationObj.cfo || []).filter(m => {
+          const n = (m.name || '').toLowerCase();
+          return (
+            n.includes('materias electivas de arqueología') ||
+            n.includes('materias electivas de arqueologia') ||
+            n.includes('electivas de arqueología') ||
+            n.includes('electivas de arqueologia')
+          );
+        });
 
         const opcionesElectivasOcupadasEnOtras = new Set();
-        if (esElectivaArqueologia) {
-          electivasBaseLista.forEach(el => {
+        if (esElectivaArqueologiaCFO) {
+          materiasElectivasArqCFO.forEach(el => {
             if (el.id !== mat.id) {
               const otraVal = studentData[selectedPlan]?.[el.id]?.customName;
               if (OPCIONES_ELECTIVAS_ARQUEOLOGIA.includes(otraVal)) {
@@ -1656,7 +1667,27 @@ export default function App() {
                 );
               })()}
 
-              {(() => {
+              {esElectivaArqueologiaCFO ? (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Materia Electiva de Arqueología:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar opción --</option>
+                    {OPCIONES_ELECTIVAS_ARQUEOLOGIA.map((opcion) => (
+                      <option
+                        key={opcion}
+                        value={opcion}
+                        disabled={opcionesElectivasOcupadasEnOtras.has(opcion)}
+                      >
+                        {opcion}{opcionesElectivasOcupadasEnOtras.has(opcion) ? ' (Ya elegida en la otra electiva)' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (() => {
                 const nombreMat = (mat.name || '').toLowerCase();
                 const idMat = (mat.id || '').toLowerCase();
                 let opcionesCatedrasCFO = [];
@@ -1716,27 +1747,7 @@ export default function App() {
                 return null;
               })()}
 
-              {esElectivaArqueologia ? (
-                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la alternativa de Electiva (Arqueología):</label>
-                  <select
-                    value={st.customName || ''}
-                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
-                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
-                  >
-                    <option value="">-- Seleccionar alternativa --</option>
-                    {OPCIONES_ELECTIVAS_ARQUEOLOGIA.map((opcion) => (
-                      <option
-                        key={opcion}
-                        value={opcion}
-                        disabled={opcionesElectivasOcupadasEnOtras.has(opcion)}
-                      >
-                        {opcion}{opcionesElectivasOcupadasEnOtras.has(opcion) ? ' (Ya elegida en la otra electiva)' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : esElectiva && (
+              {esElectiva && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione el Seminario u Optativa:</label>
                   <select
