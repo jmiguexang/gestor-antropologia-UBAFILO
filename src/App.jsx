@@ -225,6 +225,11 @@ const AREAS_TEMATICAS_SOCIOCULTURAL = {
   ]
 };
 
+const OPCIONES_MATERIA_METODOLOGICA_EJERCICIO = [
+  'Enfoque Cuantitativo de Investigación en Antrop. Sociocultural',
+  'Ejercicio Profesional de la Antropología'
+];
+
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -1893,6 +1898,11 @@ export default function App() {
         const modalidadActual = st.modalidadCursada || '';
         const esSeminarioCargadoCatalogo = Boolean(st.desdeCatalogoSeminarios) || (esSeminarioCuatrimestral64 && Boolean(st.customName));
 
+        const esMateriaMetodologicaEjercicio =
+          nombreMatLower.includes('materia metodológica') ||
+          nombreMatLower.includes('materia metodologica') ||
+          nombreMatLower.includes('ejercicio profesional');
+
         const esElectivaArqueologiaCFO =
           activeBlock === 'cfo' &&
           (nombreMatLower.includes('materia electiva arqueología') ||
@@ -2183,7 +2193,21 @@ export default function App() {
                 );
               })()}
 
-              {esElectivaArqueologiaCFO ? (
+              {esMateriaMetodologicaEjercicio ? (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la materia:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar opción --</option>
+                    {OPCIONES_MATERIA_METODOLOGICA_EJERCICIO.map((opcion) => (
+                      <option key={opcion} value={opcion}>{opcion}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : esElectivaArqueologiaCFO ? (
                 <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Materia Electiva de Arqueología:</label>
                   <select
