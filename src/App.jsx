@@ -231,13 +231,13 @@ const OPCIONES_MATERIA_METODOLOGICA_EJERCICIO = [
 ];
 
 const OPCIONES_PSICOLOGIA_1985 = [
-  'psicología general',
-  'psicología evolutiva'
+  'Psicología General',
+  'Psicología Evolutiva'
 ];
 
 const OPCIONES_TEORIA_SOCIOLOGICA_1985 = [
-  'teoría sociológica',
-  'sociología sistémica'
+  'Teoría Sociológica',
+  'Sociología Sistémica'
 ];
 
 const AVATARES_ANTROPOLOGIA = [
