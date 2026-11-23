@@ -150,6 +150,25 @@ const limpiarTituloSeminarioCFO = (rawNombre) => {
   return limpio;
 };
 
+const esSlotPstCFO = (nombreMateria = '') => {
+  const n = nombreMateria.toLowerCase();
+  return (
+    n.includes('prácticas socioeducativas territorializadas') ||
+    n.includes('practicas socioeducativas territorializadas') ||
+    n.includes('pst')
+  );
+};
+
+const esSlotSeminarioOrientacionCFO = (nombreMateria = '') => {
+  const n = nombreMateria.toLowerCase();
+  if (esSlotPstCFO(n)) return false;
+  return (
+    n.includes('seminario') ||
+    n.includes('orientación') ||
+    n.includes('orientacion')
+  );
+};
+
 const getEtiquetaOrientacion = (tipo) => {
   const t = (tipo || '').toLowerCase();
   if (t === 'ambas') return 'SOCIOCULTURAL Y ARQUEOLOGÍA';
@@ -552,30 +571,8 @@ export default function App() {
 
     const esPstSem = esSeminarioPst(sem);
 
-    const slotsPstCFO = cfoList.filter((m) => {
-      const n = (m.name || '').toLowerCase();
-      return (
-        n.includes('prácticas socioeducativas territorializadas') ||
-        n.includes('practicas socioeducativas territorializadas') ||
-        n.includes('pst')
-      );
-    });
-
-    const slotsOrientacionCFO = cfoList.filter((m) => {
-      const n = (m.name || '').toLowerCase();
-      const esPstSlot =
-        n.includes('prácticas socioeducativas territorializadas') ||
-        n.includes('practicas socioeducativas territorializadas') ||
-        n.includes('pst');
-      return (
-        !esPstSlot &&
-        (n.includes('seminario de la orientación en arqueología') ||
-          n.includes('seminario de la orientacion en arqueologia') ||
-          n.includes('seminario de la orientación') ||
-          n.includes('seminario de la orientacion') ||
-          n.includes('seminario'))
-      );
-    });
+    const slotsPstCFO = cfoList.filter((m) => esSlotPstCFO(m.name));
+    const slotsOrientacionCFO = cfoList.filter((m) => esSlotSeminarioOrientacionCFO(m.name));
 
     const candidatosSlot = esPstSem ? slotsPstCFO : slotsOrientacionCFO;
     const planStateActual = studentData[selectedPlan] || {};
@@ -1678,11 +1675,7 @@ export default function App() {
                 const nombreMatCardLower = (m.name || '').toLowerCase();
                 const esSeminarioCard64 =
                   getHorasMateria(m) === 64 &&
-                  (nombreMatCardLower.includes('prácticas socioeducativas territorializadas') ||
-                    nombreMatCardLower.includes('practicas socioeducativas territorializadas') ||
-                    nombreMatCardLower.includes('pst') ||
-                    nombreMatCardLower.includes('seminario de la orientación en arqueología') ||
-                    nombreMatCardLower.includes('seminario de la orientacion en arqueologia'));
+                  (esSlotPstCFO(nombreMatCardLower) || esSlotSeminarioOrientacionCFO(nombreMatCardLower));
                 const iconoModalidadCard =
                   st.modalidadCursada === '100% virtual'
                     ? '💻'
@@ -1853,11 +1846,7 @@ export default function App() {
         const nombreMatLower = (mat.name || '').toLowerCase();
         const esSeminarioCuatrimestral64 =
           horasMateriaDetalle === 64 &&
-          (nombreMatLower.includes('prácticas socioeducativas territorializadas') ||
-            nombreMatLower.includes('practicas socioeducativas territorializadas') ||
-            nombreMatLower.includes('pst') ||
-            nombreMatLower.includes('seminario de la orientación en arqueología') ||
-            nombreMatLower.includes('seminario de la orientacion en arqueologia'));
+          (esSlotPstCFO(nombreMatLower) || esSlotSeminarioOrientacionCFO(nombreMatLower));
         const modalidadActual = st.modalidadCursada || '';
         const esSeminarioCargadoCatalogo = Boolean(st.desdeCatalogoSeminarios) || (esSeminarioCuatrimestral64 && Boolean(st.customName));
 
