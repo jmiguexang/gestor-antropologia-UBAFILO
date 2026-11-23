@@ -12,7 +12,7 @@ import {
 
 const MP_ALIAS = 'juan.miguel.ch';
 
-// OFERTA OFICIAL ACTUALIZADA 2C 2026 - CIENCIAS ANTROPOLÓGICAS (FFyL UBA)
+// Respaldo inicial si la tabla seminarios_catalogo no responde o está vacía
 const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-1', tipo: 'sociocultural', codigo: '', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
   { id: 'sem-2', tipo: 'sociocultural', codigo: '', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
@@ -151,10 +151,33 @@ export default function App() {
     return { '2023': {}, '1985': {} };
   });
 
+  const cargarCatalogoSeminarios = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('seminarios_catalogo')
+        .select('*')
+        .order('creado_en', { ascending: false });
+
+      if (error) {
+        console.error("Error consultando seminarios_catalogo:", error);
+        return;
+      }
+
+      if (Array.isArray(data) && data.length > 0) {
+        setSeminariosOferta(data);
+      }
+    } catch (err) {
+      console.error("Error al cargar seminarios_catalogo:", err);
+    }
+  };
+
   useEffect(() => {
-    if (session && session.tipo === 'registrado') {
+    if (!session) return;
+    cargarCatalogoSeminarios();
+
+    if (session.tipo === 'registrado') {
       cargarDatosNube(session.email);
-    } else if (session && session.tipo === 'invitado') {
+    } else if (session.tipo === 'invitado') {
       const savedGuest = localStorage.getItem('antropologia_guest_data');
       if (savedGuest) {
         try { setStudentData(JSON.parse(savedGuest)); } catch (e) { setStudentData({ '2023': {}, '1985': {} }); }
@@ -178,11 +201,6 @@ export default function App() {
       if (data) {
         const datosRecibidos = data.datos_academicos || { '2023': {}, '1985': {} };
         setStudentData(datosRecibidos);
-        setSeminariosOferta(
-          Array.isArray(data.seminarios_oferta) && data.seminarios_oferta.length > 0
-            ? data.seminarios_oferta
-            : SEMINARIOS_OFERTA_2C_2026
-        );
 
         if (data.plan_actual) setSelectedPlan(data.plan_actual);
         if (data.orientacion_actual) setSelectedOrientation(data.orientacion_actual);
@@ -206,7 +224,6 @@ export default function App() {
 
   const guardarDatosNube = async (
     nuevoData = studentData,
-    nuevosSemis = seminariosOferta,
     nuevoAvatar = avatarActual,
     nuevoPlan = selectedPlan,
     nuevaOrientacion = selectedOrientation
@@ -225,7 +242,6 @@ export default function App() {
 
         const { error } = await supabase.from('estudiantes').update({
           datos_academicos: payloadAcademico,
-          seminarios_oferta: nuevosSemis,
           plan_actual: nuevoPlan,
           orientacion_actual: nuevaOrientacion,
           avatar: nuevoAvatar,
@@ -244,12 +260,12 @@ export default function App() {
   const handleCambiarAvatar = (avatarObj) => {
     setAvatarActual(avatarObj);
     setShowAvatarModal(false);
-    guardarDatosNube(studentData, seminariosOferta, avatarObj, selectedPlan, selectedOrientation);
+    guardarDatosNube(studentData, avatarObj, selectedPlan, selectedOrientation);
     setToastMessage(`¡Avatar actualizado a ${avatarObj.nombre}! 🏛️`);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleAgregarSeminarioManualACatalogo = (e) => {
+  const handleAgregarSeminarioManualACatalogo = async (e) => {
     e.preventDefault();
     const nombreLimpio = nuevoSemNombre.trim();
     const codigoLimpio = nuevoSemCodigo.trim();
@@ -281,9 +297,17 @@ export default function App() {
       cuatrimestre: nuevoSemCuatrimestre
     };
 
-    const updatedOferta = [nuevoSem, ...seminariosOferta];
-    setSeminariosOferta(updatedOferta);
-    guardarDatosNube(studentData, updatedOferta, avatarActual, selectedPlan, selectedOrientation);
+    const { error } = await supabase
+      .from('seminarios_catalogo')
+      .insert([nuevoSem]);
+
+    if (error) {
+      console.error("Error insertando en seminarios_catalogo:", error);
+      alert("No se pudo guardar el seminario en la base de datos.");
+      return;
+    }
+
+    setSeminariosOferta((prev) => [nuevoSem, ...prev]);
     setNuevoSemNombre('');
     setNuevoSemCodigo('');
     setNuevoSemDocente1('');
@@ -341,7 +365,7 @@ export default function App() {
             }
           }
         };
-        guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
+        guardarDatosNube(updated, avatarActual, selectedPlan, selectedOrientation);
         return updated;
       });
 
@@ -372,7 +396,7 @@ export default function App() {
           }
         }
       };
-      guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
+      guardarDatosNube(updated, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
 
@@ -395,7 +419,7 @@ export default function App() {
         ...prev,
         [selectedPlan]: planState
       };
-      guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
+      guardarDatosNube(updated, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
   };
@@ -509,7 +533,7 @@ export default function App() {
         }
       };
 
-      guardarDatosNube(updated, seminariosOferta, avatarActual, selectedPlan, selectedOrientation);
+      guardarDatosNube(updated, avatarActual, selectedPlan, selectedOrientation);
       return updated;
     });
   };
@@ -1069,7 +1093,7 @@ export default function App() {
                         const datosVacios = { '2023': {}, '1985': {}, _avatar: avatarPorDefecto };
                         await supabase.from('estudiantes').insert([{
                           email: formEmail.trim(), nombre: formNombre.trim(), apellido: formApellido.trim(),
-                          datos_academicos: datosVacios, seminarios_oferta: SEMINARIOS_OFERTA_2C_2026, avatar: avatarPorDefecto
+                          datos_academicos: datosVacios, avatar: avatarPorDefecto
                         }]);
                         setStudentData(datosVacios);
                         setAvatarActual(avatarPorDefecto);
@@ -1202,7 +1226,7 @@ export default function App() {
                   onChange={(e) => {
                     const nuevoP = e.target.value;
                     setSelectedPlan(nuevoP);
-                    guardarDatosNube(studentData, seminariosOferta, avatarActual, nuevoP, selectedOrientation);
+                    guardarDatosNube(studentData, avatarActual, nuevoP, selectedOrientation);
                   }}
                   className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
                 >
@@ -1217,7 +1241,7 @@ export default function App() {
                   onChange={(e) => {
                     const nuevaO = e.target.value;
                     setSelectedOrientation(nuevaO);
-                    guardarDatosNube(studentData, seminariosOferta, avatarActual, selectedPlan, nuevaO);
+                    guardarDatosNube(studentData, avatarActual, selectedPlan, nuevaO);
                   }}
                   className="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none"
                 >
