@@ -315,6 +315,7 @@ export default function App() {
       const planState = prev[selectedPlan] || {};
       const matState = planState[id] || { 
         estado: 'pendiente', nota: '', aplazos: '0', aplazosCBC: [], aplazosCFG: [], aplazosCFO: [], regimen: 'promocion', 
+        modalidadCursada: '', trabajoPractico: '', trabajoFinal: '',
         comision: '', anioCursada: '', cuatrimestreCursada: '',
         docenteTeorico: '', emailTeorico: '', docentePractico: '', emailPractico: '',
         parcial1: '', parcial2: '', parcial3: '', 
@@ -328,6 +329,10 @@ export default function App() {
       const cfgIds = new Set((PLANS_DATA[selectedPlan]?.cfg || []).map(c => c.id));
       const esMateriaCBC = cbcIds.has(id);
       const esMateriaCFG = cfgIds.has(id);
+
+      if (field === 'trabajoFinal') {
+        updatedMat.nota = value;
+      }
 
       if (['parcial1', 'parcial2', 'parcial3', 'final1', 'final2', 'final3', 'regimen'].includes(field)) {
         const reg = field === 'regimen' ? value : (updatedMat.regimen || 'promocion');
@@ -1412,6 +1417,15 @@ export default function App() {
         const horasMateriaDetalle = getHorasMateria(mat);
 
         const nombreMatLower = (mat.name || '').toLowerCase();
+        const esSeminarioCuatrimestral64 =
+          horasMateriaDetalle === 64 &&
+          (nombreMatLower.includes('prácticas socioeducativas territorializadas') ||
+            nombreMatLower.includes('practicas socioeducativas territorializadas') ||
+            nombreMatLower.includes('pst') ||
+            nombreMatLower.includes('seminario de la orientación en arqueología') ||
+            nombreMatLower.includes('seminario de la orientacion en arqueologia'));
+        const modalidadActual = st.modalidadCursada || '';
+
         const esElectivaArqueologiaCFO =
           activeBlock === 'cfo' &&
           (nombreMatLower.includes('materia electiva arqueología') ||
@@ -1773,41 +1787,59 @@ export default function App() {
                 </div>
               )}
 
-              <div className="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200">
-                <label className="text-xs font-bold uppercase text-slate-800 block">Régimen de la Materia:</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'promocion')}
-                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${esPromocional ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
-                  >
-                    ✨ Promocional
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleUpdateMateria(mat.id, 'regimen', 'final')}
-                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${!esPromocional ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
-                  >
-                    📝 Examen Final Obligatorio
-                  </button>
+              {esSeminarioCuatrimestral64 ? (
+                <div className="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200">
+                  <label className="text-xs font-bold uppercase text-slate-800 block">Modalidad de cursada:</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['100% virtual', '100% presencial', 'Híbrido'].map((opcionMod) => (
+                      <button
+                        key={opcionMod}
+                        type="button"
+                        onClick={() => handleUpdateMateria(mat.id, 'modalidadCursada', opcionMod)}
+                        className={`py-2 px-2.5 text-xs font-bold rounded-xl border transition ${modalidadActual === opcionMod ? 'bg-sky-700 text-white border-sky-800 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                      >
+                        {opcionMod}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                {esCBC && (
-                  <div className="mt-2 bg-white border border-slate-200 rounded-lg p-2.5 text-[10px] text-slate-600 space-y-1 leading-relaxed">
-                    <p className="font-bold text-slate-800">Régimen de Evaluación CBC / UBA XXI:</p>
-                    <p>• <strong>Promoción directa:</strong> promedio de las 2 instancias parciales ≥ 7 puntos (sin examen final).</p>
-                    <p>• <strong>Promoción indirecta:</strong> promedio entre 4 y 6,99 puntos → rinde examen final (aprueba con ≥ 4; validez de 3 turnos consecutivos).</p>
-                    <p>• <strong>Redondeo:</strong> ≥ 0,50 sube; ≤ 0,49 baja; entre 3,01 y 3,99 redondea siempre hacia abajo (3).</p>
+              ) : (
+                <div className="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200">
+                  <label className="text-xs font-bold uppercase text-slate-800 block">Régimen de la Materia:</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateMateria(mat.id, 'regimen', 'promocion')}
+                      className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${esPromocional ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                    >
+                      ✨ Promocional
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateMateria(mat.id, 'regimen', 'final')}
+                      className={`py-2 px-3 text-xs font-bold rounded-xl border transition ${!esPromocional ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200'}`}
+                    >
+                      📝 Examen Final Obligatorio
+                    </button>
                   </div>
-                )}
-                {esCFG && (
-                  <div className="mt-2 bg-white border border-slate-200 rounded-lg p-2.5 text-[10px] text-slate-600 space-y-1 leading-relaxed">
-                    <p className="font-bold text-slate-800">Régimen de Evaluación CFG (FFyL):</p>
-                    <p>• <strong>Promocional:</strong> promedio de 3 parciales ≥ 7 puntos promociona directo (con .5 a favor). Si no llega a 7, rinde final.</p>
-                    <p>• <strong>Final obligatorio:</strong> promedio de 2 parciales ≥ 4 puntos habilita a rendir final (con .5 a favor).</p>
-                    <p>• <strong>Nota definitiva con final:</strong> se promedian todos los intentos de final rendidos (hasta 3), y ese resultado se promedia con el promedio de parciales.</p>
-                  </div>
-                )}
-              </div>
+                  {esCBC && (
+                    <div className="mt-2 bg-white border border-slate-200 rounded-lg p-2.5 text-[10px] text-slate-600 space-y-1 leading-relaxed">
+                      <p className="font-bold text-slate-800">Régimen de Evaluación CBC / UBA XXI:</p>
+                      <p>• <strong>Promoción directa:</strong> promedio de las 2 instancias parciales ≥ 7 puntos (sin examen final).</p>
+                      <p>• <strong>Promoción indirecta:</strong> promedio entre 4 y 6,99 puntos → rinde examen final (aprueba con ≥ 4; validez de 3 turnos consecutivos).</p>
+                      <p>• <strong>Redondeo:</strong> ≥ 0,50 sube; ≤ 0,49 baja; entre 3,01 y 3,99 redondea siempre hacia abajo (3).</p>
+                    </div>
+                  )}
+                  {esCFG && (
+                    <div className="mt-2 bg-white border border-slate-200 rounded-lg p-2.5 text-[10px] text-slate-600 space-y-1 leading-relaxed">
+                      <p className="font-bold text-slate-800">Régimen de Evaluación CFG (FFyL):</p>
+                      <p>• <strong>Promocional:</strong> promedio de 3 parciales ≥ 7 puntos promociona directo (con .5 a favor). Si no llega a 7, rinde final.</p>
+                      <p>• <strong>Final obligatorio:</strong> promedio de 2 parciales ≥ 4 puntos habilita a rendir final (con .5 a favor).</p>
+                      <p>• <strong>Nota definitiva con final:</strong> se promedian todos los intentos de final rendidos (hasta 3), y ese resultado se promedia con el promedio de parciales.</p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><Users className="w-4 h-4 text-sky-600" /> Periodo y Cursada</h4>
@@ -1870,108 +1902,142 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
-                
-                <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-slate-600 block">Notas de Parciales / Regularidad</span>
-                  <div className={`grid ${ocultarTercerParcial ? 'grid-cols-2' : 'grid-cols-3'} gap-2`}>
+              {esSeminarioCuatrimestral64 ? (
+                <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">1er Parcial</span>
-                      <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      <span className="text-[10px] font-bold text-slate-600 block mb-1">Entrega de trabajo práctico o examen domiciliario</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.01"
+                        placeholder="Nota"
+                        value={st.trabajoPractico || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'trabajoPractico', e.target.value)}
+                        className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold"
+                      />
                     </div>
                     <div>
-                      <span className="text-[9px] font-bold text-slate-500 block mb-1">2do Parcial</span>
-                      <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      <span className="text-[10px] font-bold text-slate-600 block mb-1">Entrega de trabajo final o monografía</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.01"
+                        placeholder="Nota"
+                        value={st.trabajoFinal || ''}
+                        onChange={(e) => handleUpdateMateria(mat.id, 'trabajoFinal', e.target.value)}
+                        className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold"
+                      />
                     </div>
-                    {!ocultarTercerParcial && (
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <h4 className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-sky-600" /> Evaluaciones y Notas</h4>
+                  
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold text-slate-600 block">Notas de Parciales / Regularidad</span>
+                    <div className={`grid ${ocultarTercerParcial ? 'grid-cols-2' : 'grid-cols-3'} gap-2`}>
                       <div>
-                        <span className="text-[9px] font-bold text-slate-500 block mb-1">{esCFG ? '3er Parcial' : '3ro / Recup'}</span>
-                        <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        <span className="text-[9px] font-bold text-slate-500 block mb-1">1er Parcial</span>
+                        <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial1', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-slate-500 block mb-1">2do Parcial</span>
+                        <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial2', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                      </div>
+                      {!ocultarTercerParcial && (
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-500 block mb-1">{esCFG ? '3er Parcial' : '3ro / Recup'}</span>
+                          <input type="number" min="0" max="10" step="0.01" placeholder="Nota" value={st.parcial3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'parcial3', e.target.value)} className="w-full bg-white border rounded-lg p-2 text-xs text-center font-bold" />
+                        </div>
+                      )}
+                    </div>
+
+                    {esCBC && promedioExactoCBC !== null && (
+                      <div className="bg-sky-50 border border-sky-200 text-sky-900 p-2.5 rounded-xl text-xs flex items-center justify-between mt-2">
+                        <span>Promedio parciales: <strong>{promedioExactoCBC.toFixed(2)}</strong></span>
+                      </div>
+                    )}
+
+                    {esCFG && promedioExactoCFG !== null && (
+                      <div className="bg-sky-50 border border-sky-200 text-sky-900 p-2.5 rounded-xl text-xs flex items-center justify-between mt-2">
+                        <span>Promedio parciales: <strong>{promedioExactoCFG.toFixed(2)}</strong> (Redondeo: <strong>{notaParcialesCFG}</strong>)</span>
+                      </div>
+                    )}
+
+                    {logroPromocion && (
+                      <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                        <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
+                        <span>¡Promocionaste crack! Zafaste del final.</span>
+                      </div>
+                    )}
+
+                    {vaAFinalIndirectoCBC && (
+                      <div className="bg-amber-100 border border-amber-300 text-amber-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                        <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                        <span>Promoción indirecta: debés rendir examen final (aprueba con ≥ 4 · validez 3 turnos).</span>
+                      </div>
+                    )}
+
+                    {reprobadoParcialesCBC && (
+                      <div className="bg-red-100 border border-red-300 text-red-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                        <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
+                        <span>Cursada reprobada (promedio inferior a 4).</span>
+                      </div>
+                    )}
+
+                    {vaAFinalCFG && (
+                      <div className="bg-amber-100 border border-amber-300 text-amber-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                        <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                        <span>Habilitado/a para examen final (tenés hasta 3 oportunidades).</span>
+                      </div>
+                    )}
+
+                    {reprobadoParcialesCFG && (
+                      <div className="bg-red-100 border border-red-300 text-red-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
+                        <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
+                        <span>Cursada reprobada (promedio inferior a 4).</span>
                       </div>
                     )}
                   </div>
 
-                  {esCBC && promedioExactoCBC !== null && (
-                    <div className="bg-sky-50 border border-sky-200 text-sky-900 p-2.5 rounded-xl text-xs flex items-center justify-between mt-2">
-                      <span>Promedio parciales: <strong>{promedioExactoCBC.toFixed(2)}</strong></span>
+                  <div className={`space-y-2 pt-2 border-t border-slate-200 transition ${logroPromocion ? 'opacity-40 pointer-events-none' : ''}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">3 Intentos de Examen Final</span>
+                      <span className="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">Aplazos: {st.aplazos || '0'}</span>
                     </div>
-                  )}
-
-                  {esCFG && promedioExactoCFG !== null && (
-                    <div className="bg-sky-50 border border-sky-200 text-sky-900 p-2.5 rounded-xl text-xs flex items-center justify-between mt-2">
-                      <span>Promedio parciales: <strong>{promedioExactoCFG.toFixed(2)}</strong> (Redondeo: <strong>{notaParcialesCFG}</strong>)</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <span className="text-[9px] font-bold text-amber-700 block mb-1">1° Intento Final</span>
+                        <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-amber-700 block mb-1">2° Intento Final</span>
+                        <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-amber-700 block mb-1">3° Intento Final</span>
+                        <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
+                      </div>
                     </div>
-                  )}
-
-                  {logroPromocion && (
-                    <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
-                      <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>¡Promocionaste crack! Zafaste del final.</span>
-                    </div>
-                  )}
-
-                  {vaAFinalIndirectoCBC && (
-                    <div className="bg-amber-100 border border-amber-300 text-amber-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
-                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
-                      <span>Promoción indirecta: debés rendir examen final (aprueba con ≥ 4 · validez 3 turnos).</span>
-                    </div>
-                  )}
-
-                  {reprobadoParcialesCBC && (
-                    <div className="bg-red-100 border border-red-300 text-red-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
-                      <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
-                      <span>Cursada reprobada (promedio inferior a 4).</span>
-                    </div>
-                  )}
-
-                  {vaAFinalCFG && (
-                    <div className="bg-amber-100 border border-amber-300 text-amber-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
-                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
-                      <span>Habilitado/a para examen final (tenés hasta 3 oportunidades).</span>
-                    </div>
-                  )}
-
-                  {reprobadoParcialesCFG && (
-                    <div className="bg-red-100 border border-red-300 text-red-900 p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 mt-2">
-                      <AlertCircle className="w-4 h-4 text-red-700 shrink-0" />
-                      <span>Cursada reprobada (promedio inferior a 4).</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className={`space-y-2 pt-2 border-t border-slate-200 transition ${logroPromocion ? 'opacity-40 pointer-events-none' : ''}`}>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">3 Intentos de Examen Final</span>
-                    <span className="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">Aplazos: {st.aplazos || '0'}</span>
+                    {esCFG && promedioFinalesCFG !== null && !logroPromocion && (
+                      <div className="bg-amber-50 border border-amber-200 text-amber-950 p-2 rounded-xl text-[11px] flex items-center justify-between mt-1">
+                        <span>Promedio intentos final: <strong>{promedioFinalesCFG.toFixed(2)}</strong></span>
+                        {notaDefinitivaCFG !== null && (
+                          <span>Nota definitiva (Final + Parciales): <strong>{notaDefinitivaCFG}</strong></span>
+                        )}
+                      </div>
+                    )}
+                    {!logroPromocion && (
+                      <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (&lt; 4) computan para el promedio general de la carrera.</p>
+                    )}
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-700 block mb-1">1° Intento Final</span>
-                      <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final1 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final1', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-700 block mb-1">2° Intento Final</span>
-                      <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final2 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final2', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold text-amber-700 block mb-1">3° Intento Final</span>
-                      <input disabled={logroPromocion} type="number" min="1" max="10" placeholder="Nota" value={st.final3 || ''} onChange={(e) => handleUpdateMateria(mat.id, 'final3', e.target.value)} className="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs text-center font-bold text-amber-950 disabled:bg-slate-100 disabled:text-slate-400" />
-                    </div>
-                  </div>
-                  {esCFG && promedioFinalesCFG !== null && !logroPromocion && (
-                    <div className="bg-amber-50 border border-amber-200 text-amber-950 p-2 rounded-xl text-[11px] flex items-center justify-between mt-1">
-                      <span>Promedio intentos final: <strong>{promedioFinalesCFG.toFixed(2)}</strong></span>
-                      {notaDefinitivaCFG !== null && (
-                        <span>Nota definitiva (Final + Parciales): <strong>{notaDefinitivaCFG}</strong></span>
-                      )}
-                    </div>
-                  )}
-                  {!logroPromocion && (
-                    <p className="text-[9px] text-slate-500 mt-1">La nota de aprobación final es la que sacás al aprobar. Los aplazos previos (&lt; 4) computan para el promedio general de la carrera.</p>
-                  )}
                 </div>
-              </div>
+              )}
 
               {esCBC && (
                 <div className="space-y-2 bg-red-50/40 p-4 rounded-xl border border-red-200">
