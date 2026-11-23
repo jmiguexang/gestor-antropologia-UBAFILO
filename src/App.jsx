@@ -34,6 +34,105 @@ const SEMINARIOS_OFERTA_2C_2026 = [
 
 const ANIOS_OPCIONES = Array.from({ length: 27 }, (_, idx) => String(2026 - idx));
 
+const PARTICULAS_APELLIDO = new Set([
+  'de', 'del', 'la', 'las', 'los', 'van', 'von', 'san', 'santa', 'mac', 'mc', 'da', 'do', 'dos'
+]);
+
+const capitalizarPalabra = (pal) => {
+  if (!pal) return '';
+  const lower = pal.toLowerCase();
+  if (PARTICULAS_APELLIDO.has(lower)) return lower;
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+};
+
+const formatearNombreDocente = (raw) => {
+  if (!raw || !raw.trim()) return '';
+
+  // Extrae sufijo entre paréntesis si existe, ej. "(Depto de Artes)"
+  let sufijo = '';
+  let texto = raw.trim().replace(/\s*\(([^)]+)\)\s*$/, (_, inner) => {
+    sufijo = ` (${inner.trim()})`;
+    return '';
+  }).trim();
+
+  // Quita prefijos previos si los escribió
+  texto = texto.replace(/^(prof\.?|profesor(?:a)?|doc\.?|lic\.?|dr\.?|dra\.?)\s+/i, '').trim();
+  if (!texto) return '';
+
+  let apellido = '';
+  let nombre = '';
+
+  if (texto.includes(',')) {
+    const [izq, der] = texto.split(',', 2);
+    const izqTrim = izq.trim();
+    const derTrim = der.trim();
+    const izqEsMayus = izqTrim === izqTrim.toUpperCase() && /[A-ZÁÉÍÓÚÜÑ]/.test(izqTrim);
+    const derEsMayus = derTrim === derTrim.toUpperCase() && /[A-ZÁÉÍÓÚÜÑ]/.test(derTrim);
+
+    // Si está en formato "Nombre, APELLIDO" lo invierte; si ya está en "APELLIDO, Nombre" lo respeta
+    if (derEsMayus && !izqEsMayus) {
+      apellido = derTrim;
+      nombre = izqTrim;
+    } else {
+      apellido = izqTrim;
+      nombre = derTrim;
+    }
+  } else {
+    const tokens = texto.split(/\s+/).filter(Boolean);
+    if (tokens.length === 1) {
+      apellido = tokens[0];
+    } else {
+      const esMayusToken = (t) => t === t.toUpperCase() && /[A-ZÁÉÍÓÚÜÑ]/.test(t);
+      const mayusTokens = tokens.filter(esMayusToken);
+
+      if (mayusTokens.length > 0 && mayusTokens.length < tokens.length) {
+        // Reconoce palabras en MAYÚSCULAS como apellido y el resto como nombre
+        const apArr = [];
+        const nomArr = [];
+        tokens.forEach((t, idx) => {
+          if (esMayusToken(t) || (apArr.length > 0 && PARTICULAS_APELLIDO.has(t.toLowerCase()) && idx < tokens.length - 1)) {
+            apArr.push(t);
+          } else {
+            nomArr.push(t);
+          }
+        });
+        apellido = apArr.join(' ');
+        nombre = nomArr.join(' ');
+      } else {
+        // Sin mayúsculas distintivas: último token como apellido (o últimos 2 si hay partícula)
+        if (tokens.length >= 3 && PARTICULAS_APELLIDO.has(tokens[tokens.length - 2].toLowerCase())) {
+          apellido = tokens.slice(-2).join(' ');
+          nombre = tokens.slice(0, -2).join(' ');
+        } else {
+          apellido = tokens[tokens.length - 1];
+          nombre = tokens.slice(0, -1).join(' ');
+        }
+      }
+    }
+  }
+
+  const apellidoFmt = apellido
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((p) => (PARTICULAS_APELLIDO.has(p.toLowerCase()) ? p.toLowerCase() : p.toUpperCase()))
+    .join(' ');
+
+  const nombreFmt = nombre
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(capitalizarPalabra)
+    .join(' ');
+
+  const cuerpo = nombreFmt ? `${apellidoFmt}, ${nombreFmt}` : apellidoFmt;
+  return `PROF. ${cuerpo}${sufijo}`;
+};
+
+const formatearListaDocentes = (lista) =>
+  lista
+    .map((d) => formatearNombreDocente(d))
+    .filter(Boolean)
+    .join(' / ');
+
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -300,7 +399,7 @@ export default function App() {
     const docentesLista = [nuevoSemDocente1, nuevoSemDocente2, nuevoSemDocente3]
       .map((d) => d.trim())
       .filter(Boolean);
-    const docenteLimpio = docentesLista.join(' / ');
+    const docenteLimpio = formatearListaDocentes(docentesLista);
 
     if (!nombreLimpio || !docenteLimpio || !nuevoSemTipo || !nuevoSemAnio || !nuevoSemCuatrimestre) {
       alert("Completá nombre, tipo, año, cuatrimestre y al menos un docente.");
