@@ -1414,18 +1414,18 @@ export default function App() {
         const nombreMatLower = (mat.name || '').toLowerCase();
         const esElectivaArqueologiaCFO =
           activeBlock === 'cfo' &&
-          (nombreMatLower.includes('materias electivas de arqueología') ||
-            nombreMatLower.includes('materias electivas de arqueologia') ||
-            nombreMatLower.includes('electivas de arqueología') ||
-            nombreMatLower.includes('electivas de arqueologia'));
+          (nombreMatLower.includes('materia electiva arqueología') ||
+            nombreMatLower.includes('materia electiva arqueologia') ||
+            nombreMatLower.includes('electiva arqueología') ||
+            nombreMatLower.includes('electiva arqueologia'));
 
         const materiasElectivasArqCFO = (orientationObj.cfo || []).filter(m => {
           const n = (m.name || '').toLowerCase();
           return (
-            n.includes('materias electivas de arqueología') ||
-            n.includes('materias electivas de arqueologia') ||
-            n.includes('electivas de arqueología') ||
-            n.includes('electivas de arqueologia')
+            n.includes('materia electiva arqueología') ||
+            n.includes('materia electiva arqueologia') ||
+            n.includes('electiva arqueología') ||
+            n.includes('electiva arqueologia')
           );
         });
 
