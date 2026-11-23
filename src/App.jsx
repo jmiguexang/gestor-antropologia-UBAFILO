@@ -32,6 +32,8 @@ const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-16', tipo: 'sociocultural', codigo: '', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', anio: '2026', cuatrimestre: '2° Cuatrimestre' }
 ];
 
+const ANIOS_OPCIONES = Array.from({ length: 27 }, (_, idx) => String(2026 - idx));
+
 const AVATARES_ANTROPOLOGIA = [
   { id: 'anonimo', nombre: 'Estudiante Puaner', rol: 'Espíritu libre de Puan', emoji: '☕', img: '/avatares/anonimo.jpg' },
   { id: 'boas', nombre: 'Franz Boas', rol: 'Padre del Particularismo Histórico', emoji: '📚', img: '/avatares/franz-boas.jpg' },
@@ -1963,13 +1965,9 @@ export default function App() {
                       className="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold"
                     >
                       <option value="">-- Año --</option>
-                      <option value="2026">2026</option>
-                      <option value="2025">2025</option>
-                      <option value="2024">2024</option>
-                      <option value="2023">2023</option>
-                      <option value="2022">2022</option>
-                      <option value="2021">2021</option>
-                      <option value="2020">2020</option>
+                      {ANIOS_OPCIONES.map((yr) => (
+                        <option key={yr} value={yr}>{yr}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
@@ -2353,13 +2351,9 @@ export default function App() {
                   onChange={(e) => setNuevoSemAnio(e.target.value)}
                   className="bg-white border border-sky-300 rounded-lg px-2.5 py-2 text-xs font-semibold"
                 >
-                  <option value="2026">2026</option>
-                  <option value="2025">2025</option>
-                  <option value="2024">2024</option>
-                  <option value="2023">2023</option>
-                  <option value="2022">2022</option>
-                  <option value="2021">2021</option>
-                  <option value="2020">2020</option>
+                  {ANIOS_OPCIONES.map((yr) => (
+                    <option key={yr} value={yr}>{yr}</option>
+                  ))}
                 </select>
                 <select
                   required
