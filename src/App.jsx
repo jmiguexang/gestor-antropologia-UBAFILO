@@ -117,6 +117,7 @@ export default function App() {
   const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   const [nuevoSemNombre, setNuevoSemNombre] = useState('');
+  const [nuevoSemCodigo, setNuevoSemCodigo] = useState('');
   const [nuevoSemDocente, setNuevoSemDocente] = useState('');
   const [nuevoSemTipo, setNuevoSemTipo] = useState('sociocultural');
   
@@ -242,12 +243,14 @@ export default function App() {
   const handleAgregarSeminarioManualACatalogo = (e) => {
     e.preventDefault();
     const nombreLimpio = nuevoSemNombre.trim();
+    const codigoLimpio = nuevoSemCodigo.trim();
     const docenteLimpio = nuevoSemDocente.trim() || 'DOCENTE A CONFIRMAR';
     if (!nombreLimpio) return;
 
     const nuevoSem = {
       id: 'sem-manual-' + Date.now(),
       tipo: nuevoSemTipo,
+      codigo: codigoLimpio,
       nombre: nombreLimpio.toUpperCase(),
       docente: docenteLimpio,
       cuatrimestre: 'Manual'
@@ -257,6 +260,7 @@ export default function App() {
     setSeminariosOferta(updatedOferta);
     guardarDatosNube(studentData, updatedOferta, avatarActual, selectedPlan, selectedOrientation);
     setNuevoSemNombre('');
+    setNuevoSemCodigo('');
     setNuevoSemDocente('');
     setNuevoSemTipo('sociocultural');
     setToastMessage("¡Seminario agregado al catálogo!");
@@ -2223,19 +2227,26 @@ export default function App() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Seminarios (2C 2026)</h3>
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Seminarios</h3>
               <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 font-bold text-lg">×</button>
             </div>
 
             <form onSubmit={handleAgregarSeminarioManualACatalogo} className="bg-sky-50 border border-sky-200 rounded-xl p-3.5 space-y-2.5">
               <p className="text-xs font-bold uppercase text-sky-900">Agregar seminario manualmente al catálogo</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                 <input
                   type="text"
                   placeholder="Nombre del seminario *"
                   value={nuevoSemNombre}
                   onChange={(e) => setNuevoSemNombre(e.target.value)}
                   className="sm:col-span-2 bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs font-semibold"
+                />
+                <input
+                  type="text"
+                  placeholder="Código (opcional)"
+                  value={nuevoSemCodigo}
+                  onChange={(e) => setNuevoSemCodigo(e.target.value)}
+                  className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
                 />
                 <select
                   value={nuevoSemTipo}
