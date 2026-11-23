@@ -123,6 +123,7 @@ export default function App() {
   const [nuevoSemAnio, setNuevoSemAnio] = useState('2026');
   const [nuevoSemCuatrimestre, setNuevoSemCuatrimestre] = useState('2° Cuatrimestre');
   const [filtroSemAnio, setFiltroSemAnio] = useState('todos');
+  const [filtroSemAnioInput, setFiltroSemAnioInput] = useState('');
   const [filtroSemCuatrimestre, setFiltroSemCuatrimestre] = useState('todos');
   
   const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -1110,12 +1111,10 @@ export default function App() {
     );
   }
 
-  const aniosDisponiblesCatalogo = Array.from(
-    new Set(seminariosOferta.map((s) => s.anio).filter(Boolean))
-  ).sort((a, b) => String(b).localeCompare(String(a)));
+  const anioFiltroActivo = filtroSemAnioInput.trim() || (filtroSemAnio === 'todos' ? '' : filtroSemAnio);
 
   const seminariosFiltrados = seminariosOferta.filter((s) => {
-    const matchAnio = filtroSemAnio === 'todos' || (s.anio || '') === filtroSemAnio;
+    const matchAnio = !anioFiltroActivo || (s.anio || '').trim().toLowerCase() === anioFiltroActivo.toLowerCase();
     const matchCuatri = filtroSemCuatrimestre === 'todos' || (s.cuatrimestre || '') === filtroSemCuatrimestre;
     return matchAnio && matchCuatri;
   });
@@ -2392,29 +2391,79 @@ export default function App() {
               </div>
             </form>
 
-            <div className="flex flex-wrap items-center gap-2 bg-slate-100 p-2.5 rounded-xl border border-slate-200">
-              <span className="text-[10px] font-bold uppercase text-slate-600">Filtrar por:</span>
-              <select
-                value={filtroSemAnio}
-                onChange={(e) => setFiltroSemAnio(e.target.value)}
-                className="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold"
-              >
-                <option value="todos">Todos los años</option>
-                {aniosDisponiblesCatalogo.map((an) => (
-                  <option key={an} value={an}>{an}</option>
+            <div className="space-y-2.5 bg-slate-100 p-3 rounded-xl border border-slate-200">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold uppercase text-slate-600">Año:</span>
+                {['2026', '2025', '2024'].map((yr) => {
+                  const activo = !filtroSemAnioInput.trim() && filtroSemAnio === yr;
+                  return (
+                    <button
+                      key={yr}
+                      type="button"
+                      onClick={() => {
+                        setFiltroSemAnioInput('');
+                        setFiltroSemAnio(activo ? 'todos' : yr);
+                      }}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold border transition ${
+                        activo
+                          ? 'bg-sky-700 text-white border-sky-800 shadow-2xs'
+                          : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      {yr}
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFiltroSemAnioInput('');
+                    setFiltroSemAnio('todos');
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition ${
+                    !filtroSemAnioInput.trim() && filtroSemAnio === 'todos'
+                      ? 'bg-slate-900 text-white border-slate-900'
+                      : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  Todos
+                </button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Otro año..."
+                  value={filtroSemAnioInput}
+                  onChange={(e) => {
+                    setFiltroSemAnioInput(e.target.value);
+                    if (e.target.value.trim()) setFiltroSemAnio('todos');
+                  }}
+                  className="w-28 bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-semibold outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-bold uppercase text-slate-600 mr-1">Cuatrimestre:</span>
+                {[
+                  { value: 'todos', label: 'Todos' },
+                  { value: '1° Cuatrimestre', label: '1er cuatrimestre' },
+                  { value: '2° Cuatrimestre', label: '2do cuatrimestre' },
+                  { value: 'Anual', label: 'Anual' },
+                  { value: 'Verano', label: 'Verano' }
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setFiltroSemCuatrimestre(opt.value)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition ${
+                      filtroSemCuatrimestre === opt.value
+                        ? 'bg-slate-900 text-white border-slate-900'
+                        : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
                 ))}
-              </select>
-              <select
-                value={filtroSemCuatrimestre}
-                onChange={(e) => setFiltroSemCuatrimestre(e.target.value)}
-                className="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold"
-              >
-                <option value="todos">Todos los cuatrimestres</option>
-                <option value="1° Cuatrimestre">1° Cuatrimestre</option>
-                <option value="2° Cuatrimestre">2° Cuatrimestre</option>
-                <option value="Anual">Anual</option>
-                <option value="Verano">Verano</option>
-              </select>
+              </div>
             </div>
 
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
