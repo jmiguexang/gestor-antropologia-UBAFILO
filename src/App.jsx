@@ -894,6 +894,46 @@ export default function App() {
   const planObj = PLANS_DATA[selectedPlan];
   const orientationObj = planObj.orientaciones[selectedOrientation] || planObj.orientaciones['sociocultural'];
 
+  const getCfgAjustado = () => {
+    const baseCfg = planObj.cfg || [];
+    if (selectedPlan === '1985' && selectedOrientation === 'arqueologia') {
+      const resultado = [];
+      let optativaProcesada = false;
+      let seminariosProcesados = false;
+
+      baseCfg.forEach((m, idx) => {
+        const n = (m.name || '').toLowerCase();
+        const esOpt = n.includes('optativa');
+        const esSem = n.includes('seminario');
+
+        if (esOpt) {
+          if (!optativaProcesada) {
+            optativaProcesada = true;
+            resultado.push({ ...m, id: `${m.id}-1`, name: 'Materia Optativa 1' });
+            resultado.push({ ...m, id: `${m.id}-2`, name: 'Materia Optativa 2' });
+          }
+          return;
+        }
+
+        if (esSem) {
+          if (!seminariosProcesados) {
+            seminariosProcesados = true;
+            resultado.push({ ...m, id: `${m.id}-arq-1`, name: 'Seminario de Investigación en Arqueología I' });
+            resultado.push({ ...m, id: `${m.id}-arq-2`, name: 'Seminario de Investigación en Arqueología II' });
+          }
+          return;
+        }
+
+        resultado.push({ ...m, id: m.id || `cfg-1985-arq-${idx}` });
+      });
+
+      return resultado;
+    }
+    return baseCfg;
+  };
+
+  const currentCfgList = getCfgAjustado();
+
   const getTesisMaterias = () => {
     if (Array.isArray(planObj.tesis)) return planObj.tesis;
     if (Array.isArray(orientationObj.tesis)) return orientationObj.tesis;
@@ -909,7 +949,7 @@ export default function App() {
   const getBlockMaterias = (block) => {
     switch (block) {
       case 'cbc': return planObj.cbc || [];
-      case 'cfg': return planObj.cfg || [];
+      case 'cfg': return currentCfgList;
       case 'cfo': return (orientationObj.cfo || []).filter(m => !esMateriaTesis(m));
       case 'electivas': return orientationObj.electivas || planObj.electivas || [];
       case 'tesis': return getTesisMaterias();
@@ -924,7 +964,7 @@ export default function App() {
   const getAllMaterias = () => {
     let list = [
       ...(planObj.cbc || []),
-      ...(planObj.cfg || []),
+      ...currentCfgList,
       ...((orientationObj.cfo || []).filter(m => !esMateriaTesis(m)))
     ];
     const electivasList = orientationObj.electivas || planObj.electivas || [];
@@ -993,7 +1033,7 @@ export default function App() {
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
   const cbcIdsSet = new Set((planObj.cbc || []).map(c => c.id));
-  const cfgIdsSet = new Set((planObj.cfg || []).map(c => c.id));
+  const cfgIdsSet = new Set(currentCfgList.map(c => c.id));
   const cfoIdsSet = new Set(((orientationObj.cfo || []).filter(m => !esMateriaTesis(m))).map(c => c.id));
 
   currentMateriasAll.forEach(m => {
