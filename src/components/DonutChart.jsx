@@ -3,14 +3,14 @@ import React from 'react';
 export function DonutChart({ total, aprobadas, regularizadas, cursando, pendientes, porcentaje }) {
   const safeTotal = Math.max(total, 1);
 
-  // Porcentajes reales sobre el total de materias del plan
-  const pctAprobadas = (aprobadas / safeTotal) * 100;
-  const pctRegularizadas = (regularizadas / safeTotal) * 100;
-  const pctCursando = (cursando / safeTotal) * 100;
-
   const porcentajePrincipal = typeof porcentaje === 'number' && !isNaN(porcentaje)
-    ? porcentaje
-    : Math.round(pctAprobadas);
+    ? Math.max(0, porcentaje)
+    : Math.round((aprobadas / safeTotal) * 100);
+
+  // Porcentajes reales sobre el total de materias del plan
+  const pctAprobadas = porcentajePrincipal === 0 || aprobadas <= 0 ? 0 : (aprobadas / safeTotal) * 100;
+  const pctRegularizadas = regularizadas <= 0 ? 0 : (regularizadas / safeTotal) * 100;
+  const pctCursando = cursando <= 0 ? 0 : (cursando / safeTotal) * 100;
 
   // Geometría exacta del círculo SVG
   const size = 200;
@@ -20,9 +20,9 @@ export function DonutChart({ total, aprobadas, regularizadas, cursando, pendient
   const circumference = 2 * Math.PI * radius;
 
   // Longitudes de cada arco
-  const dashAprobadas = (pctAprobadas / 100) * circumference;
-  const dashRegularizadas = (pctRegularizadas / 100) * circumference;
-  const dashCursando = (pctCursando / 100) * circumference;
+  const dashAprobadas = pctAprobadas > 0 ? (pctAprobadas / 100) * circumference : 0;
+  const dashRegularizadas = pctRegularizadas > 0 ? (pctRegularizadas / 100) * circumference : 0;
+  const dashCursando = pctCursando > 0 ? (pctCursando / 100) * circumference : 0;
 
   // Desplazamientos (offsets) para apilar cada tramo donde termina el anterior
   const offsetAprobadas = 0;
@@ -45,7 +45,7 @@ export function DonutChart({ total, aprobadas, regularizadas, cursando, pendient
           />
 
           {/* Tramo 1: Aprobadas (Verde Esmeralda) */}
-          {aprobadas > 0 && (
+          {porcentajePrincipal > 0 && aprobadas > 0 && dashAprobadas > 0 && (
             <circle
               cx={center}
               cy={center}
@@ -61,7 +61,7 @@ export function DonutChart({ total, aprobadas, regularizadas, cursando, pendient
           )}
 
           {/* Tramo 2: Regularizadas (Ámbar) */}
-          {regularizadas > 0 && (
+          {regularizadas > 0 && dashRegularizadas > 0 && (
             <circle
               cx={center}
               cy={center}
@@ -76,7 +76,7 @@ export function DonutChart({ total, aprobadas, regularizadas, cursando, pendient
           )}
 
           {/* Tramo 3: Cursando (Celeste Sky) */}
-          {cursando > 0 && (
+          {cursando > 0 && dashCursando > 0 && (
             <circle
               cx={center}
               cy={center}
