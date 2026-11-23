@@ -14,22 +14,22 @@ const MP_ALIAS = 'juan.miguel.ch';
 
 // Respaldo inicial si la tabla seminarios_catalogo no responde
 const SEMINARIOS_OFERTA_2C_2026 = [
-  { id: 'sem-1', tipo: 'sociocultural', codigo: '', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-2', tipo: 'sociocultural', codigo: '', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-3', tipo: 'sociocultural', codigo: '', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-4', tipo: 'sociocultural', codigo: '', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN (MODALIDAD PRESENCIAL)', docente: 'PROF. URBANO, Eduardo Luis', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-5', tipo: 'sociocultural', codigo: '', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA. ALGUNOS EJEMPLOS DE EUROPA Y ARGENTINA (MODALIDAD PRESENCIAL)', docente: 'PROF. Pablo WRIGHT', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-6', tipo: 'sociocultural', codigo: '', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-7', tipo: 'sociocultural', codigo: '', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-8', tipo: 'sociocultural', codigo: '', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-9', tipo: 'arqueologia', codigo: '', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-10', tipo: 'sociocultural', codigo: '', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
-  { id: 'sem-11', tipo: 'arqueologia', codigo: '', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-12', tipo: 'arqueologia', codigo: '', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: false },
-  { id: 'sem-13', tipo: 'sociocultural', codigo: '', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
-  { id: 'sem-14', tipo: 'sociocultural', codigo: '', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
-  { id: 'sem-15', tipo: 'sociocultural', codigo: '', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true },
-  { id: 'sem-16', tipo: 'sociocultural', codigo: '', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', anio: '2026', cuatrimestre: '2° Cuatrimestre', esPst: true }
+  { id: 'sem-1', tipo: 'sociocultural', codigo: '', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-2', tipo: 'sociocultural', codigo: '', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-3', tipo: 'sociocultural', codigo: '', nombre: 'PODER POLICIAL, BUROCRACIAS PENALES Y ACTIVISMOS. TEMAS Y PROBLEMAS DE INVESTIGACIÓN', docente: 'PROF. María Victoria PITA y PROF. Florencia CORBELLE', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-4', tipo: 'sociocultural', codigo: '', nombre: 'COLONIALIDAD, MODERNIDAD E IMAGINARIOS DE NACIÓN (MODALIDAD PRESENCIAL)', docente: 'PROF. URBANO, Eduardo Luis', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-5', tipo: 'sociocultural', codigo: '', nombre: 'HETERODOXIAS SOCIORELIGIOSAS DESDE UNA PERSPECTIVA HISTÓRICA Y ANTROPOLÓGICA. ALGUNOS EJEMPLOS DE EUROPA Y ARGENTINA (MODALIDAD PRESENCIAL)', docente: 'PROF. Pablo WRIGHT', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-6', tipo: 'sociocultural', codigo: '', nombre: 'CONFLICTIVIDAD PENAL JUVENIL ENFOQUES, METODOS Y ESTUDIOS DESDE LA ANTROPOLOGÍA JURÍDICA', docente: 'PROF. María Florencia GRAZIANO y Federico MEDINA', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-7', tipo: 'sociocultural', codigo: '', nombre: 'ANTROPOLOGÍA y ECONOMÍA POLÍTICA: PODER, TRABAJO Y AMBIENTE.', docente: 'PROF. Santiago SORROCHE', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-8', tipo: 'sociocultural', codigo: '', nombre: 'COMUNICAR LA ANTROPOLOGÍA (MODALIDAD PRESENCIAL)', docente: 'PROF. Marisol GARCIA y PROF. Roberta ALLER', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-9', tipo: 'arqueologia', codigo: '', nombre: 'CAMBIO CLIMÁTICO, TRANSDISCIPLINA Y ADAPTACIÓN BASADA EN ECOSISTEMAS', docente: 'PROF. Constanza RIERA y PROF. Paula Beatriz MARTIN', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-10', tipo: 'sociocultural', codigo: '', nombre: 'PST: LAS EMPRESAS AUTOGESTIONADAS FRENTE AL PLURIEMPLEO, EL CAPITALISMO DE PLATAFORMAS Y LA SUPEREXPLOTACIÓN DEL TRABAJO EN ULTRALIBERALISMO', docente: 'PROF. Andres Eduardo Ruggeri y PROF. Natalia POLTI', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: true },
+  { id: 'sem-11', tipo: 'arqueologia', codigo: '', nombre: 'TEORÍA, INTERDISCIPLINARIEDAD Y DEBATES CONTEMPORÁNEOS EN ARQUEOLOGÍA HISTÓRICA', docente: 'PROF. María Jimena CRUZ y Melisa SALERNO', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-12', tipo: 'arqueologia', codigo: '', nombre: 'LA CULTURA BAJO UNA NUEVA PERSPECTIVA EVOLUTIVA.', docente: 'PROF. Viviana SCHEINSOHN', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: false },
+  { id: 'sem-13', tipo: 'sociocultural', codigo: '', nombre: 'PST: PRODUCCIÓN Y GESTIÓN DE PROYECTOS CULTURALES EN FILO', docente: 'PROF. Victoria Julia LENCINA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: true },
+  { id: 'sem-14', tipo: 'sociocultural', codigo: '', nombre: 'PST: DIÁLOGOS ENTRE ARTE Y EDUCACIÓN EN EL MUSEO ETNOGRÁFICO', docente: 'PROF. Mariana Denise LUTERSTEIN y PROF. María Eugenia LANZA (Depto de Artes)', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: true },
+  { id: 'sem-15', tipo: 'sociocultural', codigo: '', nombre: 'PST: CONSTRUCCIÓN DE UN ESPACIO DE RECREACIÓN EDUCATIVA PARA LAS INFANCIAS EN EL CIDAC', docente: 'PROF. Anahi GUELMAN y PROF. Mariel KAROLONSKI (Depto de Cs. de la Educación)', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: true },
+  { id: 'sem-16', tipo: 'sociocultural', codigo: '', nombre: 'PST: SABERES Y EXPERIENCIAS AMBIENTALES EN DIÁLOGOS COMUNITARIOS. EL CASO DE LA COOPERATIVA RECUPERADORES URBANOS DEL OESTE', docente: 'PROF. María Inés CARABAJAL y PROF. Lia Inés BACHMAN (Depto de Geografía)', anio: '2026', cuatrimestre: '2° Cuatrimestre', es_pst: true }
 ];
 
 const ANIOS_OPCIONES = Array.from({ length: 27 }, (_, idx) => String(2026 - idx));
@@ -129,6 +129,7 @@ const formatearListaDocentes = (lista) =>
     .join(' / ');
 
 const esSeminarioPst = (sem) => {
+  if (typeof sem?.es_pst === 'boolean') return sem.es_pst;
   if (typeof sem?.esPst === 'boolean') return sem.esPst;
   const n = (sem?.nombre || '').toLowerCase();
   return (
@@ -469,7 +470,7 @@ export default function App() {
         docente: docenteLimpio,
         anio: nuevoSemAnio,
         cuatrimestre: nuevoSemCuatrimestre,
-        esPst: Boolean(nuevoSemEsPst)
+        es_pst: Boolean(nuevoSemEsPst)
       };
 
       const { error } = await supabase
@@ -479,12 +480,12 @@ export default function App() {
 
       if (error) {
         console.error("Error actualizando en seminarios_catalogo:", error);
-        alert("No se pudo actualizar el seminario en la base de datos.");
+        alert(`No se pudo actualizar el seminario en la base de datos: ${error.message}`);
         return;
       }
 
       setSeminariosOferta((prev) =>
-        prev.map((item) => (item.id === editandoSemId ? { ...item, ...datosActualizados } : item))
+        prev.map((item) => (item.id === editandoSemId ? { ...item, ...datosActualizados, esPst: Boolean(nuevoSemEsPst) } : item))
       );
       limpiarFormularioSeminario();
       setToastMessage("¡Seminario actualizado!");
@@ -500,7 +501,7 @@ export default function App() {
       docente: docenteLimpio,
       anio: nuevoSemAnio,
       cuatrimestre: nuevoSemCuatrimestre,
-      esPst: Boolean(nuevoSemEsPst)
+      es_pst: Boolean(nuevoSemEsPst)
     };
 
     const { error } = await supabase
@@ -509,11 +510,11 @@ export default function App() {
 
     if (error) {
       console.error("Error insertando en seminarios_catalogo:", error);
-      alert("No se pudo guardar el seminario en la base de datos.");
+      alert(`No se pudo guardar el seminario en la base de datos: ${error.message}`);
       return;
     }
 
-    setSeminariosOferta((prev) => [nuevoSem, ...prev]);
+    setSeminariosOferta((prev) => [{ ...nuevoSem, esPst: Boolean(nuevoSemEsPst) }, ...prev]);
     limpiarFormularioSeminario();
     setToastMessage("¡Seminario agregado al catálogo!");
     setTimeout(() => setToastMessage(null), 3500);
@@ -530,7 +531,7 @@ export default function App() {
 
     if (error) {
       console.error("Error eliminando de seminarios_catalogo:", error);
-      alert("No se pudo eliminar el seminario del catálogo.");
+      alert(`No se pudo eliminar el seminario del catálogo: ${error.message}`);
       return;
     }
 
