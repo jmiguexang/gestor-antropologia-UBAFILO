@@ -267,6 +267,39 @@ const OPCIONES_ELECTIVAS_ARQUEOLOGIA = [
   'Estudios Interdisciplinarios en Arqueología'
 ];
 
+const ELECTIVAS_CFG_PROFESORADO_2023 = {
+  'Orientación Sociocultural': [
+    'Sociedades, Culturas Y Estados en América Prehispánica Y Colonial',
+    'Antropología Lingüística',
+    'Procesos Culturales, Folklore Y Prácticas Subalternas',
+    'Teoría Social',
+    'Teorías de la Subjetividad',
+    'Pueblos Indígenas Americanos'
+  ],
+  'Orientación en Arqueología': [
+    'Arqueología Americana Y Argentina I',
+    'Arqueología Americana Y Argentina II',
+    'Arqueología Argentina',
+    'Arqueología de África, Eurasia Y Oceanía',
+    'Metodología Y Técnicas de la Investigación Arqueológica',
+    'Geología Para Arqueólogos',
+    'Materiales Arqueológicos Y Sus Tecnologías'
+  ]
+};
+
+const CFG_PROFESORADO_2023_MATERIAS = [
+  { id: 'prof-2023-cfg-ob-1', name: 'América en contexto', etapa: 'CFG · Obligatoria', regimen: 'promocion' },
+  { id: 'prof-2023-cfg-ob-2', name: 'Metodología de la investigación antropológica en educación', etapa: 'CFG · Obligatoria', regimen: 'promocion' },
+  { id: 'prof-2023-cfg-ob-3', name: 'Antropología y Conocimiento', etapa: 'CFG · Obligatoria', regimen: 'promocion' },
+  { id: 'prof-2023-cfg-ob-4', name: 'Antropología y Educación', etapa: 'CFG · Obligatoria', regimen: 'promocion' },
+  { id: 'prof-2023-cfg-el-1', name: 'Materia Electiva CFG 1', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-2', name: 'Materia Electiva CFG 2', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-3', name: 'Materia Electiva CFG 3', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-4', name: 'Materia Electiva CFG 4', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-5', name: 'Materia Electiva CFG 5', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-pst-1', name: 'Seminario de Prácticas Socioeducativas Territorializadas (PST)', etapa: 'CFG · Seminario PST', regimen: 'promocion' }
+];
+
 const redondearUBAXXI = (promedio) => {
   if (promedio >= 3.01 && promedio <= 3.99) {
     return 3;
@@ -676,7 +709,7 @@ export default function App() {
       setShowSeminarioModal(false);
       setOnlyFavorites(false);
       setActiveBlock('cfo');
-      setToastMessage(`¡Seminario asignado en CFO (${slotLibre.name})!`);
+      setToastMessage(`¡Seminario asignado en CFE (${slotLibre.name})!`);
       setTimeout(() => setToastMessage(null), 4000);
       return;
     }
@@ -766,6 +799,16 @@ export default function App() {
     });
   };
 
+  const esProfesorado2023 = selectedPlan === '2023' && selectedOrientation === 'profesorado';
+  const etiquetaBloqueEspecifico = esProfesorado2023 ? 'CFE' : 'CFO';
+
+  const getCfgMateriasActuales = () => {
+    if (esProfesorado2023) {
+      return CFG_PROFESORADO_2023_MATERIAS;
+    }
+    return planObj.cfg || [];
+  };
+
   const handleUpdateMateria = (id, field, value) => {
     setStudentData(prev => {
       const planState = prev[selectedPlan] || {};
@@ -778,14 +821,14 @@ export default function App() {
         desdeCatalogoSeminarios: false,
         parcial1: '', parcial2: '', parcial3: '', 
         final1: '', final2: '', final3: '', 
-        customName: '', codigoOptativa: '', facultadElectiva: '', carreraElectiva: '', areaTematicaElectiva: '',
+        customName: '', codigoOptativa: '', facultadElectiva: '', carreraElectiva: '', areaTematicaElectiva: '', orientacionElectivaCFG: '',
         favorita: false, materiaElectivaCBC: ''
       };
 
       let updatedMat = { ...matState, [field]: value };
 
       const cbcIds = new Set((PLANS_DATA[selectedPlan]?.cbc || []).map(c => c.id));
-      const cfgIds = new Set((PLANS_DATA[selectedPlan]?.cfg || []).map(c => c.id));
+      const cfgIds = new Set(getCfgMateriasActuales().map(c => c.id));
       const esMateriaCBC = cbcIds.has(id);
       const esMateriaCFG = cfgIds.has(id);
 
@@ -933,6 +976,7 @@ export default function App() {
   };
 
   const currentCfoList = getCfoArqueologia1985Ajustado();
+  const currentCfgList = getCfgMateriasActuales();
 
   const getTesisMaterias = () => {
     if (Array.isArray(planObj.tesis)) return planObj.tesis;
@@ -949,7 +993,7 @@ export default function App() {
   const getBlockMaterias = (block) => {
     switch (block) {
       case 'cbc': return planObj.cbc || [];
-      case 'cfg': return planObj.cfg || [];
+      case 'cfg': return currentCfgList;
       case 'cfo': return currentCfoList;
       case 'electivas': return orientationObj.electivas || planObj.electivas || [];
       case 'tesis': return getTesisMaterias();
@@ -964,7 +1008,7 @@ export default function App() {
   const getAllMaterias = () => {
     let list = [
       ...(planObj.cbc || []),
-      ...(planObj.cfg || []),
+      ...currentCfgList,
       ...currentCfoList
     ];
     const electivasList = orientationObj.electivas || planObj.electivas || [];
@@ -1033,7 +1077,7 @@ export default function App() {
 
   const idiomasIds = new Set((planObj.idiomas || []).map(i => i.id));
   const cbcIdsSet = new Set((planObj.cbc || []).map(c => c.id));
-  const cfgIdsSet = new Set((planObj.cfg || []).map(c => c.id));
+  const cfgIdsSet = new Set(currentCfgList.map(c => c.id));
   const cfoIdsSet = new Set(currentCfoList.map(c => c.id));
 
   currentMateriasAll.forEach(m => {
@@ -1150,6 +1194,7 @@ export default function App() {
       const esSeminario =
         m.esCustomSeminario ||
         idLower.includes('sem') ||
+        idLower.includes('pst') ||
         nameLower.includes('seminario') ||
         nameLower.includes('pst') ||
         etapaLower.includes('seminario');
@@ -1724,7 +1769,7 @@ export default function App() {
             <div className="flex items-center gap-2">
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cbc'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cbc' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CBC</button>
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfg'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfg' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CFG</button>
-              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfo'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfo' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> CFO</button>
+              <button onClick={() => { setOnlyFavorites(false); setActiveBlock('cfo'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'cfo' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> {etiquetaBloqueEspecifico}</button>
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('electivas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'electivas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Electivas / Seminarios</button>
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('tesis'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'tesis' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Tesis</button>
               <button onClick={() => { setOnlyFavorites(false); setActiveBlock('idiomas'); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-2 ${!onlyFavorites && activeBlock === 'idiomas' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}`}><Layers className="w-4 h-4 text-sky-600" /> Idiomas</button>
@@ -1738,7 +1783,7 @@ export default function App() {
             <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-base font-bold flex items-center gap-2 uppercase tracking-wide">
-                  {onlyFavorites ? <><Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Materias Favoritas</> : <><BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock.toUpperCase()}</>}
+                  {onlyFavorites ? <><Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Materias Favoritas</> : <><BookOpen className="w-5 h-5 text-sky-400" /> Bloque: {activeBlock === 'cfo' ? etiquetaBloqueEspecifico : activeBlock.toUpperCase()}</>}
                 </h2>
                 {!onlyFavorites && (
                   <div className="mt-1 text-[11px] text-sky-200 leading-tight">
@@ -1755,7 +1800,7 @@ export default function App() {
                       <p className="text-amber-300 mt-0.5">Promedio CFG (con aplazos): <strong>{promedioCFG}</strong></p>
                     )}
                     {activeBlock === 'cfo' && (
-                      <p className="text-amber-300 mt-0.5">Promedio CFO (con aplazos): <strong>{promedioCFO}</strong></p>
+                      <p className="text-amber-300 mt-0.5">Promedio {etiquetaBloqueEspecifico} (con aplazos): <strong>{promedioCFO}</strong></p>
                     )}
                   </div>
                 )}
@@ -1941,6 +1986,10 @@ export default function App() {
         const esElectiva = activeBlock === 'electivas';
         const horasMateriaDetalle = getHorasMateria(mat);
 
+        const esElectivaProfCFG = Boolean(esProfesorado2023 && esCFG && mat.esElectivaProfesoradoCFG);
+        const orientacionElectivaProfCFG = st.orientacionElectivaCFG || '';
+        const opcionesMateriasElectivasProfCFG = ELECTIVAS_CFG_PROFESORADO_2023[orientacionElectivaProfCFG] || [];
+
         const nombreMatLower = (mat.name || '').toLowerCase();
         const esSeminarioCuatrimestral64 =
           horasMateriaDetalle === 64 &&
@@ -2096,7 +2145,7 @@ export default function App() {
 
               {(() => {
                 const textoMateria = `${mat.id || ''} ${mat.name || ''} ${mat.etapa || ''}`.toLowerCase();
-                const esOptativa = textoMateria.includes('optativa') && !mat.esCustomSeminario && !esElectivaSociocultural;
+                const esOptativa = textoMateria.includes('optativa') && !mat.esCustomSeminario && !esElectivaSociocultural && !esElectivaProfCFG;
 
                 if (!esOptativa) return null;
 
@@ -2234,7 +2283,45 @@ export default function App() {
                 );
               })()}
 
-              {esCFG && (() => {
+              {esElectivaProfCFG && (
+                <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Seleccione la Orientación:</label>
+                    <select
+                      value={orientacionElectivaProfCFG}
+                      onChange={(e) => {
+                        handleUpdateMateria(mat.id, 'orientacionElectivaCFG', e.target.value);
+                        handleUpdateMateria(mat.id, 'customName', '');
+                      }}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                    >
+                      <option value="">-- Seleccionar orientación --</option>
+                      {Object.keys(ELECTIVAS_CFG_PROFESORADO_2023).map((ori) => (
+                        <option key={ori} value={ori}>{ori}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold uppercase text-sky-900 block mb-1">Seleccione la Materia:</label>
+                    <select
+                      value={st.customName || ''}
+                      onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                      disabled={!orientacionElectivaProfCFG}
+                      className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold disabled:bg-slate-100 disabled:text-slate-400"
+                    >
+                      <option value="">
+                        {orientacionElectivaProfCFG ? '-- Seleccionar materia --' : '-- Primero elegí una orientación --'}
+                      </option>
+                      {opcionesMateriasElectivasProfCFG.map((opcionMat) => (
+                        <option key={opcionMat} value={opcionMat}>{opcionMat}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {esCFG && !esElectivaProfCFG && (() => {
                 const nombreMat = mat.name.toLowerCase();
                 const idMat = mat.id.toLowerCase();
                 let opcionesCatedrasCFG = [];
@@ -2418,7 +2505,7 @@ export default function App() {
                 if (opcionesCatedrasCFO.length > 0) {
                   return (
                     <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
-                      <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Cátedra del CFO:</label>
+                      <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Cátedra del {etiquetaBloqueEspecifico}:</label>
                       <select
                         value={st.customName || ''}
                         onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
@@ -2953,7 +3040,7 @@ export default function App() {
               {esCFO && (
                 <div className="space-y-2 bg-red-50/40 p-4 rounded-xl border border-red-200">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos CFO)</span>
+                    <span className="text-[10px] font-bold text-red-800 uppercase tracking-wide">Cursadas anteriores reprobadas (Aplazos {etiquetaBloqueEspecifico})</span>
                     <button
                       type="button"
                       onClick={() => handleUpdateMateria(mat.id, 'aplazosCFO', [...aplazosCFOList, ''])}
@@ -2996,7 +3083,7 @@ export default function App() {
                       ))}
                     </div>
                   )}
-                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del CFO en una cursada pasada, cargá aquí las notas reprobadas (menores a 4) para que computen en el promedio del CFO y de la carrera.</p>
+                  <p className="text-[9px] text-slate-600">Si recursaste esta materia del {etiquetaBloqueEspecifico} en una cursada pasada, cargá aquí las notas reprobadas (menores a 4) para que computen en el promedio del {etiquetaBloqueEspecifico} y de la carrera.</p>
                 </div>
               )}
 
