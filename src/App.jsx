@@ -1271,6 +1271,14 @@ export default function App() {
                     nombreMatCardLower.includes('pst') ||
                     nombreMatCardLower.includes('seminario de la orientación en arqueología') ||
                     nombreMatCardLower.includes('seminario de la orientacion en arqueologia'));
+                const iconoModalidadCard =
+                  st.modalidadCursada === '100% virtual'
+                    ? '💻'
+                    : st.modalidadCursada === '100% presencial'
+                      ? '🏛️'
+                      : st.modalidadCursada === 'Híbrido'
+                        ? '🔄'
+                        : '🧭';
 
                 return (
                   <div key={m.id} className="p-4 sm:p-5 hover:bg-slate-50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1279,7 +1287,7 @@ export default function App() {
                         <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">{m.etapa}</span>
                         {esSeminarioCard64 ? (
                           <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border bg-sky-50 text-sky-800 border-sky-200">
-                            {st.modalidadCursada ? `🧭 Modalidad: ${st.modalidadCursada}` : '🧭 Modalidad sin elegir'}
+                            {st.modalidadCursada ? `${iconoModalidadCard} Modalidad: ${st.modalidadCursada}` : `${iconoModalidadCard} Modalidad sin elegir`}
                           </span>
                         ) : (
                           <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${esPromocional ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`}>
