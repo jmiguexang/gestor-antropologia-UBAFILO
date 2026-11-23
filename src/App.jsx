@@ -7,12 +7,12 @@ import {
   Bookmark, User, LogOut, Trash2, 
   Mail, Users, FileText, CheckSquare, Layers, Loader2,
   Share2, Download, RefreshCw, Sparkles,
-  Star, Trophy, Coffee, Copy, Check, Plus, Camera, Heart
+  Star, Trophy, Coffee, Copy, Check, Plus, Camera, Heart, Pencil
 } from 'lucide-react';
 
 const MP_ALIAS = 'juan.miguel.ch';
 
-// Respaldo inicial si la tabla seminarios_catalogo no responde o está vacía
+// Respaldo inicial si la tabla seminarios_catalogo no responde
 const SEMINARIOS_OFERTA_2C_2026 = [
   { id: 'sem-1', tipo: 'sociocultural', codigo: '', nombre: 'SEMINARIO DE ANTROPOLOGIA SOCIAL (ANTROPOLOGIA RURAL Y ANTROPOLOGIA SOCIAL) - SOLO PLAN 1985', docente: 'PROF. VALVERDE, Sebastián', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
   { id: 'sem-2', tipo: 'sociocultural', codigo: '', nombre: 'REPRODUCCIÓN SOCIAL, DESIGUALDADES Y DIGITALIZACIÓN EN EL MUNDO DEL TRABAJO', docente: 'PROF. Hernán PALERMO y PROF. Verónica CASAS', anio: '2026', cuatrimestre: '2° Cuatrimestre' },
@@ -118,6 +118,7 @@ export default function App() {
 
   const [seminariosOferta, setSeminariosOferta] = useState([]);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
+  const [editandoSemId, setEditandoSemId] = useState(null);
   const [nuevoSemNombre, setNuevoSemNombre] = useState('');
   const [nuevoSemCodigo, setNuevoSemCodigo] = useState('');
   const [nuevoSemDocente1, setNuevoSemDocente1] = useState('');
@@ -267,6 +268,31 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
+  const limpiarFormularioSeminario = () => {
+    setEditandoSemId(null);
+    setNuevoSemNombre('');
+    setNuevoSemCodigo('');
+    setNuevoSemDocente1('');
+    setNuevoSemDocente2('');
+    setNuevoSemDocente3('');
+    setNuevoSemTipo('sociocultural');
+    setNuevoSemAnio('2026');
+    setNuevoSemCuatrimestre('2° Cuatrimestre');
+  };
+
+  const handleIniciarEdicionSeminario = (sem) => {
+    setEditandoSemId(sem.id);
+    setNuevoSemNombre(sem.nombre || '');
+    setNuevoSemCodigo(sem.codigo || '');
+    setNuevoSemTipo(sem.tipo || 'sociocultural');
+    setNuevoSemAnio(sem.anio || '2026');
+    setNuevoSemCuatrimestre(sem.cuatrimestre || '2° Cuatrimestre');
+    const docentesSeparados = (sem.docente || '').split('/').map((d) => d.trim());
+    setNuevoSemDocente1(docentesSeparados[0] || '');
+    setNuevoSemDocente2(docentesSeparados[1] || '');
+    setNuevoSemDocente3(docentesSeparados[2] || '');
+  };
+
   const handleAgregarSeminarioManualACatalogo = async (e) => {
     e.preventDefault();
     const nombreLimpio = nuevoSemNombre.trim();
@@ -281,13 +307,17 @@ export default function App() {
       return;
     }
 
+    const otrosSeminarios = editandoSemId
+      ? seminariosOferta.filter((s) => s.id !== editandoSemId)
+      : seminariosOferta;
+
     const yaExistePorCodigo =
       codigoLimpio !== '' &&
-      seminariosOferta.some(
+      otrosSeminarios.some(
         (s) => (s.codigo || '').trim().toLowerCase() === codigoLimpio.toLowerCase()
       );
 
-    const yaExistePorNombre = seminariosOferta.some(
+    const yaExistePorNombre = otrosSeminarios.some(
       (s) =>
         (s.nombre || '').trim().toLowerCase() === nombreLimpio.toLowerCase() &&
         (s.anio || '').trim() === nuevoSemAnio.trim() &&
@@ -296,6 +326,36 @@ export default function App() {
 
     if (yaExistePorCodigo || yaExistePorNombre) {
       alert("Este seminario ya está agregado en el catálogo.");
+      return;
+    }
+
+    if (editandoSemId) {
+      const datosActualizados = {
+        tipo: nuevoSemTipo,
+        codigo: codigoLimpio,
+        nombre: nombreLimpio.toUpperCase(),
+        docente: docenteLimpio,
+        anio: nuevoSemAnio,
+        cuatrimestre: nuevoSemCuatrimestre
+      };
+
+      const { error } = await supabase
+        .from('seminarios_catalogo')
+        .update(datosActualizados)
+        .eq('id', editandoSemId);
+
+      if (error) {
+        console.error("Error actualizando en seminarios_catalogo:", error);
+        alert("No se pudo actualizar el seminario en la base de datos.");
+        return;
+      }
+
+      setSeminariosOferta((prev) =>
+        prev.map((item) => (item.id === editandoSemId ? { ...item, ...datosActualizados } : item))
+      );
+      limpiarFormularioSeminario();
+      setToastMessage("¡Seminario actualizado!");
+      setTimeout(() => setToastMessage(null), 3500);
       return;
     }
 
@@ -320,12 +380,7 @@ export default function App() {
     }
 
     setSeminariosOferta((prev) => [nuevoSem, ...prev]);
-    setNuevoSemNombre('');
-    setNuevoSemCodigo('');
-    setNuevoSemDocente1('');
-    setNuevoSemDocente2('');
-    setNuevoSemDocente3('');
-    setNuevoSemTipo('sociocultural');
+    limpiarFormularioSeminario();
     setToastMessage("¡Seminario agregado al catálogo!");
     setTimeout(() => setToastMessage(null), 3500);
   };
@@ -345,6 +400,9 @@ export default function App() {
       return;
     }
 
+    if (editandoSemId === sem.id) {
+      limpiarFormularioSeminario();
+    }
     setSeminariosOferta((prev) => prev.filter((item) => item.id !== sem.id));
     setToastMessage("Seminario eliminado del catálogo.");
     setTimeout(() => setToastMessage(null), 3000);
@@ -2375,11 +2433,24 @@ export default function App() {
           <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Bookmark className="w-5 h-5 text-sky-600" /> Catálogo de Seminarios</h3>
-              <button onClick={() => setShowSeminarioModal(false)} className="text-slate-400 font-bold text-lg">×</button>
+              <button onClick={() => { limpiarFormularioSeminario(); setShowSeminarioModal(false); }} className="text-slate-400 font-bold text-lg">×</button>
             </div>
 
             <form onSubmit={handleAgregarSeminarioManualACatalogo} className="bg-sky-50 border border-sky-200 rounded-xl p-3.5 space-y-2.5">
-              <p className="text-xs font-bold uppercase text-sky-900">Agregar seminario al catálogo</p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold uppercase text-sky-900">
+                  {editandoSemId ? 'Editando seminario del catálogo' : 'Agregar seminario al catálogo'}
+                </p>
+                {editandoSemId && (
+                  <button
+                    type="button"
+                    onClick={limpiarFormularioSeminario}
+                    className="text-[11px] font-bold text-slate-600 hover:text-slate-900 underline"
+                  >
+                    Cancelar edición
+                  </button>
+                )}
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                 <input
                   type="text"
@@ -2453,12 +2524,21 @@ export default function App() {
                   className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
                 />
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                {editandoSemId && (
+                  <button
+                    type="button"
+                    onClick={limpiarFormularioSeminario}
+                    className="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-lg transition"
+                  >
+                    Cancelar
+                  </button>
+                )}
                 <button
                   type="submit"
                   className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition shrink-0"
                 >
-                  <Plus className="w-4 h-4" /> Guardar en Catálogo
+                  {editandoSemId ? <><Check className="w-4 h-4" /> Guardar Cambios</> : <><Plus className="w-4 h-4" /> Guardar en Catálogo</>}
                 </button>
               </div>
             </form>
@@ -2540,7 +2620,7 @@ export default function App() {
 
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
               {seminariosFiltrados.map(s => (
-                <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 gap-3">
+                <div key={s.id} className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border gap-3 ${editandoSemId === s.id ? 'bg-sky-50 border-sky-400' : 'bg-slate-50 border-slate-200'}`}>
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900">{s.tipo.toUpperCase()}</span>
@@ -2558,6 +2638,9 @@ export default function App() {
                     <button onClick={() => handleAgregarSeminarioACursada(s)} className="flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
                       <Plus className="w-4 h-4" /> Agregar a mi cursada
                     </button>
+                    <button type="button" onClick={() => handleIniciarEdicionSeminario(s)} title="Editar seminario" className="p-2 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl transition">
+                      <Pencil className="w-4 h-4" />
+                    </button>
                     <button type="button" onClick={() => handleEliminarSeminarioCatalogo(s)} title="Eliminar del catálogo" className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition">
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -2565,7 +2648,7 @@ export default function App() {
                 </div>
               ))}
             </div>
-            <div className="flex justify-end"><button onClick={() => setShowSeminarioModal(false)} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button></div>
+            <div className="flex justify-end"><button onClick={() => { limpiarFormularioSeminario(); setShowSeminarioModal(false); }} className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Cerrar</button></div>
           </div>
         </div>
       )}
