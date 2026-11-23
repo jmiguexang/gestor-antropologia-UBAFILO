@@ -120,7 +120,9 @@ export default function App() {
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   const [nuevoSemNombre, setNuevoSemNombre] = useState('');
   const [nuevoSemCodigo, setNuevoSemCodigo] = useState('');
-  const [nuevoSemDocente, setNuevoSemDocente] = useState('');
+  const [nuevoSemDocente1, setNuevoSemDocente1] = useState('');
+  const [nuevoSemDocente2, setNuevoSemDocente2] = useState('');
+  const [nuevoSemDocente3, setNuevoSemDocente3] = useState('');
   const [nuevoSemTipo, setNuevoSemTipo] = useState('sociocultural');
   const [nuevoSemAnio, setNuevoSemAnio] = useState('2026');
   const [nuevoSemCuatrimestre, setNuevoSemCuatrimestre] = useState('2° Cuatrimestre');
@@ -251,7 +253,10 @@ export default function App() {
     e.preventDefault();
     const nombreLimpio = nuevoSemNombre.trim();
     const codigoLimpio = nuevoSemCodigo.trim();
-    const docenteLimpio = nuevoSemDocente.trim();
+    const docentesLista = [nuevoSemDocente1, nuevoSemDocente2, nuevoSemDocente3]
+      .map((d) => d.trim())
+      .filter(Boolean);
+    const docenteLimpio = docentesLista.join(' / ');
 
     if (!nombreLimpio || !codigoLimpio || !docenteLimpio || !nuevoSemTipo || !nuevoSemAnio || !nuevoSemCuatrimestre) {
       alert("Todos los campos son obligatorios para agregar un seminario al catálogo.");
@@ -281,7 +286,9 @@ export default function App() {
     guardarDatosNube(studentData, updatedOferta, avatarActual, selectedPlan, selectedOrientation);
     setNuevoSemNombre('');
     setNuevoSemCodigo('');
-    setNuevoSemDocente('');
+    setNuevoSemDocente1('');
+    setNuevoSemDocente2('');
+    setNuevoSemDocente3('');
     setNuevoSemTipo('sociocultural');
     setToastMessage("¡Seminario agregado al catálogo!");
     setTimeout(() => setToastMessage(null), 3500);
@@ -2367,15 +2374,31 @@ export default function App() {
                   <option value="Verano">Verano</option>
                 </select>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <input
                   type="text"
                   required
-                  placeholder="Docente / Cátedra *"
-                  value={nuevoSemDocente}
-                  onChange={(e) => setNuevoSemDocente(e.target.value)}
-                  className="flex-1 bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
+                  placeholder="Docente / Cátedra 1 *"
+                  value={nuevoSemDocente1}
+                  onChange={(e) => setNuevoSemDocente1(e.target.value)}
+                  className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
                 />
+                <input
+                  type="text"
+                  placeholder="Docente / Cátedra 2 (opcional)"
+                  value={nuevoSemDocente2}
+                  onChange={(e) => setNuevoSemDocente2(e.target.value)}
+                  className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
+                />
+                <input
+                  type="text"
+                  placeholder="Docente / Cátedra 3 (opcional)"
+                  value={nuevoSemDocente3}
+                  onChange={(e) => setNuevoSemDocente3(e.target.value)}
+                  className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
+                />
+              </div>
+              <div className="flex justify-end">
                 <button
                   type="submit"
                   className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition shrink-0"
