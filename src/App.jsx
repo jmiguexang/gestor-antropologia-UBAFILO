@@ -116,7 +116,7 @@ export default function App() {
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [copiedAlias, setCopiedAlias] = useState(false);
 
-  const [seminariosOferta, setSeminariosOferta] = useState(SEMINARIOS_OFERTA_2C_2026);
+  const [seminariosOferta, setSeminariosOferta] = useState([]);
   const [showSeminarioModal, setShowSeminarioModal] = useState(false);
   const [nuevoSemNombre, setNuevoSemNombre] = useState('');
   const [nuevoSemCodigo, setNuevoSemCodigo] = useState('');
@@ -160,14 +160,16 @@ export default function App() {
 
       if (error) {
         console.error("Error consultando seminarios_catalogo:", error);
+        setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
         return;
       }
 
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setSeminariosOferta(data);
       }
     } catch (err) {
       console.error("Error al cargar seminarios_catalogo:", err);
+      setSeminariosOferta(SEMINARIOS_OFERTA_2C_2026);
     }
   };
 
@@ -274,16 +276,26 @@ export default function App() {
       .filter(Boolean);
     const docenteLimpio = docentesLista.join(' / ');
 
-    if (!nombreLimpio || !codigoLimpio || !docenteLimpio || !nuevoSemTipo || !nuevoSemAnio || !nuevoSemCuatrimestre) {
-      alert("Todos los campos son obligatorios para agregar un seminario al catálogo.");
+    if (!nombreLimpio || !docenteLimpio || !nuevoSemTipo || !nuevoSemAnio || !nuevoSemCuatrimestre) {
+      alert("Completá nombre, tipo, año, cuatrimestre y al menos un docente.");
       return;
     }
 
-    const yaExiste = seminariosOferta.some(
-      (s) => (s.codigo || '').trim().toLowerCase() === codigoLimpio.toLowerCase()
+    const yaExistePorCodigo =
+      codigoLimpio !== '' &&
+      seminariosOferta.some(
+        (s) => (s.codigo || '').trim().toLowerCase() === codigoLimpio.toLowerCase()
+      );
+
+    const yaExistePorNombre = seminariosOferta.some(
+      (s) =>
+        (s.nombre || '').trim().toLowerCase() === nombreLimpio.toLowerCase() &&
+        (s.anio || '').trim() === nuevoSemAnio.trim() &&
+        (s.cuatrimestre || '').trim() === nuevoSemCuatrimestre.trim()
     );
-    if (yaExiste) {
-      alert("El seminario que estás intentando ingresar ya está en la lista.");
+
+    if (yaExistePorCodigo || yaExistePorNombre) {
+      alert("Este seminario ya está agregado en el catálogo.");
       return;
     }
 
@@ -316,6 +328,26 @@ export default function App() {
     setNuevoSemTipo('sociocultural');
     setToastMessage("¡Seminario agregado al catálogo!");
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleEliminarSeminarioCatalogo = async (sem) => {
+    const confirmar = window.confirm(`¿Eliminar "${sem.nombre}" del catálogo?`);
+    if (!confirmar) return;
+
+    const { error } = await supabase
+      .from('seminarios_catalogo')
+      .delete()
+      .eq('id', sem.id);
+
+    if (error) {
+      console.error("Error eliminando de seminarios_catalogo:", error);
+      alert("No se pudo eliminar el seminario del catálogo.");
+      return;
+    }
+
+    setSeminariosOferta((prev) => prev.filter((item) => item.id !== sem.id));
+    setToastMessage("Seminario eliminado del catálogo.");
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   const handleAgregarSeminarioACursada = (sem) => {
@@ -2347,7 +2379,7 @@ export default function App() {
             </div>
 
             <form onSubmit={handleAgregarSeminarioManualACatalogo} className="bg-sky-50 border border-sky-200 rounded-xl p-3.5 space-y-2.5">
-              <p className="text-xs font-bold uppercase text-sky-900">Agregar seminario al catálogo (todos los campos obligatorios)</p>
+              <p className="text-xs font-bold uppercase text-sky-900">Agregar seminario al catálogo</p>
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                 <input
                   type="text"
@@ -2359,8 +2391,7 @@ export default function App() {
                 />
                 <input
                   type="text"
-                  required
-                  placeholder="Código *"
+                  placeholder="Código (opcional)"
                   value={nuevoSemCodigo}
                   onChange={(e) => setNuevoSemCodigo(e.target.value)}
                   className="bg-white border border-sky-300 rounded-lg px-3 py-2 text-xs"
@@ -2523,9 +2554,14 @@ export default function App() {
                     <p className="font-bold text-slate-800 text-xs mt-1">{s.nombre}</p>
                     <p className="text-[11px] text-slate-500">{s.docente}</p>
                   </div>
-                  <button onClick={() => handleAgregarSeminarioACursada(s)} className="flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shrink-0">
-                    <Plus className="w-4 h-4" /> Agregar a mi cursada
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button onClick={() => handleAgregarSeminarioACursada(s)} className="flex items-center justify-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
+                      <Plus className="w-4 h-4" /> Agregar a mi cursada
+                    </button>
+                    <button type="button" onClick={() => handleEliminarSeminarioCatalogo(s)} title="Eliminar del catálogo" className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
