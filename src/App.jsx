@@ -669,6 +669,7 @@ export default function App() {
   };
 
   const handleAgregarSeminarioACursada = (sem) => {
+    const esProf2023Actual = selectedPlan === '2023' && selectedOrientation === 'profesorado';
     const planObjActual = PLANS_DATA[selectedPlan];
     const orientObjActual =
       planObjActual?.orientaciones?.[selectedOrientation] ||
@@ -677,10 +678,12 @@ export default function App() {
 
     const esPstSem = esSeminarioPst(sem);
 
-    const slotsPstCFO = cfoList.filter((m) => esSlotPstCFO(m.name));
+    const slotsPstEnBloque = esProf2023Actual
+      ? CFG_PROFESORADO_2023_MATERIAS.filter((m) => esSlotPstCFO(m.name))
+      : cfoList.filter((m) => esSlotPstCFO(m.name));
     const slotsOrientacionCFO = cfoList.filter((m) => esSlotSeminarioOrientacionCFO(m.name));
 
-    const candidatosSlot = esPstSem ? slotsPstCFO : slotsOrientacionCFO;
+    const candidatosSlot = esPstSem ? slotsPstEnBloque : slotsOrientacionCFO;
     const planStateActual = studentData[selectedPlan] || {};
 
     const slotLibre =
@@ -724,8 +727,8 @@ export default function App() {
 
       setShowSeminarioModal(false);
       setOnlyFavorites(false);
-      setActiveBlock('cfo');
-      setToastMessage(`¡Seminario asignado en CFE (${slotLibre.name})!`);
+      setActiveBlock(esProf2023Actual && esPstSem ? 'cfg' : 'cfo');
+      setToastMessage(`¡Seminario asignado en ${esProf2023Actual && esPstSem ? 'CFG' : 'CFE'} (${slotLibre.name})!`);
       setTimeout(() => setToastMessage(null), 4000);
       return;
     }
