@@ -292,12 +292,28 @@ const CFG_PROFESORADO_2023_MATERIAS = [
   { id: 'prof-2023-cfg-ob-2', name: 'Metodología de la investigación antropológica en educación', etapa: 'CFG · Obligatoria', regimen: 'promocion' },
   { id: 'prof-2023-cfg-ob-3', name: 'Antropología y Conocimiento', etapa: 'CFG · Obligatoria', regimen: 'promocion' },
   { id: 'prof-2023-cfg-ob-4', name: 'Antropología y Educación', etapa: 'CFG · Obligatoria', regimen: 'promocion' },
-  { id: 'prof-2023-cfg-el-1', name: 'Materia Electiva CFG 1', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
-  { id: 'prof-2023-cfg-el-2', name: 'Materia Electiva CFG 2', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
-  { id: 'prof-2023-cfg-el-3', name: 'Materia Electiva CFG 3', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
-  { id: 'prof-2023-cfg-el-4', name: 'Materia Electiva CFG 4', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
-  { id: 'prof-2023-cfg-el-5', name: 'Materia Electiva CFG 5', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-1', name: 'Materia Electiva 1', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-2', name: 'Materia Electiva 2', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-3', name: 'Materia Electiva 3', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-4', name: 'Materia Electiva 4', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
+  { id: 'prof-2023-cfg-el-5', name: 'Materia Electiva 5', etapa: 'CFG · Electiva', regimen: 'promocion', esElectivaProfesoradoCFG: true },
   { id: 'prof-2023-cfg-pst-1', name: 'Seminario de Prácticas Socioeducativas Territorializadas (PST)', etapa: 'CFG · Seminario PST', regimen: 'promocion' }
+];
+
+const OPCIONES_ELECTIVAS_CS_EDUCACION_CFE = [
+  'Historia Social General de la Educación',
+  'Política Educacional',
+  'Historia de la Educación Argentina',
+  'Sociología de la Educación'
+];
+
+const CFE_PROFESORADO_2023_MATERIAS = [
+  { id: 'prof-2023-cfe-esi', name: 'Seminario de Educación Sexual Integral', etapa: 'CFE · Seminario', regimen: 'promocion' },
+  { id: 'prof-2023-cfe-did-gral', name: 'Didáctica General', etapa: 'CFE · Obligatoria', regimen: 'promocion' },
+  { id: 'prof-2023-cfe-did-esp', name: 'Didáctica Especial y Prácticas de la Enseñanza', etapa: 'CFE · Obligatoria', regimen: 'promocion' },
+  { id: 'prof-2023-cfe-exp-sit', name: 'Experiencias Socioeducativas Situadas', etapa: 'CFE · Obligatoria', regimen: 'promocion' },
+  { id: 'prof-2023-cfe-el-edu-1', name: 'Materia Electiva de Cs. de la Educación 1', etapa: 'CFE · Electiva Cs. de la Educación', regimen: 'promocion', esElectivaCsEducacionCFE: true },
+  { id: 'prof-2023-cfe-el-edu-2', name: 'Materia Electiva de Cs. de la Educación 2', etapa: 'CFE · Electiva Cs. de la Educación', regimen: 'promocion', esElectivaCsEducacionCFE: true }
 ];
 
 const redondearUBAXXI = (promedio) => {
@@ -938,6 +954,9 @@ export default function App() {
   const orientationObj = planObj.orientaciones[selectedOrientation] || planObj.orientaciones['sociocultural'];
 
   const getCfoArqueologia1985Ajustado = () => {
+    if (esProfesorado2023) {
+      return CFE_PROFESORADO_2023_MATERIAS;
+    }
     const baseCfo = (orientationObj.cfo || []).filter(m => !esMateriaTesis(m));
     if (selectedPlan === '1985' && selectedOrientation === 'arqueologia') {
       const resultado = [];
@@ -1990,6 +2009,19 @@ export default function App() {
         const orientacionElectivaProfCFG = st.orientacionElectivaCFG || '';
         const opcionesMateriasElectivasProfCFG = ELECTIVAS_CFG_PROFESORADO_2023[orientacionElectivaProfCFG] || [];
 
+        const esElectivaCsEducacionCFE = Boolean(esProfesorado2023 && esCFO && mat.esElectivaCsEducacionCFE);
+        const opcionesElectivasEduOcupadasEnOtras = new Set();
+        if (esElectivaCsEducacionCFE) {
+          CFE_PROFESORADO_2023_MATERIAS.forEach(el => {
+            if (el.esElectivaCsEducacionCFE && el.id !== mat.id) {
+              const otraVal = studentData[selectedPlan]?.[el.id]?.customName;
+              if (OPCIONES_ELECTIVAS_CS_EDUCACION_CFE.includes(otraVal)) {
+                opcionesElectivasEduOcupadasEnOtras.add(otraVal);
+              }
+            }
+          });
+        }
+
         const nombreMatLower = (mat.name || '').toLowerCase();
         const esSeminarioCuatrimestral64 =
           horasMateriaDetalle === 64 &&
@@ -2145,7 +2177,7 @@ export default function App() {
 
               {(() => {
                 const textoMateria = `${mat.id || ''} ${mat.name || ''} ${mat.etapa || ''}`.toLowerCase();
-                const esOptativa = textoMateria.includes('optativa') && !mat.esCustomSeminario && !esElectivaSociocultural && !esElectivaProfCFG;
+                const esOptativa = textoMateria.includes('optativa') && !mat.esCustomSeminario && !esElectivaSociocultural && !esElectivaProfCFG && !esElectivaCsEducacionCFE;
 
                 if (!esOptativa) return null;
 
@@ -2365,7 +2397,29 @@ export default function App() {
                 );
               })()}
 
-              {esPsicologia1985CFO ? (
+              {esElectivaCsEducacionCFE && (
+                <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                  <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la Materia Electiva de Cs. de la Educación:</label>
+                  <select
+                    value={st.customName || ''}
+                    onChange={(e) => handleUpdateMateria(mat.id, 'customName', e.target.value)}
+                    className="w-full bg-white border border-sky-300 rounded-lg p-2 text-xs font-semibold"
+                  >
+                    <option value="">-- Seleccionar materia --</option>
+                    {OPCIONES_ELECTIVAS_CS_EDUCACION_CFE.map((opcionMat) => (
+                      <option
+                        key={opcionMat}
+                        value={opcionMat}
+                        disabled={opcionesElectivasEduOcupadasEnOtras.has(opcionMat)}
+                      >
+                        {opcionMat}{opcionesElectivasEduOcupadasEnOtras.has(opcionMat) ? ' (Ya elegida en la otra electiva)' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {!esElectivaCsEducacionCFE && (esPsicologia1985CFO ? (
                 <div className="space-y-2 bg-sky-50 p-4 rounded-xl border border-sky-200">
                   <label className="text-xs font-bold uppercase text-sky-900 block">Seleccione la materia:</label>
                   <select
@@ -2520,7 +2574,7 @@ export default function App() {
                   );
                 }
                 return null;
-              })()}
+              })())}
 
               {esElectivaLibreUBA && (
                 <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-200">
